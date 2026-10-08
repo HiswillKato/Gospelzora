@@ -1,0 +1,19 @@
+# Runtime artifacts
+install.lock
+
+# Per-server configuration. app/config.php holds the committed defaults;
+# app/config.local.php holds the real database password, mail password and the
+# production domain, and is loaded on top of it. It must never be committed.
+app/config.local.php
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# VS Code workspace files: per-machine, and they leak absolute local paths if
+# they end up inside the docroot (dashboard/ is served).
+*.code-workspace
+
+

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Artist image placeholder">
+  <rect width="512" height="512" fill="#efe9ff"/>
+  <circle cx="256" cy="188" r="84" fill="#6b2bbf" fill-opacity="0.85"/>
+  <path d="M64 512c0-106 86-192 192-192s192 86 192 192z" fill="#6b2bbf" fill-opacity="0.85"/>
+  <circle cx="256" cy="188" r="112" fill="none" stroke="#6b2bbf" stroke-opacity="0.16" stroke-width="8"/>
+  <rect x="4" y="4" width="504" height="504" fill="none" stroke="#6b2bbf" stroke-opacity="0.2" stroke-width="8"/>
+</svg>

@@ -1,0 +1,78 @@
+RewriteEngine On
+
+# RewriteBase is the one genuinely path-dependent line in this file. Serve the
+# project from the DOCUMENT ROOT (not a subdirectory) and this is correct as-is.
+# A subdirectory install needs this changed to the subdirectory, e.g.
+# `RewriteBase /gospelzora/`; deploy/check.php fails the deployment if the
+# detected base does not match, because every pretty URL would 404 otherwise.
+#
+# Do not try to make it dynamic. Making the `admin/` 301 below use a relative
+# target instead (so it would not need a base) does not work: Apache resolves a
+# relative [R=301] substitution against the FILESYSTEM, so it emits
+# https://host/var/www/zora/dashboard/admin/... and the redirect 404s.
+RewriteBase /
+
+# Block sensitive files/directories.
+# NOTE: `pages/` is deliberately NOT denied. The public-page rules below rewrite
+# to pages/<name>.php, and mod_rewrite performs an internal redirect for a path
+# substitution - which re-runs this ruleset against /pages/<name>.php. A deny
+# rule for `pages` would therefore block the router's own target and 403 every
+# public page. Direct /pages/<name>.php hits render the same page as the pretty
+# URL, so the only cost is a duplicate URL per page.
+# Internal PHP only: the app/ classes+helpers, the vendor/ tree, the
+# editor/vcs metadata, and deploy/ (server-side deployment tooling - it reads
+# the database and prints the resolved paths and hosts, so it must never be
+# reachable over HTTP; check.php also refuses to run outside the CLI).
+# None of these are rewrite *targets*, only require()d, so denying them cannot
+# break a route (contrast `pages/` below).
+# installer.php at the root is deliberately NOT denied - it is
+# the setup wizard's entry point, and it refuses to run while install.lock exists.
+RewriteRule ^(?:app|vendor|deploy|\.git|\.vscode)(?:/|$) - [F,L]
+# Shared page partials. Unlike pages/ these are never a rewrite *target* - they
+# are only `require`d, which bypasses mod_rewrite entirely - so denying them
+# cannot break a route. Keeps add-user.php & friends from being runnable alone.
+RewriteRule .*/includes/ - [F,L]
+RewriteRule ^\.gitignore$ - [F,L]
+RewriteRule ^(?:database\.sql|\.env|composer\.(?:json|lock))$ - [F,L]
+# The docs carry real DB/mailbox credentials, so they are blocked by extension.
+RewriteRule \.(?:md|lock|log|sql|ini|sh|bak|swp)$ - [F,L]
+Options -Indexes
+
+# Dashboard (member & admin dashboard, one page per section in dashboard/).
+# Placed before the files/dirs catch-all so /dashboard maps to the router
+# instead of the directory index (which would 301 to /dashboard/).
+RewriteRule ^dashboard/?$ dashboard/index.php [L,QSA]
+RewriteRule ^dashboard/(favorites|profile|songs|song-requests|add-song|playlists)/?$ dashboard/$1.php [L,QSA]
+
+# Admin panel lives under dashboard/admin/, same catch-all rules above the
+# files/dirs catch-all. /admin/* is kept as a 301 to the moved location.
+RewriteRule ^dashboard/admin/songs/(add|edit)/?$ dashboard/admin/add-song.php [L,QSA]
+RewriteRule ^dashboard/admin/artists/(add|edit)/?$ dashboard/admin/add-artist.php [L,QSA]
+RewriteRule ^dashboard/admin/categories/(add|edit)/?$ dashboard/admin/add-category.php [L,QSA]
+RewriteRule ^dashboard/admin/users/(add|edit)/?$ dashboard/admin/add-user.php [L,QSA]
+RewriteRule ^dashboard/admin/admins/(add|edit)/?$ dashboard/admin/add-admin.php [L,QSA]
+RewriteRule ^dashboard/admin/pages/(add|edit)/?$ dashboard/admin/page-edit.php [L,QSA]
+RewriteRule ^dashboard/admin/?$ dashboard/admin/index.php [L,QSA]
+RewriteRule ^dashboard/admin/(login|logout|dashboard|songs|artists|categories|users|admins|messages|logs|logins|visits|downloads|pages|maintenance)/?$ dashboard/admin/$1.php [L,QSA]
+RewriteRule ^admin/(.*)?$ /dashboard/admin/$1 [R=301,L]
+
+# Public pages (pages/). These explicit routes come before the files/dirs
+# catch-all so every page has exactly one canonical, pretty URL.
+RewriteRule ^$ pages/index.php [L,QSA]
+RewriteRule ^(song|artist|category|download|playlist)/([A-Za-z0-9][A-Za-z0-9-]*)/?$ pages/$1.php?slug=$2 [L,QSA]
+RewriteRule ^(music|artists|categories|charts|search|about|contact|login|register|logout|favorites|playlists|playlist|terms|privacy|copyright|forgot|reset|verify-email)/?$ pages/$1.php [L,QSA]
+
+# Existing files/directories
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# API
+RewriteRule ^api/([a-z]+)/?$ api/$1.php [L,QSA]
+
+# 404
+RewriteRule ^ pages/404.php [L]
+# ErrorDocument 404 /404.html
+# ErrorDocument 403 /403.html
+# ErrorDocument 500 /500.html
+# ErrorDocument 502 /502.html
