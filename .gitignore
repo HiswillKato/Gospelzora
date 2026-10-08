@@ -15,5 +15,5 @@ Thumbs.db
 # VS Code workspace files: per-machine, and they leak absolute local paths if
 # they end up inside the docroot (dashboard/ is served).
 *.code-workspace
-
+AGENTS.md
 
