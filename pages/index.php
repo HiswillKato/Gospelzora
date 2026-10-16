@@ -32,7 +32,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
                     <a href="<?= url('music') ?>" class="btn btn-gold btn-lg">
                         <?= icon('list', 'me-2') ?>Explore Music
                     </a>
-                    <a href="<?= url('artists') ?>" class="btn btn-outline-purple btn-lg">
+                    <a href="<?= url('artists') ?>" class="btn btn-soft btn-lg">
                         <?= icon('users', 'me-2') ?>Browse Artists
                     </a>
                 </div>
@@ -48,7 +48,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
             <h2 class="section-title">Latest Releases</h2>
             <p class="section-subtitle mb-0">Fresh songs added to the platform</p>
         </div>
-            <a href="<?= url('music') ?>" class="btn btn-outline-purple btn-sm d-none d-md-inline-flex">View all <?= icon('arrow-right', 'ms-1') ?></a>
+            <a href="<?= url('music') ?>" class="btn btn-soft btn-sm d-none d-md-inline-flex">View all <?= icon('arrow-right', 'ms-1') ?></a>
         </div>
         <div class="row g-4">
             <?php
@@ -62,7 +62,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
 </section>
 
 <!-- Popular Songs -->
-<section class="py-5 bg-purple-soft">
+<section class="py-5 bg-primary-subtle">
     <div class="container">
         <div class="d-flex justify-content-between align-items-end mb-4"><div>
             <h2 class="section-title">Popular Songs</h2>
@@ -87,7 +87,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
             <h2 class="section-title">Featured Artists</h2>
             <p class="section-subtitle mb-0">Gifted voices leading worship</p>
         </div>
-            <a href="<?= url('artists') ?>" class="btn btn-outline-purple btn-sm d-none d-md-inline-flex">View all <?= icon('arrow-right', 'ms-1') ?></a>
+            <a href="<?= url('artists') ?>" class="btn btn-soft btn-sm d-none d-md-inline-flex">View all <?= icon('arrow-right', 'ms-1') ?></a>
         </div>
         <div class="row g-4">
             <?php if (empty($artists)) {

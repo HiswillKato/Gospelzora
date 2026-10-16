@@ -24,19 +24,19 @@ Some parts are still under development, so the available features may change as 
 - **MySQL / MariaDB** for storing data, accessed with MySQLi
 - **Bootstrap 5** for the interface and responsive layout
 - **HTML, CSS and JavaScript** for the frontend
-- **Apache** for local development and URL rewriting
+- **nginx** for local development and URL rewriting
 
 ## Running it locally
 
-I'm developing Gospelzora in a Linux-based Apache environment. To work with the project locally, you'll need PHP, a MySQL-compatible database and Apache.
+I'm developing Gospelzora in a Linux-based nginx environment. To work with the project locally, you'll need PHP, a MySQL-compatible database and nginx.
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/HiswillKato/Gospelzora.git
    ```
-2. Place the project in your Apache web directory, or point an Apache virtual host to it.
+2. Place the project in your nginx document root, or point an nginx server block to it.
 3. Set up the database and update the local database settings in `app/config.php` to match your environment.
-4. Enable Apache's rewrite module if the routes depend on `.htaccess` rules.
+4. Routing lives in `.htaccess`, which nginx does not read natively — run the [`.htaccess`-for-nginx](https://github.com/e404/htaccess-for-nginx) Lua module (this project uses it) if the short routes must work.
 5. Open the configured local address in your browser.
 
 Database setup may require additional steps depending on the current version of the project. Keep local credentials out of Git.

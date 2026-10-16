@@ -101,7 +101,7 @@ $songs_active_tab = 'add-song';
 <div class="col-12">
 <div class="upload-progress d-none" data-upload-progress>
 <div class="d-flex justify-content-between small text-muted mb-1"><span data-upload-status>Uploading…</span><span data-upload-percent>0%</span></div>
-<div class="progress" style="height:8px" role="progressbar" aria-label="Upload progress"><div class="progress-bar bg-gold" data-upload-bar role="presentation" style="width:0%"></div></div>
+<div class="progress" style="height:8px" role="progressbar" aria-label="Upload progress"><div class="progress-bar bg-warning" data-upload-bar role="presentation" style="width:0%"></div></div>
 </div>
 <button type="submit" class="btn btn-gold" data-save-btn><?= icon('floppy-disk', 'me-1') ?>Save Song</button>
 <a href="<?= url('dashboard/songs') ?>" class="btn btn-outline-secondary">Cancel</a>

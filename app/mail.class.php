@@ -47,7 +47,11 @@ class Mail {
             $mail->Username = MAIL_USER;
             $mail->Password = MAIL_PASS;
         }
-        $mail->SMTPAutoTLS = false;  // plain loopback; port 25 has no trusted cert
+        /* A real SMTP server (e.g. Gmail on 587) authenticates over STARTTLS,
+           so TLS is required whenever there is a username. The local loopback
+           has no username and no trusted cert, so it stays on plain port 25 —
+           exactly the split bubapc/mail.php uses. */
+        $mail->SMTPAutoTLS = $mail->SMTPAuth;
         $mail->SMTPSecure = '';
         $mail->Timeout = 10;
         $mail->CharSet = PHPMailer::CHARSET_UTF8;

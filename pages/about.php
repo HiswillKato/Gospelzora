@@ -16,7 +16,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h2 class="fw-bold text-purple mb-3">What is Gospelzora?</h2>
+                <h2 class="fw-bold text-primary mb-3">What is Gospelzora?</h2>
                 <p class="lead text-muted">Gospelzora is a gospel music platform dedicated to making anointed worship and praise music easily accessible to believers around the world.</p>
                 
                 <h3 class="h5 fw-semibold mt-4">Our Mission</h3>

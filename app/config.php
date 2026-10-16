@@ -58,11 +58,11 @@ define('GOSPELZORA_HOSTS', ['zora', 'www.zora', 'localhost', '127.0.0.1']);
 
 define('MAIL_HOST', '127.0.0.1');
 define('MAIL_PORT', 25);
-define('MAIL_FROM', 'noreply@zora.local');
+define('MAIL_FROM', 'gospelzora@gmail.com');
 define('MAIL_FROM_NAME', 'Gospelzora');
 define('MAIL_USER', '');
 define('MAIL_PASS', '');
-define('MAIL_ADMIN', 'admin@zora.local');
+define('MAIL_ADMIN', 'gospelzora@gmail.com');
 define('MAIL_SUBJECT_PREFIX', '[Gospelzora] ');
 define('MAIL_VERIFY_EXPIRY_HOURS', 48);
 define('MAIL_RESET_EXPIRY_HOURS', 1);
@@ -243,11 +243,11 @@ defined('LOGIN_LOCK_MINUTES')    || define('LOGIN_LOCK_MINUTES', 15);
 
 defined('MAIL_HOST')     || define('MAIL_HOST', '127.0.0.1');
 defined('MAIL_PORT')     || define('MAIL_PORT', 25);
-defined('MAIL_FROM')     || define('MAIL_FROM', 'noreply@mail.local');
+defined('MAIL_FROM')     || define('MAIL_FROM', 'gospelzora@gmail.com');
 defined('MAIL_FROM_NAME') || define('MAIL_FROM_NAME', SITE_NAME);
 defined('MAIL_USER')     || define('MAIL_USER', '');
 defined('MAIL_PASS')     || define('MAIL_PASS', '');
-defined('MAIL_ADMIN')    || define('MAIL_ADMIN', 'hiswill@mail.local');
+defined('MAIL_ADMIN')    || define('MAIL_ADMIN', 'gospelzora@gmail.com');
 defined('MAIL_SUBJECT_PREFIX')       || define('MAIL_SUBJECT_PREFIX', '[' . SITE_NAME . '] ');
 defined('MAIL_VERIFY_EXPIRY_HOURS')  || define('MAIL_VERIFY_EXPIRY_HOURS', 48);
 defined('MAIL_RESET_EXPIRY_HOURS')   || define('MAIL_RESET_EXPIRY_HOURS', 1);

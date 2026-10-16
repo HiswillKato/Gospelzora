@@ -55,12 +55,12 @@ require_once __DIR__ . '/../app/includes/public/header.php';
                         </form>
                         <?php } else { ?>
                         <p class="text-center mt-2 mb-0">
-                            <a href="<?= url('login') ?>" class="text-purple fw-semibold">Back to login</a>
+                            <a href="<?= url('login') ?>" class="text-primary fw-semibold">Back to login</a>
                         </p>
                         <?php } ?>
                         
                         <p class="text-center mt-4 mb-0 text-muted">
-                            Remembered it? <a href="<?= url('login') ?>" class="text-purple fw-semibold">Login</a>
+                            Remembered it? <a href="<?= url('login') ?>" class="text-primary fw-semibold">Login</a>
                         </p>
                     </div>
                 </div>

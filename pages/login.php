@@ -134,14 +134,14 @@ require_once __DIR__ . '/../app/includes/public/header.php';
                                 <label class="form-label">Password</label>
                                 <input type="password" name="password" class="form-control" required>
                                 <div class="text-end mt-2">
-                                    <a href="<?= url('forgot') ?>" class="small text-purple text-decoration-none">Forgot password?</a>
+                                    <a href="<?= url('forgot') ?>" class="small text-primary text-decoration-none">Forgot password?</a>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-gold w-100 btn-lg">Login</button>
                         </form>
 
                         <p class="text-center mt-4 mb-0 text-muted">
-                            Don't have an account? <a href="<?= url('register') ?>" class="text-purple fw-semibold">Register</a>
+                            Don't have an account? <a href="<?= url('register') ?>" class="text-primary fw-semibold">Register</a>
                         </p>
                     </div>
                 </div>

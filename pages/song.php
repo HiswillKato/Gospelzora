@@ -42,7 +42,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
                 <?php if ($categories) { ?>
                 <div class="mb-3">
                     <?php foreach ($categories as $c) { ?>
-                    <a href="<?= url('category/' . $c['slug']) ?>" class="badge bg-gold text-dark me-1 text-decoration-none"><?= e($c['name']) ?></a>
+                    <a href="<?= url('category/' . $c['slug']) ?>" class="badge bg-warning text-dark me-1 text-decoration-none"><?= e($c['name']) ?></a>
                     <?php } ?>
                 </div>
                 <?php } ?>
@@ -81,7 +81,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
 <?php } ?>
 
 <?php if ($related) { ?>
-<section class="py-5 bg-purple-soft">
+<section class="py-5 bg-primary-subtle">
     <div class="container">
         <h3 class="section-title mb-4"><?= e(sprintf("More from %s", $song['artist_name'])) ?></h3>
         <div class="row g-4">

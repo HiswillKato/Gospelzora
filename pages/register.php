@@ -149,7 +149,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
                         </form>
                         
                         <p class="text-center mt-4 mb-0 text-muted">
-                            Already have an account? <a href="<?= url('login') ?>" class="text-purple fw-semibold">Login</a>
+                            Already have an account? <a href="<?= url('login') ?>" class="text-primary fw-semibold">Login</a>
                         </p>
                     </div>
                 </div>

@@ -62,7 +62,7 @@ require __DIR__ . '/../app/includes/partials/page-header.php';
             <?php foreach ($songs as $s) {
                 $cover = image($s['artwork'], 'song'); ?>
                 <tr>
-                    <td class="fw-bold text-purple"><?= (int)$s['position'] ?></td>
+                    <td class="fw-bold text-primary"><?= (int)$s['position'] ?></td>
                     <td>
                         <div class="d-flex align-items-center gap-2">
                             <img src="<?= e($cover) ?>" alt="" width="40" height="40" class="rounded flex-shrink-0" style="object-fit:cover">

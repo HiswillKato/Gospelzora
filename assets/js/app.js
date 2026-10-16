@@ -1253,11 +1253,27 @@
         });
     }
 
+    function initBackToTop() {
+        var button = doc.getElementById('back-to-top');
+        if (!button) {
+            return;
+        }
+        var paint = function () {
+            button.hidden = window.scrollY < 500;
+        };
+        window.addEventListener('scroll', paint, { passive: true });
+        button.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        paint();
+    }
+
     function boot() {
         Theme.init();
         initFavourites();
         initAdminSidebar();
         initIconPickers();
+        initBackToTop();
         doc.addEventListener('click', function (event) {
             var trigger = closest(event.target, '.js-playlist-add');
             if (!trigger) {

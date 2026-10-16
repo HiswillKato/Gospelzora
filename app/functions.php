@@ -213,6 +213,25 @@ function icon(string $name, string $style = '', string $classes = '', string $at
 }
 
 /**
+ * The social networks this site links to, ready to loop.
+ *
+ * One list, so the masthead strip and the footer cannot drift apart: both
+ * print the same accounts. Each entry is ['url' => …, 'icon' => …], the icon
+ * being a Font Awesome brand name for icon().
+ *
+ * @return array<string, array{url: string, icon: string}>
+ */
+function socials(): array
+{
+    return [
+        'Facebook'  => ['url' => 'https://facebook.com/Gospelzora',  'icon' => 'facebook-f'],
+        'X'         => ['url' => 'https://x.com/Gospelzora',         'icon' => 'x-twitter'],
+        'Instagram' => ['url' => 'https://instagram.com/Gospelzora', 'icon' => 'instagram'],
+        'YouTube'   => ['url' => 'https://youtube.com/@Gospelzora',  'icon' => 'youtube'],
+    ];
+}
+
+/**
  * Emit a JSON response and stop.
  *
  * Every api/*.php endpoint and every AJAX branch in dashboard/ ends here, so
@@ -311,6 +330,22 @@ function asset(string $path): string
     }
 
     return url('assets/' . $path);
+}
+
+/**
+ * asset() with a ?v= filemtime stamp.
+ *
+ * A browser that has cached a stylesheet or script keeps it until the URL
+ * changes, which is how a page can end up half-styled after a theme change.
+ * The stamp moves whenever the file does, so the fix is fetched at once;
+ * a missing file simply falls back to the bare URL.
+ */
+function versioned(string $path): string
+{
+    $file = dirname(__DIR__) . '/assets/' . ltrim($path, '/');
+    $time = is_file($file) ? filemtime($file) : 0;
+
+    return asset($path) . ($time ? '?v=' . $time : '');
 }
 
 /**

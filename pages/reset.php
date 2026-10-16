@@ -74,7 +74,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
                         <?php } ?>
 
                         <p class="text-center mt-4 mb-0 text-muted">
-                            <a href="<?= url('login') ?>" class="text-purple fw-semibold">Back to login</a>
+                            <a href="<?= url('login') ?>" class="text-primary fw-semibold">Back to login</a>
                         </p>
                     </div>
                 </div>
