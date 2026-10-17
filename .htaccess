@@ -25,7 +25,7 @@ RewriteBase /
 # reachable over HTTP; check.php also refuses to run outside the CLI).
 # None of these are rewrite *targets*, only require()d, so denying them cannot
 # break a route (contrast `pages/` below).
-# installer.php at the root is deliberately NOT denied - it is
+# install.php at the root is deliberately NOT denied - it is
 # the setup wizard's entry point, and it refuses to run while install.lock exists.
 RewriteRule ^(?:app|vendor|deploy|\.git|\.vscode)(?:/|$) - [F,L]
 # Shared page partials. Unlike pages/ these are never a rewrite *target* - they

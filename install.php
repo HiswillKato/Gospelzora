@@ -2,7 +2,7 @@
 /**
  * Gospelzora Installer — step-by-step setup wizard, one self-contained file.
  *
- * Use only once, via /installer.php. Once the admin account is created a lock
+ * Use only once, via /install.php. Once the admin account is created a lock
  * file (install.lock) is written and the installer refuses to run again (delete
  * install.lock, or this file, after installation).
  *
@@ -43,7 +43,7 @@ header('X-Robots-Tag: noindex');
    $_GET/$_POST or echoes - section 2 owns the request, and
    section 3 owns the request's side effects.
 
-   Part of installer.php, not a separate entry point.
+   Part of install.php, not a separate entry point.
    */
 
 /* ---------------- helpers ---------------- */
@@ -262,7 +262,7 @@ $missing_tables = [];
    rewriting app/config.php, creating the admin, writing install.lock) is behind
    one of those POST branches, so a GET can only ever render.
 
-   Part of installer.php, not a separate entry point.
+   Part of install.php, not a separate entry point.
    */
 
 /* ---------------- POST handling ---------------- */
@@ -418,7 +418,7 @@ if ($step === 4) {
                         unset($_SESSION['install']);
                         $notice = $lock_ok
                             ? 'The administrator account has been created and the installer is now locked.'
-                            : 'The administrator account was created, but install.lock could not be written — delete installer.php to secure the site.';
+                            : 'The administrator account was created, but install.lock could not be written — delete install.php to secure the site.';
                     } else {
                         $error = 'Could not create the administrator account: ' . $stmt->error;
                     }
@@ -438,14 +438,14 @@ if (!$error && !$done && !$installed && !$db_ready && $_SERVER['REQUEST_METHOD']
     }
 }
 
-/* -------- post-install: allow deleting installer.php from the UI -------- */
+/* -------- post-install: allow deleting install.php from the UI -------- */
 $deleted_installer = false;
 if (($installed || $done) && ($_POST['action'] ?? '') === 'delete_installer' && csrf($_POST['csrf_token'] ?? '')) {
-    if (@unlink(ROOT_PATH . '/installer.php')) {
+    if (@unlink(ROOT_PATH . '/install.php')) {
         $deleted_installer = true;
-        $notice = 'installer.php has been deleted. The installer can no longer be reached.';
+        $notice = 'install.php has been deleted. The installer can no longer be reached.';
     } else {
-        $error = 'Could not delete installer.php automatically (not writable by the web server). Remove the file manually.';
+        $error = 'Could not delete install.php automatically (not writable by the web server). Remove the file manually.';
     }
 }
 
@@ -473,7 +473,7 @@ if (!$error && !$done && !$installed) {
    the body of each of the six steps. Pure presentation - it only reads the
    variables sections 2 and 3 have already set.
 
-   Part of installer.php, not a separate entry point.
+   Part of install.php, not a separate entry point.
    */
 
 ?>
@@ -518,14 +518,14 @@ if (!$error && !$done && !$installed) {
                 <a class="btn btn-gold" href="<?= e(url('login')) ?>">Go to Admin Login</a>
                 <a class="btn btn-outline-secondary" href="<?= e(url()) ?>">Visit Site</a>
             </div>
-            <?php if (file_exists(ROOT_PATH . '/installer.php')) { ?>
-                <form method="POST" class="mt-3" onsubmit="return confirm('Delete installer.php now? This cannot be undone.');">
+            <?php if (file_exists(ROOT_PATH . '/install.php')) { ?>
+                <form method="POST" class="mt-3" onsubmit="return confirm('Delete install.php now? This cannot be undone.');">
                     <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
                     <input type="hidden" name="action" value="delete_installer">
-                    <button type="submit" class="btn btn-sm btn-outline-danger"><?= icon('trash-can', 'me-1') ?>Delete installer.php</button>
+                    <button type="submit" class="btn btn-sm btn-outline-danger"><?= icon('trash-can', 'me-1') ?>Delete install.php</button>
                 </form>
             <?php } ?>
-            <p class="small text-muted mt-3 mb-0">To re-run the installer, delete <code>install.lock</code> (and then remove <code>installer.php</code> once finished).</p>
+            <p class="small text-muted mt-3 mb-0">To re-run the installer, delete <code>install.lock</code> (and then remove <code>install.php</code> once finished).</p>
         </div></div>
     <?php } elseif ($done) { ?>
         <div class="card border-0 shadow" style="border-radius:16px"><div class="card-body p-4 p-md-5 text-center">
@@ -537,14 +537,14 @@ if (!$error && !$done && !$installed) {
                 <a class="btn btn-outline-secondary" href="<?= e(url()) ?>">Visit Site</a>
             </div>
             <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
-                <form method="POST" class="d-inline" onsubmit="return confirm('Delete installer.php now? This cannot be undone.');">
+                <form method="POST" class="d-inline" onsubmit="return confirm('Delete install.php now? This cannot be undone.');">
                     <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
                     <input type="hidden" name="action" value="delete_installer">
-                    <button type="submit" class="btn btn-sm btn-outline-danger"><?= icon('trash-can', 'me-1') ?>Delete installer.php now</button>
+                    <button type="submit" class="btn btn-sm btn-outline-danger"><?= icon('trash-can', 'me-1') ?>Delete install.php now</button>
                 </form>
             </div>
             <p class="small text-muted mt-3 mb-0">
-                Security reminder: delete <code>installer.php</code> from the server, or keep the <code>install.lock</code> file in place. Put your real database and mail credentials in <code>app/config.local.php</code> (it is gitignored) rather than <code>app/config.php</code>, and enable HTTPS.
+                Security reminder: delete <code>install.php</code> from the server, or keep the <code>install.lock</code> file in place. Put your real database and mail credentials in <code>app/config.local.php</code> (it is gitignored) rather than <code>app/config.php</code>, and enable HTTPS.
             </p>
         </div></div>
     <?php } else { ?>
@@ -596,7 +596,7 @@ if (!$error && !$done && !$installed) {
                 </div>
             </div>
             <div class="alert alert-warning small text-start">
-                <?= icon('lightbulb', 'me-2') ?>Afterwards, delete <code>installer.php</code> from the server. Re-running the wizard never modifies existing data — the schema is only applied to a fully empty database.
+                <?= icon('lightbulb', 'me-2') ?>Afterwards, delete <code>install.php</code> from the server. Re-running the wizard never modifies existing data — the schema is only applied to a fully empty database.
             </div>
             <a class="btn btn-gold w-100" href="?step=2">Start Installation <?= icon('arrow-right', 'ms-1') ?></a>
         </div>
@@ -751,7 +751,7 @@ if (!$error && !$done && !$installed) {
     </div></div>
 
     <p class="text-center text-white-50 small mt-4 mb-0">
-        <?= SITE_NAME ?> &middot; <?= SITE_TAGLINE ?> — delete <code>installer.php</code> after installation completes.
+        <?= SITE_NAME ?> &middot; <?= SITE_TAGLINE ?> — delete <code>install.php</code> after installation completes.
     </p>
 
     <?php } ?>

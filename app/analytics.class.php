@@ -226,7 +226,7 @@ class Analytics {
      * Record the current request as a page view with its HTTP method and
      * final status code, deduped per ip+method+path+useragent within a
      * 15-minute window. All public page renders (any method, incl. 404s)
-     * are tracked; asset/admin/api paths and installer.php are skipped.
+     * are tracked; asset/admin/api paths and install.php are skipped.
      * Legacy rows without a stored method default to GET.
      *
      * Also enforces the retention policy: once the visitors table passes
@@ -236,7 +236,7 @@ class Analytics {
         $path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '/';
         $path = substr($path, 0, 255);
         if (preg_match('~^/(?:assets|admin|api)/~', $path)) return false;
-        if ($path === '/installer.php') return false;
+        if ($path === '/install.php') return false;
 
         $method = strtoupper(substr($_SERVER['REQUEST_METHOD'] ?? 'GET', 0, 10));
         $status = (int)http_response_code();

@@ -1,7 +1,7 @@
 -- ---------------------------------------------------------------------------
 -- Gospelzora — schema
 --
--- Applied by installer.php with mysqli::multi_query() on the whole file, so it
+-- Applied by install.php with mysqli::multi_query() on the whole file, so it
 -- must stay plain SQL: no DELIMITER, no stored procedures, no result sets.
 --
 -- WARNING, and deploy/check.php says the same about this file: it hardcodes

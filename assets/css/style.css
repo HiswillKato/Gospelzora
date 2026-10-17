@@ -161,6 +161,7 @@ a {
   text-underline-offset: 0.18em;
   text-decoration-thickness: 0.08em;
   transition: color var(--snap);
+  text-decoration: none;
 }
 a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item):not(.page-link):not(.list-group-item):not(.badge):not(.card):hover {
   text-decoration: underline;
