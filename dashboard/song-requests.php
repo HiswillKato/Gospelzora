@@ -49,9 +49,10 @@ require __DIR__ . '/../app/includes/member/header.php';
 ?>
 <div class="row g-4">
 <div class="col-lg-5">
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body">
-<h5 class="fw-semibold mb-3">Request a song</h5>
-<p class="text-muted small mb-3">Found a song that is missing? Request it and an admin will add it when it is available.</p>
+<div class="card tile">
+<div class="card-header"><span class="fw-semibold">Request a song</span></div>
+<div class="card-body">
+<p class="text-body-secondary small">Found a song that is missing? Request it and an admin will add it when it is available.</p>
 <form method="POST"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="song_request">
 <div class="mb-3"><label class="form-label">Song title</label>
 <input type="text" name="title" class="form-control" required minlength="2" maxlength="200" value="<?= e($keepTitle) ?>"></div>
@@ -61,7 +62,7 @@ require __DIR__ . '/../app/includes/member/header.php';
 <?php foreach ($artists as $a) { ?>
 <option value="<?= (int)$a['id'] ?>" <?= (int)$a['id'] === $keepArtist ? 'selected' : '' ?>><?= e($a['name']) ?></option>
 <?php } ?></select></div>
-<div class="mb-3"><label class="form-label">Category <span class="text-muted small">(Optional)</span></label>
+<div class="mb-3"><label class="form-label">Category <span class="text-body-secondary small">(optional)</span></label>
 <select name="category" class="form-select">
 <option value="0">None</option>
 <?php foreach ($categories as $c) { ?>
@@ -69,26 +70,32 @@ require __DIR__ . '/../app/includes/member/header.php';
 <?php } ?></select></div>
 <div class="mb-3"><label class="form-label">Note (optional)</label>
 <textarea name="description" class="form-control" rows="4" maxlength="2000" placeholder="Optional note for the admin (e.g. a specific version or what you have heard)."><?= e($keepNote) ?></textarea></div>
-<button type="submit" class="btn btn-gold"><?= icon('paper-plane', 'me-1') ?>Submit request</button>
-</form></div></div>
+<button type="submit" class="btn btn-gold"><?= icon('paper-plane') ?>Submit request</button>
+</form>
+</div></div>
 </div>
 
 <div class="col-lg-7">
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body">
-<h5 class="fw-semibold mb-3">My song requests</h5>
-<div class="table-responsive"><table class="table table-sm table-hover align-middle"><thead><tr>
-<th>Song title</th><th>Artist</th><th>Submitted</th><th>Status</th></tr></thead><tbody>
+<div class="card tile">
+<div class="card-header"><span class="fw-semibold">My song requests</span></div>
 <?php if (empty($my_requests)) { ?>
-<tr><td colspan="4" class="text-center text-muted py-4">You have not requested any songs yet.</td></tr>
-<?php } else { foreach ($my_requests as $r) { ?>
+<div class="p-5 text-center">
+<?= icon('paper-plane', '', 'fa-2x text-primary d-block mb-3') ?>
+<p class="text-body-secondary mb-0">You have not requested any songs yet.</p>
+</div>
+<?php } else { ?>
+<div class="table-responsive"><table class="table table-sm table-hover align-middle mb-0"><thead><tr>
+<th>Song title</th><th>Artist</th><th>Submitted</th><th>Status</th></tr></thead><tbody>
+<?php foreach ($my_requests as $r) { ?>
 <tr>
-<td><?= e($r['title']) ?><?= !empty($r['description']) ? ' <span class="text-muted small" title="' . e($r['description']) . '">' . icon('comment') . '</span>' : '' ?></td>
+<td><?= e($r['title']) ?><?= !empty($r['description']) ? ' <span class="text-body-secondary" title="' . e($r['description']) . '">' . icon('comment') . '</span>' : '' ?></td>
 <td><?= e($r['artist_name']) ?></td>
-<td class="text-muted small text-nowrap"><?= e(date('M j, Y', strtotime($r['created']))) ?></td>
-<td><span class="badge bg-info">Requested</span></td>
-</tr><?php } } ?>
+<td class="text-body-secondary small text-nowrap"><?= e(date('M j, Y', strtotime($r['created']))) ?></td>
+<td><span class="badge rounded-pill bg-info">Requested</span></td>
+</tr><?php } ?>
 </tbody></table></div>
-</div></div>
+<?php } ?>
+</div>
 </div>
 </div>
 <?php require __DIR__ . '/../app/includes/member/footer.php'; 

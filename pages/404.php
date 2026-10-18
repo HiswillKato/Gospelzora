@@ -12,16 +12,16 @@ require_once __DIR__ . '/../app/includes/public/header.php';
             <?= icon('music', 'text-gold', '', 'style="font-size: 4rem"') ?>
         </div>
         <h1 class="error-code mb-2">404</h1>
-        <h2 class="h3 mb-3">Page Not Found</h2>
-        <p class="text-muted mb-4 col-md-6 mx-auto">
+        <h2 class="h3 mb-3">Page not found</h2>
+        <p class="text-body-secondary mb-4 col-md-6 mx-auto">
             The page you're looking for doesn't exist or has been moved. Let's get you back to the music.
         </p>
         <div class="d-flex flex-wrap justify-content-center gap-3">
             <a href="<?= url() ?>" class="btn btn-gold btn-lg">
-                <?= icon('house', 'me-2') ?>Go Home
+                <?= icon('house') ?>Go home
             </a>
             <a href="<?= url('music') ?>" class="btn btn-soft btn-lg">
-                <?= icon('music', 'me-2') ?>Browse Music
+                <?= icon('music') ?>Browse music
             </a>
         </div>
     </div>

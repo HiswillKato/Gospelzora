@@ -27,13 +27,13 @@ require_once __DIR__ . '/../app/includes/public/header.php';
             <div class="col-lg-7">
                 <h1 class="hero-title"><?= sprintf("Welcome to %s", SITE_NAME) ?></h1>
                 <p class="hero-tagline"><?= SITE_TAGLINE ?></p>
-                <p class="lead text-muted mb-4">Welcome! Dive in and stream anointed gospel music that inspires worship, strengthens faith, and transforms lives — from gifted artists around the world.</p>
+                <p class="lead mb-4">Welcome! Dive in and stream anointed gospel music that inspires worship, strengthens faith, and transforms lives — from gifted artists around the world.</p>
                 <div class="d-flex flex-wrap gap-3 mb-4">
                     <a href="<?= url('music') ?>" class="btn btn-gold btn-lg">
-                        <?= icon('list', 'me-2') ?>Explore Music
+                        <?= icon('list') ?>Explore Music
                     </a>
                     <a href="<?= url('artists') ?>" class="btn btn-soft btn-lg">
-                        <?= icon('users', 'me-2') ?>Browse Artists
+                        <?= icon('users') ?>Browse Artists
                     </a>
                 </div>
             </div>
@@ -48,7 +48,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
             <h2 class="section-title">Latest Releases</h2>
             <p class="section-subtitle mb-0">Fresh songs added to the platform</p>
         </div>
-            <a href="<?= url('music') ?>" class="btn btn-soft btn-sm d-none d-md-inline-flex">View all <?= icon('arrow-right', 'ms-1') ?></a>
+            <a href="<?= url('music') ?>" class="btn btn-soft btn-sm d-none d-md-inline-flex">View all <?= icon('arrow-right') ?></a>
         </div>
         <div class="row g-4">
             <?php
@@ -87,7 +87,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
             <h2 class="section-title">Featured Artists</h2>
             <p class="section-subtitle mb-0">Gifted voices leading worship</p>
         </div>
-            <a href="<?= url('artists') ?>" class="btn btn-soft btn-sm d-none d-md-inline-flex">View all <?= icon('arrow-right', 'ms-1') ?></a>
+            <a href="<?= url('artists') ?>" class="btn btn-soft btn-sm d-none d-md-inline-flex">View all <?= icon('arrow-right') ?></a>
         </div>
         <div class="row g-4">
             <?php if (empty($artists)) {
@@ -108,7 +108,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
         <p class="section-subtitle text-center">Find the perfect sound for every moment of worship</p>
         <div class="d-flex flex-wrap justify-content-center gap-2">
             <?php if (empty($categories)) { ?>
-            <p class="text-muted">No categories yet.</p>
+            <p class="text-body-secondary">No categories yet.</p>
             <?php } else { foreach ($categories as $cat) { ?>
             <a href="<?= url('category/' . $cat['slug']) ?>" class="category-pill">
                 <?= icon($cat['icon'] ?: 'music', 'me-1') ?><?= e($cat['name']) ?>
@@ -119,12 +119,12 @@ require_once __DIR__ . '/../app/includes/public/header.php';
 </section>
 
 <!-- CTA -->
-<section class="py-5" style="background: var(--navy);">
-    <div class="container text-center text-white">
-        <h2 class="fw-bold mb-3">Start Your Worship Journey Today</h2>
-        <p class="lead mb-4 opacity-75">Explore thousands of gospel songs that will inspire, encourage, and draw you closer to God.</p>
+<section class="py-5 bg-body-tertiary border-top">
+    <div class="container text-center">
+        <h2 class="section-title mb-3">Start Your Worship Journey Today</h2>
+        <p class="lead text-body-secondary mb-4">Explore thousands of gospel songs that will inspire, encourage, and draw you closer to God.</p>
         <a href="<?= url('music') ?>" class="btn btn-gold btn-lg">
-            <?= icon('headphones', 'me-2') ?>Browse the Collection
+            <?= icon('headphones') ?>Browse the Collection
         </a>
     </div>
 </section>

@@ -50,11 +50,15 @@
         return fallback;
     }
 
+    // Every page carries the install path on <body>, so the API lives in the
+    // same sub-folder as the page rather than always at the web root.
     function apiUrl(name) {
         var meta = doc.querySelector('meta[name="base-url"]');
         var base = meta ? (meta.getAttribute('content') || '') : '';
-        base = base.replace(/\/+$/, '');
-        return base + '/api/' + name;
+        if (base === '' && doc.body) {
+            base = doc.body.getAttribute('data-base-url') || '';
+        }
+        return base.replace(/\/+$/, '') + '/api/' + name;
     }
 
     function toInt(value) {
@@ -575,12 +579,12 @@
             '<span class="player-bar__title"></span>',
             '<span class="player-bar__artist"></span>',
             '</div>',
-            '<button type="button" class="btn btn-gold player-bar__icon" data-player="toggle" aria-label="Play">',
+            '<button type="button" class="btn btn-gold rounded-circle player-bar__icon" data-player="toggle" aria-label="Play">',
             '<i class="fa-icon fa-solid fa-play" aria-hidden="true"></i></button>',
             '<span class="player-bar__time" data-player="elapsed">0:00</span>',
             '<input type="range" class="player-bar__seek" data-player="seek" min="0" max="100" step="1" value="0" aria-label="Seek through the song">',
             '<span class="player-bar__time" data-player="total">0:00</span>',
-            '<button type="button" class="btn btn-outline-secondary player-bar__icon" data-player="close" aria-label="Close the player">',
+            '<button type="button" class="btn btn-outline-secondary rounded-circle player-bar__icon" data-player="close" aria-label="Close the player">',
             '<i class="fa-icon fa-solid fa-xmark" aria-hidden="true"></i></button>',
             '<audio preload="none"></audio>',
             '</div>'
@@ -739,15 +743,15 @@
             var glyph = item.privacy === 'public' ? 'globe' : 'lock';
             var badge = added
                 ? '<span class="badge text-bg-success">Added</span>'
-                : '<i class="fa-icon fa-solid fa-plus text-muted" aria-hidden="true"></i>';
+                : '<i class="fa-icon fa-solid fa-plus text-body-secondary" aria-hidden="true"></i>';
             return '<button type="button" class="list-group-item list-group-item-action d-flex align-items-center gap-3'
                 + (added ? ' disabled' : '')
                 + '" data-playlist="' + escapeHtml(item.id) + '" data-name="' + name + '" data-privacy="'
                 + escapeHtml(item.privacy === 'public' ? 'public' : 'private') + '">'
-                + '<i class="fa-icon fa-solid fa-' + glyph + ' text-muted" aria-hidden="true"></i>'
+                + '<i class="fa-icon fa-solid fa-' + glyph + ' text-body-secondary" aria-hidden="true"></i>'
                 + '<span class="flex-grow-1 text-start">'
                 + '<span class="d-block fw-semibold">' + name + '</span>'
-                + '<span class="small text-muted">' + escapeHtml(facts.join(' · ')) + '</span>'
+                + '<span class="small text-body-secondary">' + escapeHtml(facts.join(' · ')) + '</span>'
                 + '</span>'
                 + badge
                 + '</button>';
@@ -897,7 +901,7 @@
                 '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>',
                 '</div>',
                 '<div class="modal-body">',
-                '<p class="small text-muted" data-slot="song"></p>',
+                '<p class="small text-body-secondary" data-slot="song"></p>',
                 '<div data-slot="status" class="mb-3"></div>',
                 '<div data-slot="list" class="list-group mb-3" hidden></div>',
                 '<form data-slot="create" novalidate>',
@@ -975,6 +979,420 @@
                 }
             }
         };
+    })();
+
+    /**
+     * The upload box on the three add-song forms.
+     *
+     * The markup alone cannot do the job: a dropped file is ignored by a hidden
+     * input, a chosen file never reaches the name line, and a native submit gives
+     * no sign of the wait. This module supplies all three — it pushes a dropped
+     * file into the input it belongs to, echoes the name back, and sends the
+     * submit over XHR so the progress bar can be painted.
+     *
+     * The input's accept attribute is the one list of allowed types: the picker,
+     * the check here and the copy under the box all follow it.
+     */
+    var Upload = (function () {
+        var zones = 0;
+
+        function allowed(input) {
+            var list = [];
+            String(input.getAttribute('accept') || '').split(',').forEach(function (entry) {
+                entry = entry.trim().toLowerCase();
+                if (entry.charAt(0) === '.' && entry.length > 1) {
+                    list.push(entry.slice(1));
+                }
+            });
+            return list;
+        }
+
+        function extension(name) {
+            var dot = String(name).lastIndexOf('.');
+            return dot === -1 ? '' : String(name).slice(dot + 1).toLowerCase();
+        }
+
+        function complaint(input, file) {
+            var list = allowed(input);
+            if (list.length && list.indexOf(extension(file.name)) === -1) {
+                return 'The ' + (input.getAttribute('name') || 'chosen') + ' file must be one of: '
+                    + list.map(function (one) { return one.toUpperCase(); }).join(', ') + '.';
+            }
+            return '';
+        }
+
+        function claim(input, file) {
+            if (typeof window.DataTransfer !== 'function') {
+                toast('This browser cannot take a dropped file — click the box and choose one instead.', 'warning');
+                return false;
+            }
+            var transfer = new window.DataTransfer();
+            transfer.items.add(file);
+            input.files = transfer.files;
+            return true;
+        }
+
+        function wire(zone) {
+            var input = $('input[type="file"]', zone);
+            if (!input) {
+                return;
+            }
+            zones += 1;
+            var name = $('[data-file-name]', zone);
+            var empty = name ? name.textContent.trim() : '';
+
+            function paint(file) {
+                if (name) {
+                    name.textContent = file ? file.name : empty;
+                }
+            }
+
+            function take(file) {
+                var problem = complaint(input, file);
+                if (problem) {
+                    input.value = '';
+                    paint(null);
+                    toast(problem, 'danger');
+                    return false;
+                }
+                if (!claim(input, file)) {
+                    return false;
+                }
+                paint(file);
+                return true;
+            }
+
+            function over(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                zone.classList.add('is-dragging');
+            }
+
+            function leave(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                if (event.type === 'dragleave' && zone.contains(event.relatedTarget)) {
+                    return;
+                }
+                zone.classList.remove('is-dragging');
+            }
+
+            input.addEventListener('change', function () {
+                var file = input.files && input.files[0];
+                if (file) {
+                    take(file);
+                } else {
+                    paint(null);
+                }
+            });
+            zone.addEventListener('dragenter', over);
+            zone.addEventListener('dragover', over);
+            zone.addEventListener('dragleave', leave);
+            zone.addEventListener('dragend', leave);
+            zone.addEventListener('drop', function (event) {
+                leave(event);
+                var files = event.dataTransfer ? event.dataTransfer.files : null;
+                if (files && files.length) {
+                    take(files[0]);
+                }
+            });
+        }
+
+        function send(form) {
+            var progress = $('[data-upload-progress]', form);
+            var status = $('[data-upload-status]', form);
+            var percent = $('[data-upload-percent]', form);
+            var bar = $('[data-upload-bar]', form);
+            var button = $('[data-save-btn]', form);
+            var xhr = new XMLHttpRequest();
+
+            function paint(value) {
+                var done = Math.max(0, Math.min(100, Math.round(value)));
+                if (percent) {
+                    percent.textContent = done + '%';
+                }
+                if (bar) {
+                    bar.style.width = done + '%';
+                }
+            }
+
+            function say(message, failed) {
+                if (status) {
+                    status.textContent = message;
+                    status.className = failed ? 'text-danger' : '';
+                }
+                if (failed) {
+                    toast(message, 'danger');
+                }
+            }
+
+            function stop(message) {
+                say(message, true);
+                if (button) {
+                    button.disabled = false;
+                }
+                if (progress) {
+                    progress.classList.add('d-none');
+                }
+            }
+
+            if (progress) {
+                progress.classList.remove('d-none');
+            }
+            if (button) {
+                button.disabled = true;
+            }
+            paint(0);
+            say('Uploading…', false);
+
+            xhr.upload.addEventListener('progress', function (event) {
+                if (event.lengthComputable && event.total > 0) {
+                    paint((event.loaded / event.total) * 100);
+                }
+            });
+            xhr.onload = function () {
+                var reply = null;
+                try {
+                    reply = JSON.parse(xhr.responseText);
+                } catch (error) {
+                    reply = null;
+                }
+                if (!reply || typeof reply !== 'object') {
+                    stop('The server sent a reply we could not read.');
+                    return;
+                }
+                if (reply.success === false) {
+                    stop(messageOf(reply, 'That song could not be saved.'));
+                    return;
+                }
+                paint(100);
+                say(messageOf(reply, 'Saved.'), false);
+                window.location.href = form.getAttribute('data-success-url')
+                    || form.getAttribute('action')
+                    || window.location.href;
+            };
+            xhr.onerror = function () {
+                stop('We could not reach the server. Check your connection and try again.');
+            };
+            xhr.open('POST', form.getAttribute('action') || window.location.href, true);
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.send(new FormData(form));
+        }
+
+        function refuse(event) {
+            event.preventDefault();
+        }
+
+        function init() {
+            $$('[data-file-dropzone]').forEach(wire);
+            $$('form').forEach(function (form) {
+                if (!$('[data-upload-progress]', form)) {
+                    return;
+                }
+                form.addEventListener('submit', function (event) {
+                    var invalid = form.checkValidity() ? null : form.querySelector(':invalid');
+                    event.preventDefault();
+                    if (invalid) {
+                        if (invalid.type === 'file') {
+                            toast('Choose the file to upload first.', 'warning');
+                        }
+                        form.reportValidity();
+                        return;
+                    }
+                    send(form);
+                });
+            });
+            if (zones > 0) {
+                // A drop that misses the box would otherwise make the browser open
+                // the file and leave the page.
+                doc.addEventListener('dragover', refuse);
+                doc.addEventListener('drop', refuse);
+            }
+        }
+
+        return { init: init };
+    })();
+
+    /**
+     * The artist box on the admin add-song form.
+     *
+     * The box shows a name and the form posts an id, so the two halves have to
+     * be kept in step by hand: typing searches /api/artists.php, picking a row
+     * writes its id through, and editing the text clears that id again — a
+     * half-typed name must never post the artist it no longer names. Until a
+     * row is picked the field reports itself invalid, so the form cannot claim
+     * a song belongs to somebody the admin never chose.
+     */
+    var ArtistPicker = (function () {
+        var WAIT = 220;
+        var MIN = 2;
+
+        function wire(box) {
+            var target = box.getAttribute('data-target') || '';
+            var input = $('[data-artist-input]', box);
+            var panel = $('[data-artist-results]', box);
+            var field = target ? doc.getElementById(target) : null;
+            if (!input || !panel || !field) {
+                return;
+            }
+
+            var rows = [];
+            var active = -1;
+            var timer = null;
+
+            panel.id = panel.id || target + 'Results';
+            panel.setAttribute('role', 'listbox');
+            input.setAttribute('role', 'combobox');
+            input.setAttribute('aria-autocomplete', 'list');
+            input.setAttribute('aria-controls', panel.id);
+            input.setAttribute('aria-expanded', 'false');
+
+            function hide() {
+                panel.hidden = true;
+                panel.innerHTML = '';
+                input.setAttribute('aria-expanded', 'false');
+                input.removeAttribute('aria-activedescendant');
+                rows = [];
+                active = -1;
+            }
+
+            // The name in the box and the id beside it are one answer: an
+            // unselected name blocks the save with a message the browser shows.
+            function sync() {
+                input.setCustomValidity(input.value.trim() !== '' && field.value === '0'
+                    ? 'Pick the artist from the list of matches.'
+                    : '');
+            }
+
+            function pick(name, id) {
+                field.value = id;
+                input.value = name;
+                sync();
+                hide();
+            }
+
+            function mark(index) {
+                if (!rows.length) {
+                    return;
+                }
+                if (index < 0) {
+                    index = rows.length - 1;
+                }
+                if (index >= rows.length) {
+                    index = 0;
+                }
+                if (rows[active]) {
+                    rows[active].classList.remove('is-active');
+                    rows[active].setAttribute('aria-selected', 'false');
+                }
+                active = index;
+                rows[active].classList.add('is-active');
+                rows[active].setAttribute('aria-selected', 'true');
+                input.setAttribute('aria-activedescendant', rows[active].id);
+                if (rows[active].scrollIntoView) {
+                    rows[active].scrollIntoView({ block: 'nearest' });
+                }
+            }
+
+            function say(html, kind) {
+                panel.innerHTML = '<p class="mb-0 px-3 py-2 small text-' + kind + '">' + html + '</p>';
+                panel.hidden = false;
+                input.setAttribute('aria-expanded', 'true');
+                rows = [];
+                active = -1;
+            }
+
+            function render(list) {
+                if (!list.length) {
+                    say('No artist matches “' + escapeHtml(input.value.trim()) + '”.', 'body-secondary');
+                    return;
+                }
+                var html = '';
+                for (var i = 0; i < list.length; i++) {
+                    html += '<button type="button" role="option" aria-selected="false" id="'
+                        + escapeHtml(panel.id + '-' + i) + '"'
+                        + ' data-name="' + escapeHtml(list[i].name) + '"'
+                        + ' data-id="' + escapeHtml(list[i].id) + '">'
+                        + escapeHtml(list[i].name) + '</button>';
+                }
+                panel.innerHTML = html;
+                panel.hidden = false;
+                input.setAttribute('aria-expanded', 'true');
+                rows = $$('button[role="option"]', panel);
+                active = -1;
+            }
+
+            function find() {
+                var term = input.value.trim();
+                if (term.length < MIN) {
+                    hide();
+                    return;
+                }
+                request(apiUrl('artists.php') + '?q=' + encodeURIComponent(term)).then(function (data) {
+                    if (term !== input.value.trim()) {
+                        return;
+                    }
+                    render(data.artists && typeof data.artists.length === 'number' ? data.artists : []);
+                }).catch(function (error) {
+                    say(escapeHtml(error.message), 'danger');
+                });
+            }
+
+            input.addEventListener('input', function () {
+                field.value = '0';
+                sync();
+                window.clearTimeout(timer);
+                timer = window.setTimeout(find, WAIT);
+            });
+
+            input.addEventListener('keydown', function (event) {
+                if (panel.hidden) {
+                    return;
+                }
+                if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    mark(event.key === 'ArrowDown' ? active + 1 : active - 1);
+                    return;
+                }
+                if (event.key === 'Enter' && active >= 0) {
+                    event.preventDefault();
+                    pick(rows[active].getAttribute('data-name'), rows[active].getAttribute('data-id'));
+                    return;
+                }
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    hide();
+                }
+            });
+
+            // Keep the caret in the box while a result is clicked, so the
+            // click lands before anything can close the panel.
+            panel.addEventListener('mousedown', function (event) {
+                event.preventDefault();
+            });
+
+            panel.addEventListener('click', function (event) {
+                var row = closest(event.target, 'button[role="option"]');
+                if (row) {
+                    pick(row.getAttribute('data-name'), row.getAttribute('data-id'));
+                }
+            });
+
+            doc.addEventListener('mousedown', function (event) {
+                if (!panel.hidden && !box.contains(event.target)) {
+                    hide();
+                }
+            });
+
+            sync();
+        }
+
+        function init() {
+            $$('[data-artist-search]').forEach(wire);
+        }
+
+        return { init: init };
     })();
 
     function favouritePressed(button) {
@@ -1274,6 +1692,8 @@
         initAdminSidebar();
         initIconPickers();
         initBackToTop();
+        Upload.init();
+        ArtistPicker.init();
         doc.addEventListener('click', function (event) {
             var trigger = closest(event.target, '.js-playlist-add');
             if (!trigger) {

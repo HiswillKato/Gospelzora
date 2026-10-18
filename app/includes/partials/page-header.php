@@ -13,7 +13,7 @@ if (!defined('APP_BOOTSTRAPPED')) { http_response_code(404); exit; } ?><section 
 <?php if ($page_header_title !== '') { ?>
 <h1 class="fw-bold mb-1"><?= $page_header_title ?></h1>
 <?php if ($page_header_subtitle !== '') { ?>
-<p class="text-muted mb-0"><?= $page_header_subtitle ?></p>
+<p class="text-body-secondary mb-0"><?= $page_header_subtitle ?></p>
 <?php } ?>
 <?php } ?>
 <?= $page_header_content ?>

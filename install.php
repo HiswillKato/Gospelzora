@@ -488,21 +488,21 @@ if (!$error && !$done && !$installed) {
 <style>
     .install-wrap { max-width: 760px; margin: 3rem auto 4rem; }
     .install-step { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
-    .install-step span { background: var(--purple-soft, #efe9ff); color: #6b2bbf; border-radius: 999px; padding: .25rem .8rem; font-size: .8rem; font-weight: 600; }
-    .install-step span.active { background: var(--gold, #f0b429); color: #1a1030; }
-    .check-row { display: flex; align-items: center; gap: .75rem; padding: .45rem 0; border-bottom: 1px dashed rgba(0,0,0,.08); }
+    .install-step span { background: var(--bs-primary-bg-subtle); color: var(--bs-primary-text-emphasis); border-radius: var(--bs-border-radius-pill); padding: .25rem .8rem; font-size: .8rem; font-weight: 600; }
+    .install-step span.active { background: var(--bs-warning); color: var(--on-gold); }
+    .check-row { display: flex; align-items: center; gap: .75rem; padding: .45rem 0; border-bottom: 1px dashed var(--bs-border-color); }
     .check-row:last-child { border-bottom: 0; }
     .check-row .fa-check { color: var(--bs-success); }
     .check-row .fa-triangle-exclamation { color: var(--bs-warning); }
     .check-row .fa-xmark { color: var(--bs-danger); }
 </style>
 </head>
-<body style="background:var(--navy);min-height:100vh">
+<body style="background:var(--bs-body-bg);min-height:100vh">
 <div class="install-wrap px-3">
     <div class="text-center mb-4">
-        <?= icon('music', 'text-gold fs-1') ?>
-        <h1 class="fw-bold text-white mt-2 mb-0"><?= SITE_NAME ?> Installer</h1>
-        <p class="text-white-50">Step-by-step setup wizard</p>
+        <?= icon('music', 'text-warning-emphasis fs-1') ?>
+        <h1 class="fw-bold text-body-emphasis mt-2 mb-0"><?= SITE_NAME ?> Installer</h1>
+        <p class="text-body-secondary">Step-by-step setup wizard</p>
     </div>
 
     <?php if ($error) { ?><div class="alert alert-danger"><?= icon('triangle-exclamation', 'me-2') ?><?= e($error) ?></div><?php } ?>
@@ -510,10 +510,10 @@ if (!$error && !$done && !$installed) {
     <?php if ($success) { ?><div class="alert alert-success"><?= icon('circle-check', 'me-2') ?><?= e($success) ?></div><?php } ?>
 
     <?php if ($installed && empty($_SESSION['install_done'])) { ?>
-        <div class="card border-0 shadow" style="border-radius:16px"><div class="card-body p-4 p-md-5 text-center">
+        <div class="card tile"><div class="card-body p-4 p-md-5 text-center">
             <?= icon('circle-check', 'text-success fs-1 mb-3') ?>
             <h4 class="fw-bold">Already installed</h4>
-            <p class="text-muted">A lock file (<code>install.lock</code>) exists, so the installer is disabled to prevent a takeover.</p>
+            <p class="text-body-secondary">A lock file (<code>install.lock</code>) exists, so the installer is disabled to prevent a takeover.</p>
             <div class="d-flex justify-content-center gap-2 flex-wrap">
                 <a class="btn btn-gold" href="<?= e(url('login')) ?>">Go to Admin Login</a>
                 <a class="btn btn-outline-secondary" href="<?= e(url()) ?>">Visit Site</a>
@@ -522,16 +522,16 @@ if (!$error && !$done && !$installed) {
                 <form method="POST" class="mt-3" onsubmit="return confirm('Delete install.php now? This cannot be undone.');">
                     <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
                     <input type="hidden" name="action" value="delete_installer">
-                    <button type="submit" class="btn btn-sm btn-outline-danger"><?= icon('trash-can', 'me-1') ?>Delete install.php</button>
+                    <button type="submit" class="btn btn-sm btn-outline-danger"><?= icon('trash-can') ?>Delete install.php</button>
                 </form>
             <?php } ?>
-            <p class="small text-muted mt-3 mb-0">To re-run the installer, delete <code>install.lock</code> (and then remove <code>install.php</code> once finished).</p>
+            <p class="small text-body-secondary mt-3 mb-0">To re-run the installer, delete <code>install.lock</code> (and then remove <code>install.php</code> once finished).</p>
         </div></div>
     <?php } elseif ($done) { ?>
-        <div class="card border-0 shadow" style="border-radius:16px"><div class="card-body p-4 p-md-5 text-center">
-            <?= icon('check-double', 'text-gold fs-1 mb-3') ?>
+        <div class="card tile"><div class="card-body p-4 p-md-5 text-center">
+            <?= icon('check-double', 'text-warning-emphasis fs-1 mb-3') ?>
             <h4 class="fw-bold">Installation complete</h4>
-            <p class="text-muted"><?= e($notice) ?></p>
+            <p class="text-body-secondary"><?= e($notice) ?></p>
             <div class="d-flex justify-content-center gap-2 flex-wrap">
 <a class="btn btn-gold" href="<?= e(url('login')) ?>">Login as Administrator</a>
                 <a class="btn btn-outline-secondary" href="<?= e(url()) ?>">Visit Site</a>
@@ -540,10 +540,10 @@ if (!$error && !$done && !$installed) {
                 <form method="POST" class="d-inline" onsubmit="return confirm('Delete install.php now? This cannot be undone.');">
                     <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
                     <input type="hidden" name="action" value="delete_installer">
-                    <button type="submit" class="btn btn-sm btn-outline-danger"><?= icon('trash-can', 'me-1') ?>Delete install.php now</button>
+                    <button type="submit" class="btn btn-sm btn-outline-danger"><?= icon('trash-can') ?>Delete install.php now</button>
                 </form>
             </div>
-            <p class="small text-muted mt-3 mb-0">
+            <p class="small text-body-secondary mt-3 mb-0">
                 Security reminder: delete <code>install.php</code> from the server, or keep the <code>install.lock</code> file in place. Put your real database and mail credentials in <code>app/config.local.php</code> (it is gitignored) rather than <code>app/config.php</code>, and enable HTTPS.
             </p>
         </div></div>
@@ -558,47 +558,47 @@ if (!$error && !$done && !$installed) {
         <span class="<?= $step === 6 ? 'active' : '' ?>">6. Finish</span>
     </div>
 
-    <div class="card border-0 shadow" style="border-radius:16px"><div class="card-body p-4 p-md-5">
+    <div class="card tile"><div class="card-body p-4 p-md-5">
 
     <?php if ($step === 1) { ?>
         <div class="text-center py-3">
-            <?= icon('book-open', 'text-gold fs-1 mb-3') ?>
+            <?= icon('book-open', 'text-warning-emphasis fs-1 mb-3') ?>
             <h5 class="fw-semibold mb-2">Welcome to <?= SITE_NAME ?></h5>
-            <p class="text-muted mb-4">This wizard will get the platform up and running in a few minutes.</p>
+            <p class="text-body-secondary mb-4">This wizard will get the platform up and running in a few minutes.</p>
             <div class="text-start mb-4">
                 <div class="d-flex gap-3 mb-3">
-                    <?= icon('circle-check', 'text-gold fs-4') ?>
+                    <?= icon('circle-check', 'text-warning-emphasis fs-4') ?>
                     <div>
                         <div class="fw-semibold small">1. Server requirements</div>
-                        <div class="text-muted small">Checks PHP version, extensions, upload limits and writable folders.</div>
+                        <div class="text-body-secondary small">Checks PHP version, extensions, upload limits and writable folders.</div>
                     </div>
                 </div>
                 <div class="d-flex gap-3 mb-3">
-                    <?= icon('database', 'text-gold fs-4') ?>
+                    <?= icon('database', 'text-warning-emphasis fs-4') ?>
                     <div>
                         <div class="fw-semibold small">2. Database</div>
-                        <div class="text-muted small">Connects to MySQL/MariaDB, optionally creates the database and installs the schema.</div>
+                        <div class="text-body-secondary small">Connects to MySQL/MariaDB, optionally creates the database and installs the schema.</div>
                     </div>
                 </div>
                 <div class="d-flex gap-3 mb-3">
-                    <?= icon('envelope', 'text-gold fs-4') ?>
+                    <?= icon('envelope', 'text-warning-emphasis fs-4') ?>
                     <div>
                         <div class="fw-semibold small">3. Mail (SMTP)</div>
-                        <div class="text-muted small">Outgoing email host, port and sender address — password optional (current one is kept when blank).</div>
+                        <div class="text-body-secondary small">Outgoing email host, port and sender address — password optional (current one is kept when blank).</div>
                     </div>
                 </div>
                 <div class="d-flex gap-3">
-                    <?= icon('user-shield', 'text-gold fs-4') ?>
+                    <?= icon('user-shield', 'text-warning-emphasis fs-4') ?>
                     <div>
                         <div class="fw-semibold small">4. Administrator account</div>
-                        <div class="text-muted small">Creates the site owner, then locks the installer to prevent a takeover.</div>
+                        <div class="text-body-secondary small">Creates the site owner, then locks the installer to prevent a takeover.</div>
                     </div>
                 </div>
             </div>
             <div class="alert alert-warning small text-start">
                 <?= icon('lightbulb', 'me-2') ?>Afterwards, delete <code>install.php</code> from the server. Re-running the wizard never modifies existing data — the schema is only applied to a fully empty database.
             </div>
-            <a class="btn btn-gold w-100" href="?step=2">Start Installation <?= icon('arrow-right', 'ms-1') ?></a>
+            <a class="btn btn-gold w-100" href="?step=2">Start Installation <?= icon('arrow-right') ?></a>
         </div>
 
     <?php } elseif ($step === 2) { ?>
@@ -618,14 +618,14 @@ if (!$error && !$done && !$installed) {
             <?= icon($ok ? 'check' : ($optional ? 'triangle-exclamation' : 'xmark'), $ok ? '' : ($optional ? 'text-warning' : '')) ?>
             <div class="flex-grow-1">
                 <div class="fw-semibold small"><?= e($c[0]) ?></div>
-                <div class="text-muted small"><?= e($c[2]) ?></div>
+                <div class="text-body-secondary small"><?= e($c[2]) ?></div>
             </div>
             <span class="badge bg-<?= $ok ? 'success' : ($optional ? 'warning' : 'danger') ?>"><?= $ok ? 'OK' : ($optional ? 'Warn' : 'Fail') ?></span>
         </div>
         <?php } ?>
         <hr>
         <?php if ($all_pass) { ?>
-            <a class="btn btn-gold w-100" href="?step=3">Continue to Database Setup <?= icon('arrow-right', 'ms-1') ?></a>
+            <a class="btn btn-gold w-100" href="?step=3">Continue to Database Setup <?= icon('arrow-right') ?></a>
         <?php } else { ?>
             <div class="alert alert-danger mb-3"><?= icon('triangle-exclamation', 'me-2') ?>Fix the failing items above before continuing.</div>
             <a class="btn btn-outline-secondary w-100" href="?step=2">Re-run the check</a>
@@ -648,12 +648,12 @@ if (!$error && !$done && !$installed) {
             </div>
             <?php if ($db_ready) { ?>
                 <input type="hidden" name="db_ready" value="1">
-                <a class="btn btn-gold w-100 mt-4" href="?step=4">Continue to Mail Settings <?= icon('arrow-right', 'ms-1') ?></a>
+                <a class="btn btn-gold w-100 mt-4" href="?step=4">Continue to Mail Settings <?= icon('arrow-right') ?></a>
             <?php } else { ?>
                 <button type="submit" class="btn btn-gold w-100 mt-4">Set Up Database</button>
             <?php } ?>
         </form>
-        <p class="text-muted small mt-3 mb-0">
+        <p class="text-body-secondary small mt-3 mb-0">
             <?= icon('circle-info', 'me-1') ?>
             The database is created automatically if it does not exist, and the schema is installed automatically on a fully empty database (existing data is never modified). Recommended for production: use a dedicated database user whose permissions are limited to this database (not <code>root</code>).
         </p>
@@ -661,14 +661,14 @@ if (!$error && !$done && !$installed) {
     <?php } elseif ($step === 4) { ?>
         <?php if (!$db_ready) { ?>
             <div class="text-center py-4">
-                <?= icon('database', 'text-muted fs-1 mb-3') ?>
+                <?= icon('database', 'text-body-secondary fs-1 mb-3') ?>
                 <h5 class="fw-semibold">Database setup required</h5>
-                <p class="text-muted">Complete the database step before configuring outgoing mail.</p>
-                <a class="btn btn-gold w-100" href="?step=3">Go to Database Setup <?= icon('arrow-right', 'ms-1') ?></a>
+                <p class="text-body-secondary">Complete the database step before configuring outgoing mail.</p>
+                <a class="btn btn-gold w-100" href="?step=3">Go to Database Setup <?= icon('arrow-right') ?></a>
             </div>
         <?php } else { ?>
         <h5 class="fw-semibold mb-3">Mail settings (SMTP)</h5>
-        <p class="text-muted small mb-3">
+        <p class="text-body-secondary small mb-3">
             <?= icon('circle-info', 'me-1') ?>
             Fields are pre-filled from the current config and can be adjusted. The password is never pre-filled — leaving it blank keeps the current one. An empty username means the SMTP server needs no authentication (typical for a local relay).
         </p>
@@ -683,17 +683,17 @@ if (!$error && !$done && !$installed) {
                     <input type="email" name="mail_from" class="form-control" value="<?= e($mail_cfg['from']) ?>" required></div>
                 <div class="col-md-6"><label class="form-label small">From name</label>
                     <input type="text" name="mail_from_name" class="form-control" value="<?= e($mail_cfg['from_name']) ?>" maxlength="120"></div>
-                <div class="col-md-6"><label class="form-label small">SMTP username <span class="text-muted">(optional)</span></label>
+                <div class="col-md-6"><label class="form-label small">SMTP username <span class="text-body-secondary">(optional)</span></label>
                     <input type="text" name="mail_user" class="form-control" value="<?= e($mail_cfg['user']) ?>" autocomplete="off"></div>
-                <div class="col-md-6"><label class="form-label small">SMTP password <span class="text-muted">(blank = keep current)</span></label>
+                <div class="col-md-6"><label class="form-label small">SMTP password <span class="text-body-secondary">(blank = keep current)</span></label>
                     <input type="password" name="mail_pass" class="form-control" autocomplete="new-password" placeholder="Leave blank to keep the existing password"></div>
-                <div class="col-md-12"><label class="form-label small">Admin notifications email <span class="text-muted">(receives contact messages)</span></label>
+                <div class="col-md-12"><label class="form-label small">Admin notifications email <span class="text-body-secondary">(receives contact messages)</span></label>
                     <input type="email" name="mail_admin" class="form-control" value="<?= e($mail_cfg['admin']) ?>" required></div>
             </div>
-            <button type="submit" class="btn btn-gold w-100 mt-4">Save Mail Settings &amp; Continue <?= icon('arrow-right', 'ms-1') ?></button>
+            <button type="submit" class="btn btn-gold w-100 mt-4">Save Mail Settings &amp; Continue <?= icon('arrow-right') ?></button>
             <a class="btn btn-link w-100 mt-2" href="?step=3">&larr; Back to Database Setup</a>
         </form>
-        <p class="text-muted small mt-3 mb-0">
+        <p class="text-body-secondary small mt-3 mb-0">
             <?= icon('lightbulb', 'me-1') ?>
             Emails (account verification, password reset, contact notifications) are best-effort: if a send fails, the user's action still succeeds.
         </p>
@@ -702,10 +702,10 @@ if (!$error && !$done && !$installed) {
     <?php } elseif ($step === 5) { ?>
         <?php if (!$db_ready) { ?>
             <div class="text-center py-4">
-                <?= icon('database', 'text-muted fs-1 mb-3') ?>
+                <?= icon('database', 'text-body-secondary fs-1 mb-3') ?>
                 <h5 class="fw-semibold">Database setup required</h5>
-                <p class="text-muted">Complete the database step before creating the administrator account.</p>
-                <a class="btn btn-gold w-100" href="?step=3">Go to Database Setup <?= icon('arrow-right', 'ms-1') ?></a>
+                <p class="text-body-secondary">Complete the database step before creating the administrator account.</p>
+                <a class="btn btn-gold w-100" href="?step=3">Go to Database Setup <?= icon('arrow-right') ?></a>
             </div>
         <?php } else { ?>
         <h5 class="fw-semibold mb-3">Create the administrator account</h5>
@@ -740,7 +740,7 @@ if (!$error && !$done && !$installed) {
                  this URL lands on the "Already installed" page again. */ ?>
         <?php unset($_SESSION['install_done']); ?>
         <h5 class="fw-semibold mb-3">Finish installing</h5>
-        <p class="text-muted">The installation is ready. Log in with the administrator account you created.</p>
+        <p class="text-body-secondary">The installation is ready. Log in with the administrator account you created.</p>
         <div class="d-flex gap-2 flex-wrap">
             <a class="btn btn-gold" href="<?= e(url('login')) ?>">Login as Administrator</a>
             <a class="btn btn-outline-secondary" href="<?= e(url()) ?>">Visit Site</a>
@@ -750,7 +750,7 @@ if (!$error && !$done && !$installed) {
 
     </div></div>
 
-    <p class="text-center text-white-50 small mt-4 mb-0">
+    <p class="text-center text-body-secondary small mt-4 mb-0">
         <?= SITE_NAME ?> &middot; <?= SITE_TAGLINE ?> — delete <code>install.php</code> after installation completes.
     </p>
 

@@ -42,7 +42,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
                 <?php if ($categories) { ?>
                 <div class="mb-3">
                     <?php foreach ($categories as $c) { ?>
-                    <a href="<?= url('category/' . $c['slug']) ?>" class="badge bg-warning text-dark me-1 text-decoration-none"><?= e($c['name']) ?></a>
+                    <a href="<?= url('category/' . $c['slug']) ?>" class="badge rounded-pill bg-warning text-dark me-1 text-decoration-none"><?= e($c['name']) ?></a>
                     <?php } ?>
                 </div>
                 <?php } ?>
@@ -55,15 +55,15 @@ require_once __DIR__ . '/../app/includes/public/header.php';
                             data-cover="<?= e(image($song['artwork'], 'song')) ?>"
                             data-audio="<?= e(asset($song['audio'])) ?>"
                             data-duration="<?= $song['duration'] ?>">
-                        <?= icon('play', 'me-2') ?>Play
+                        <?= icon('play') ?>Play
                     </button>
                     <button class="btn btn-outline-light btn-lg btn-favorite <?= $is_fav ? 'active' : '' ?>"
                             data-id="<?= $song['id'] ?>" data-logged-in="<?= $user->authed() ? '1' : '0' ?>"
                             aria-label="<?= e($is_fav ? "Remove from favorites" : "Add to favorites") ?>">
-                        <?= icon('heart', $is_fav ? 'solid' : 'regular', 'me-1') ?>Favorite
+                        <?= icon('heart', $is_fav ? 'solid' : 'regular') ?>Favorite
                     </button>
                     <a href="<?= url('download/' . $song['slug']) ?>" class="song-download btn btn-outline-light btn-lg">
-                        <?= icon('download', 'me-1') ?>Download
+                        <?= icon('download') ?>Download
                     </a>
                 </div>
             </div>
@@ -75,7 +75,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
 <section class="py-4">
     <div class="container">
         <h5 class="fw-semibold">About this song</h5>
-        <p class="text-muted"><?= nl2br(e($song['description'])) ?></p>
+        <p class="text-body-secondary"><?= nl2br(e($song['description'])) ?></p>
     </div>
 </section>
 <?php } ?>

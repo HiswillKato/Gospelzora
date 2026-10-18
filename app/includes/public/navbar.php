@@ -3,28 +3,44 @@
  * Gospelzora — the menu at the top of every public page.
  * header.php includes it, so a page never includes this file directly.
  *
- * The bar is laid out the way the Ember theme lays one out, but kept dark to
- * match this site's brand: a sticky header holding the brand mark and the name,
- * a search button that drops a panel under the bar with Bootstrap's own
- * collapse, the theme switcher, and the account links. Register is the one
- * thing the bar asks a newcomer to DO, so it is a filled button at the end
- * rather than another link.
+ * The bar is one translucent sticky strip: the brand mark and the name on the
+ * left, then the search panel toggle, the theme switch and the account
+ * cluster, with the shortcuts behind Bootstrap's own collapse. Register is the
+ * one thing the bar asks a newcomer to DO, so it is a filled gold button at
+ * the end rather than another link.
  *
- * The background is Bootstrap's own text-bg-dark, so the bar can never go
- * see-through. Everything else is a Bootstrap class except brand-mark and
- * brand-name, which only fix a size and a face Bootstrap has no utility for.
+ * Every class here is a Bootstrap one except brand-mark and brand-name, which
+ * fix a size and a face Bootstrap has no utility for.
  */
 
 $search_term = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
+
+/* One row per shortcut: [label, path, the URL prefix that marks it active]. */
+$nav = [
+    ['Home', '', ['/', '']],
+    ['Music', 'music', ['/music']],
+    ['Artists', 'artists', ['/artists']],
+    ['Categories', 'categories', ['/categories']],
+    ['Top Charts', 'charts', ['/charts']],
+    ['Playlists', 'playlists', ['/playlists']],
+];
+$nav_active = static function (array $prefixes) use ($current_path): bool {
+    foreach ($prefixes as $prefix) {
+        if ($prefix === '' ? $current_path === '/' : str_contains((string)$current_path, $prefix)) {
+            return true;
+        }
+    }
+    return false;
+};
 ?>
 
-<header class="site-header sticky-top text-bg-dark">
-    <nav class="navbar navbar-expand-lg py-2">
+<header class="site-header">
+    <nav class="navbar navbar-expand-lg" aria-label="Main">
         <div class="container">
 
             <a class="navbar-brand d-flex align-items-center gap-2 me-lg-4" href="<?= url() ?>">
                 <span class="brand-mark" aria-hidden="true">
-                    <img src="<?= e(asset('images/logo.png')) ?>" alt="">
+                    <img src="<?= e(asset('images/logo.svg')) ?>" alt="">
                 </span>
                 <span class="brand-name"><?= e(SITE_NAME) ?></span>
             </a>
@@ -33,51 +49,38 @@ $search_term = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
                    of its own: gap-2 only spaces the buttons against each other,
                    because CSS gap never puts a gap in front of the first child. */ ?>
             <div class="d-flex align-items-center gap-2 order-lg-3 ms-auto ms-lg-3">
-                <button class="btn btn-outline-light rounded-circle d-inline-flex align-items-center justify-content-center"
-                        type="button" data-bs-toggle="collapse" data-bs-target="#zora-search"
-                        aria-controls="zora-search" aria-expanded="false" aria-label="Search the site">
+                <button class="btn btn-ghost rounded-circle" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#zora-search" aria-controls="zora-search" aria-expanded="false"
+                        aria-label="Search the site">
                     <?= icon('magnifying-glass') ?>
                 </button>
 
-                <button class="theme-toggle btn btn-outline-light rounded-circle d-inline-flex align-items-center justify-content-center"
-                        type="button" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+                <button class="theme-toggle btn btn-ghost rounded-circle" type="button" id="themeToggle"
+                        aria-label="Toggle theme" title="Toggle theme">
                     <?= icon('sun') ?>
                     <?= icon('moon') ?>
                 </button>
 
-                <button class="navbar-toggler border-0 shadow-none" type="button"
+                <button class="btn btn-ghost rounded-circle d-lg-none" type="button"
                         data-bs-toggle="collapse" data-bs-target="#zora-menu"
                         aria-controls="zora-menu" aria-expanded="false" aria-label="Toggle navigation">
-                    <?= icon('bars', '', 'fs-3') ?>
+                    <?= icon('bars') ?>
                 </button>
             </div>
 
             <div class="collapse navbar-collapse order-lg-2" id="zora-menu">
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2 py-3 py-lg-0">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 py-3 py-lg-0">
+                    <?php foreach ($nav as [$label, $path, $prefixes]) { ?>
                     <li class="nav-item">
-                        <a class="nav-link fw-semibold<?= ($current_path === '/' || str_ends_with($current_path, '/')) ? ' active' : '' ?>" href="<?= url() ?>">Home</a>
+                        <a class="nav-link fw-semibold<?= $nav_active($prefixes) ? ' active' : '' ?>" href="<?= url($path) ?>"><?= e($label) ?></a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold<?= strpos($current_path, '/music') !== false ? ' active' : '' ?>" href="<?= url('music') ?>">Music</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold<?= strpos($current_path, '/artists') !== false ? ' active' : '' ?>" href="<?= url('artists') ?>">Artists</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold<?= strpos($current_path, '/categories') !== false ? ' active' : '' ?>" href="<?= url('categories') ?>">Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold<?= strpos($current_path, '/charts') !== false ? ' active' : '' ?>" href="<?= url('charts') ?>">Top Charts</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold<?= strpos($current_path, '/playlists') !== false ? ' active' : '' ?>" href="<?= url('playlists') ?>">Playlists</a>
-                    </li>
+                    <?php } ?>
 
                     <?php if ($current_user) { ?>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle fw-semibold text-white d-flex align-items-center" href="#" role="button"
+                            <a class="nav-link dropdown-toggle fw-semibold d-flex align-items-center" href="#" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <?= icon('circle-user', '', 'me-1 fs-5') ?>
+                                <?= icon('circle-user', '', 'fs-5') ?>
                                 <span class="d-none d-sm-inline"><?= e($current_user['name']) ?></span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end rounded-4 shadow border-0 p-2">
@@ -99,10 +102,10 @@ $search_term = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
                         </li>
                     <?php } else { ?>
                         <li class="nav-item">
-                            <a class="nav-link fw-semibold<?= strpos($current_path, '/login') !== false ? ' active' : '' ?>" href="<?= url('login') ?>"><?= icon('right-to-bracket', '', 'me-1') ?>Login</a>
+                            <a class="nav-link fw-semibold<?= $nav_active(['/login']) ? ' active' : '' ?>" href="<?= url('login') ?>"><?= icon('right-to-bracket', '', 'me-1') ?>Login</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="btn btn-gold ms-lg-2" href="<?= url('register') ?>">Register</a>
+                        <li class="nav-item mt-2 mt-lg-0 ms-lg-2">
+                            <a class="btn btn-gold" href="<?= url('register') ?>"><?= icon('user-plus') ?>Register</a>
                         </li>
                     <?php } ?>
                 </ul>

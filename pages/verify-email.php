@@ -21,31 +21,23 @@ if ($token === '') {
 
 $page_title = "Verify Email";
 require_once __DIR__ . '/../app/includes/public/header.php';
-?>
 
-<section class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5">
-                <div class="card border-0 shadow" style="border-radius: 16px;">
-                    <div class="card-body p-4 p-md-5 text-center">
-                        <?php if ($verified) { ?>
-                            <?= icon('circle-check', 'text-success fs-1') ?>
-                            <h1 class="fw-bold mt-3 fs-2">Email Verified</h1>
-                            <p class="text-muted">Your email address is confirmed. You can now log in to your account.</p>
-                            <a href="<?= url('login') ?>" class="btn btn-gold btn-lg w-100 mt-2">Login</a>
-                        <?php } else { ?>
-                            <?= icon('circle-exclamation', 'text-warning fs-1') ?>
-                            <h1 class="fw-bold mt-3 fs-2">Verification Failed</h1>
-                            <p class="text-muted"><?= e($error) ?></p>
-                            <a href="<?= url('login') ?>" class="btn btn-gold btn-lg w-100 mt-2">Go to Login</a>
-                            <p class="mt-3 mb-0 small text-muted">You can resend the verification email from the login page.</p>
-                        <?php } ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+ob_start();
+if ($verified) { ?>
+<p class="text-body-secondary">Your email address is confirmed. You can now log in to your account.</p>
+<a href="<?= url('login') ?>" class="btn btn-gold btn-lg w-100 mt-2">Log in</a>
+<?php } else { ?>
+<p class="text-body-secondary"><?= e($error) ?></p>
+<a href="<?= url('login') ?>" class="btn btn-gold btn-lg w-100 mt-2">Go to login</a>
+<p class="mt-3 mb-0 small text-body-secondary">You can resend the verification email from the login page.</p>
+<?php }
 
-<?php require_once __DIR__ . '/../app/includes/public/footer.php'; 
+$auth_body = ob_get_clean();
+$auth_icon = $verified ? 'circle-check' : 'circle-exclamation';
+$auth_icon_class = $verified ? 'text-success fs-1' : 'text-warning fs-1';
+$auth_title = $verified ? 'Email verified' : 'Verification failed';
+$auth_text = '';
+$auth_center = true;
+require __DIR__ . '/../app/includes/partials/auth-panel.php';
+
+require_once __DIR__ . '/../app/includes/public/footer.php'; 

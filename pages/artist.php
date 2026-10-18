@@ -17,7 +17,7 @@ $page_header_content = '
 <img src="' . e(image($artist['image'] ?? '', 'artist')) . '" class="rounded-3" style="width:120px;height:120px;object-fit:cover" alt="' . e($artist['name']) . '">
 <div class="text-center text-md-start">
 <h1 class="fw-bold mb-1">' . e($artist['name']) . '</h1>
-' . (!empty($artist['country']) ? '<p class="text-muted mb-1">' . icon('location-dot', 'me-1') . e(country($artist['country'])) . '</p>' : '') . '
+' . (!empty($artist['country']) ? '<p class="text-body-secondary mb-1">' . icon('location-dot', 'me-1') . e(country($artist['country'])) . '</p>' : '') . '
 ' . (!empty($artist['bio']) ? '<p class="mb-0" style="max-width:640px">' . e($artist['bio']) . '</p>' : '') . '
 </div></div>';
 require __DIR__ . '/../app/includes/partials/page-header.php';

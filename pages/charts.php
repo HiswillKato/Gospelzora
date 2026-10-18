@@ -32,7 +32,7 @@ require __DIR__ . '/../app/includes/partials/page-header.php';
 
         <?php $periodNote = Music::PERIOD_CHARTS[$type]['note'] ?? null;
         if ($periodNote) { ?>
-        <p class="text-muted small mb-4"><?= e($periodNote) ?></p>
+        <p class="text-body-secondary small mb-4"><?= e($periodNote) ?></p>
         <?php } ?>
 
         <?php if (empty($songs)) {
@@ -44,7 +44,7 @@ require __DIR__ . '/../app/includes/partials/page-header.php';
                 require __DIR__ . '/../app/includes/partials/empty-state.php';
             }
         } else { ?>
-        <div class="card border-0 shadow" style="border-radius:12px">
+        <div class="card tile overflow-hidden">
         <div class="card-body p-0">
         <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
@@ -68,11 +68,11 @@ require __DIR__ . '/../app/includes/partials/page-header.php';
                             <img src="<?= e($cover) ?>" alt="" width="40" height="40" class="rounded flex-shrink-0" style="object-fit:cover">
                             <div class="overflow-hidden">
                                 <a href="<?= url('song/' . $s['slug']) ?>" class="text-decoration-none fw-semibold d-block text-truncate"><?= e($s['title']) ?></a>
-                                <small class="text-muted d-md-none"><?= e($s['artist_name'] ?? "Unknown") ?></small>
+                                <small class="text-body-secondary d-md-none"><?= e($s['artist_name'] ?? "Unknown") ?></small>
                             </div>
                         </div>
                     </td>
-                    <td class="d-none d-md-table-cell text-muted"><?= e($s['artist_name'] ?? "Unknown") ?></td>
+                    <td class="d-none d-md-table-cell text-body-secondary"><?= e($s['artist_name'] ?? "Unknown") ?></td>
                     <td class="text-end text-nowrap"><?= abbrev($s['plays']) ?></td>
                     <td class="text-end text-nowrap"><?= abbrev($s['downloads']) ?></td>
                     <td class="text-end">

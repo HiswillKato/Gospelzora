@@ -20,6 +20,6 @@ require __DIR__ . '/../app/includes/partials/page-header.php';
 <div class="col-6 col-md-4 col-lg-3"><a href="<?= url('category/'.$c['slug']) ?>" class="card category-card text-decoration-none text-dark h-100">
 <div class="card-body text-center py-4"><?= icon($c['icon'] ?: 'music', 'text-gold', '', 'style="font-size:2.5rem"') ?>
 <h5 class="mt-3 mb-1"><?= e($c['name']) ?></h5>
-<p class="small text-muted mb-0"><?= e(sprintf("%d songs", (int)$c['song_count'])) ?></p></div></a></div>
+<p class="small text-body-secondary mb-0"><?= e(sprintf("%d songs", (int)$c['song_count'])) ?></p></div></a></div>
 <?php } ?></div><?php } ?></div></section>
 <?php require_once __DIR__ . '/../app/includes/public/footer.php'; 

@@ -9,7 +9,7 @@ $page_header_content = '';
 require __DIR__ . '/../app/includes/partials/page-header.php';
 ?>
 <section class="py-5"><div class="container"><div class="row justify-content-center"><div class="col-lg-9">
-<div class="card border-0 shadow" style="border-radius:16px"><div class="card-body p-4 p-md-5">
+<div class="card tile"><div class="card-body p-4 p-md-5">
 <?= legal(sprintf(
 <<<PRIVACY_BODY
 <p class="lead">We are committed to protecting your personal data. This Privacy Policy explains what information we collect on %s, why we collect it, how we use and protect it, and your rights under the <strong>Data Protection and Privacy Act, 2019</strong> (Uganda) ("DPPA") and its regulations.</p>
@@ -83,7 +83,7 @@ require __DIR__ . '/../app/includes/partials/page-header.php';
 <h5 class="fw-semibold text-primary">14. Changes to this Policy</h5>
 <p>We may update this Policy from time to time. The "Last updated" date at the top indicates when the Policy was revised. We encourage you to review it periodically.</p>
 
-<p class="small text-muted mt-4 mb-0">This page is provided for general information and is not legal advice. If you need legal guidance, please consult a qualified Ugandan attorney.</p>
+<p class="small text-body-secondary mt-4 mb-0">This page is provided for general information and is not legal advice. If you need legal guidance, please consult a qualified Ugandan attorney.</p>
 PRIVACY_BODY, SITE_NAME, SITE_NAME, url('contact'), url('contact')
 )) ?>
 </div></div></div></div></div></section>

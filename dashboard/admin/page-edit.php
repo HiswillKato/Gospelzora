@@ -72,13 +72,11 @@ require __DIR__ . '/../../app/includes/admin/header.php';
 ?>
 <div class="row g-4">
 <div class="col-lg-9">
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body">
-<div class="d-flex justify-content-between align-items-center mb-3">
-<h5 class="fw-bold mb-0"><?= icon('file-lines', 'me-2') ?><?= e($page_title) ?></h5>
-</div>
+<div class="card tile">
+<div class="card-body">
 
 <?php if ($editing) { ?>
-<p class="text-muted small"><code class="me-1"><?= e($edit_key) ?></code>Page key</p>
+<p class="text-body-secondary small"><code class="me-1"><?= e($edit_key) ?></code>Page key</p>
 <?php } ?>
 
 <form method="POST"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
@@ -91,7 +89,7 @@ require __DIR__ . '/../../app/includes/admin/header.php';
 <?php if (!$editing) { ?>
 <div class="col-md-6">
 <label class="form-label">Page key</label>
-<input type="text" name="slug" class="form-control" maxlength="100" placeholder="Page key · <code>about</code>" required>
+<input type="text" name="slug" class="form-control" maxlength="100" placeholder="Page key — e.g. about" required>
 </div>
 <?php } ?>
 
@@ -104,7 +102,7 @@ require __DIR__ . '/../../app/includes/admin/header.php';
 
 <div class="col-12">
 <button type="submit" class="btn btn-gold">Save</button>
-<a href="<?= url('dashboard/admin/pages') ?>" class="btn btn-outline-secondary">Cancel</a>
+<a href="<?= url('dashboard/admin/pages') ?>" class="btn btn-ghost">Cancel</a>
 </div>
 </div>
 </form>

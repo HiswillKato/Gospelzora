@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . '/../app/bootstrap.php';
 $user->guard('login');
-if ($user->check('admin')) redirect('dashboard');
 
+/* Any signed-in account edits itself here — a listener, an artist or an admin
+ * who opened their profile from the dashboard topbar. */
 $dash_type = $user->role();
 $dash_user = $user->current();
 $dash_id = (int)$dash_user['id'];
@@ -50,29 +51,31 @@ require __DIR__ . '/../app/includes/member/header.php';
 ?>
 <div class="row g-4">
 <div class="col-lg-4">
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body text-center p-4">
+<div class="card tile"><div class="card-body text-center p-4">
 <div class="rounded-circle bg-secondary-subtle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:80px;height:80px">
 <?= icon('user', 'fs-3 text-secondary') ?></div>
 <h5 class="fw-bold mb-1"><?= e($dash_user['name']) ?></h5>
-<p class="text-muted mb-2"><?= e($dash_user['email']) ?></p>
-<p class="small text-muted mb-3"><?= e(sprintf("Member since %s", date('M Y', strtotime($dash_user['created'] ?? 'now')))) ?></p>
+<p class="text-body-secondary mb-2"><?= e($dash_user['email']) ?></p>
+<p class="small text-body-secondary mb-3"><?= e(sprintf("Member since %s", date('M Y', strtotime($dash_user['created'] ?? 'now')))) ?></p>
 <div class="d-flex justify-content-center gap-2 flex-wrap">
-<span class="badge bg-<?= $dash_type === 'artist' ? 'purple' : 'info' ?>"><?= $dash_type === 'artist' ? "Artist" : "User" ?></span>
+<span class="badge rounded-pill bg-<?= $dash_type === 'artist' ? 'primary' : 'info' ?>"><?= e($dash_role['label']) ?></span>
 <?php if ($dash_type === 'artist' && !empty($dash_user['slug'])) { ?>
-<a href="<?= url('artist/' . $dash_user['slug']) ?>" class="btn btn-sm btn-outline-secondary"><?= icon('arrow-up-right-from-square', 'me-1') ?>Artist page</a>
+<a href="<?= url('artist/' . $dash_user['slug']) ?>" class="btn btn-ghost btn-sm"><?= icon('arrow-up-right-from-square') ?>Artist page</a>
 <?php } ?>
 </div>
 </div></div>
-<div class="card border-0 shadow mt-4" style="border-radius:12px"><div class="card-body p-4">
-<h5 class="fw-semibold mb-3">Account overview</h5>
-<div class="d-flex justify-content-between py-2 border-bottom"><small class="text-muted">Country</small><strong><?= e(country($dash_user['country'] ?? '') ?: '—') ?></strong></div>
-<div class="d-flex justify-content-between py-2 border-bottom"><small class="text-muted">Account type</small><strong><?= $dash_type === 'artist' ? "Artist" : "Member" ?></strong></div>
-<div class="d-flex justify-content-between py-2 border-bottom"><small class="text-muted">Favorites</small><strong><?= abbrev($overview['favorites']) ?></strong></div>
+<div class="card tile mt-4">
+<div class="card-header"><span class="fw-semibold">Account overview</span></div>
+<div class="card-body p-4 pt-2">
+<div class="d-flex justify-content-between py-2 border-bottom"><small class="text-body-secondary">Country</small><strong><?= e(country($dash_user['country'] ?? '') ?: '—') ?></strong></div>
+<div class="d-flex justify-content-between py-2 border-bottom"><small class="text-body-secondary">Account type</small><strong><?= e($dash_role['label']) ?></strong></div>
+<div class="d-flex justify-content-between py-2"><small class="text-body-secondary">Favorites</small><strong><?= abbrev($overview['favorites']) ?></strong></div>
 </div></div>
 </div>
 <div class="col-lg-8">
-<div class="card border-0 shadow mb-4" style="border-radius:12px"><div class="card-body p-4">
-<h5 class="fw-semibold mb-3">Edit Profile</h5>
+<div class="card tile mb-4">
+<div class="card-header"><span class="fw-semibold">Edit profile</span></div>
+<div class="card-body p-4">
 <form method="POST"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="update_profile">
 <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" maxlength="100" value="<?= e($dash_user['name']) ?>" required></div>
 <div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control" maxlength="150" value="<?= e($dash_user['email']) ?>" required></div>
@@ -81,8 +84,9 @@ require __DIR__ . '/../app/includes/member/header.php';
 require __DIR__ . '/../app/includes/partials/country-options.php'; ?></select></div>
 <button type="submit" class="btn btn-gold">Save Changes</button></form>
 </div></div>
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body p-4">
-<h5 class="fw-semibold mb-3">Change Password</h5>
+<div class="card tile">
+<div class="card-header"><span class="fw-semibold">Change password</span></div>
+<div class="card-body p-4">
 <form method="POST"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="change_password">
 <div class="mb-3"><label class="form-label">Current Password</label><input type="password" name="current_password" class="form-control" required></div>
 <div class="mb-3"><label class="form-label">New Password</label><input type="password" name="new_password" class="form-control" required minlength="<?= (int)MIN_PASSWORD_LENGTH ?>"></div>

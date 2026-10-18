@@ -66,8 +66,8 @@ require __DIR__ . '/../../../app/includes/admin/header.php';
 ?>
 <?php $alert_type = 'danger'; $alert_text = $err;
 require __DIR__ . '/../../../app/includes/partials/alert.php'; ?>
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body">
-<h5 class="fw-semibold mb-3"><?= $edit ? e($type['edit_title']) : e($type['add_title']) ?></h5>
+<div class="card tile">
+<div class="card-body">
 <form method="POST"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="save">
 <?php if ($edit) { ?><input type="hidden" name="id" value="<?= $edit['id'] ?>"><?php } ?>
 <div class="row g-3">
@@ -84,6 +84,7 @@ require __DIR__ . '/../../../app/includes/partials/country-options.php'; ?></sel
 <input type="password" name="password" class="form-control" <?= $edit?'':'required' ?> autocomplete="new-password" title="<?= $edit ? "Leave empty to keep the current password unchanged" : '' ?>">
 <?php if ($edit) { ?><div class="form-text password-hint">Leave empty to keep the current password unchanged.</div><?php } ?>
 </div>
-<div class="col-md-3"><label class="form-label text-muted">&nbsp;</label><div class="pt-1"><button type="submit" class="btn btn-gold">Save</button> <a href="<?= url($type['list']) ?>" class="btn btn-outline-secondary">Cancel</a></div></div>
-</div></form></div></div>
+<div class="col-md-3 d-flex align-items-end gap-2"><button type="submit" class="btn btn-gold">Save</button> <a href="<?= url($type['list']) ?>" class="btn btn-ghost">Cancel</a></div>
+</div></form>
+</div></div>
 <?php require __DIR__ . '/../../../app/includes/admin/footer.php'; 

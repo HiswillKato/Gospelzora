@@ -81,21 +81,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
 }
 
 $accounts = $user->roster($role);
-$header_actions = '<a class="btn btn-gold btn-sm" href="' . url($type['add']) . '">' . icon('plus', 'me-1') . "Add " . $type['One'] . '</a>';
+$header_actions = '<a class="btn btn-gold btn-sm" href="' . url($type['add']) . '">' . icon('plus') . "Add " . $type['One'] . '</a>';
 require __DIR__ . '/../../../app/includes/admin/header.php';
 ?>
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body"><div class="table-responsive">
-<table class="table table-hover"><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Joined</th><th>Last Login</th><th></th></tr></thead><tbody>
-<?php if (empty($accounts)) { ?><tr><td colspan="6" class="text-center text-muted py-4"><?= $type['empty'] ?></td></tr>
+<div class="card tile"><div class="table-responsive">
+<table class="table table-hover align-middle mb-0"><thead><tr><th>Name</th><th>Email</th><th>Status</th><th class="d-none d-md-table-cell">Joined</th><th class="d-none d-lg-table-cell">Last Login</th><th></th></tr></thead><tbody>
+<?php if (empty($accounts)) { ?><tr><td colspan="6" class="text-center text-body-secondary py-4"><?= $type['empty'] ?></td></tr>
 <?php } else { foreach ($accounts as $u) { ?><tr>
-<td><?= e($u['name']) ?><?= $self_id === (int)$u['id'] ? ' <span class="badge bg-info text-dark">' . "You" . '</span>' : '' ?></td><td><?= e($u['email']) ?></td>
-<td><span class="badge bg-<?= $u['status']==='active'?'success':'secondary' ?>"><?= e(status((string)$u['status'])) ?></span></td>
-<td><?= date('M j, Y', strtotime($u['created'])) ?></td>
-<td><?= $u['login'] ? ago($u['login']) : "Never" ?></td>
+<td><?= e($u['name']) ?><?= $self_id === (int)$u['id'] ? ' <span class="badge rounded-pill text-bg-info">' . "You" . '</span>' : '' ?></td><td class="text-break"><?= e($u['email']) ?></td>
+<td><span class="badge rounded-pill bg-<?= $u['status']==='active'?'success':'secondary' ?>"><?= e(status((string)$u['status'])) ?></span></td>
+<td class="d-none d-md-table-cell text-nowrap"><?= date('M j, Y', strtotime($u['created'])) ?></td>
+<td class="d-none d-lg-table-cell text-nowrap"><?= $u['login'] ? ago($u['login']) : "Never" ?></td>
 <td class="text-end">
-<a href="<?= url($type['edit']) ?>?edit=<?= $u['id'] ?>" class="btn btn-sm btn-outline-primary" title="Edit <?= $one ?>"><?= icon('pen') ?></a>
-<form method="POST" class="d-inline"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="toggle"><input type="hidden" name="id" value="<?= $u['id'] ?>"><button class="btn btn-sm btn-outline-warning" title="Toggle status" aria-label="<?= e(sprintf("Toggle status of %s", $u['name'])) ?>"><?= icon('toggle-on') ?></button></form>
+<div class="d-inline-flex gap-1">
+<a href="<?= url($type['edit']) ?>?edit=<?= $u['id'] ?>" class="btn btn-ghost btn-sm rounded-circle" title="Edit <?= $one ?>"><?= icon('pen') ?></a>
+<form method="POST" class="d-inline"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="toggle"><input type="hidden" name="id" value="<?= $u['id'] ?>"><button class="btn btn-ghost btn-sm rounded-circle" title="Toggle status" aria-label="<?= e(sprintf("Toggle status of %s", $u['name'])) ?>"><?= icon('toggle-on') ?></button></form>
 <?php if ($self_id !== (int)$u['id']) { $delete_id = (int)$u['id']; $delete_confirm = sprintf("Delete this %s?", $one); $delete_form_class = 'd-inline';
 require __DIR__ . '/../../../app/includes/partials/delete-button.php'; ?><?php } ?>
-</td></tr><?php } } ?></tbody></table></div></div></div>
+</div>
+</td></tr><?php } } ?></tbody></table></div></div>
 <?php require __DIR__ . '/../../../app/includes/admin/footer.php'; 

@@ -478,6 +478,7 @@ function validate(string $kind, array $file): ?string
     $error = (int)($file['error'] ?? UPLOAD_ERR_NO_FILE);
 
     return match ($error) {
+        UPLOAD_ERR_OK => null,
         UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => sprintf(
             'The %s file is larger than the %s upload limit. Please choose a smaller file.',
             $kind,
@@ -517,7 +518,7 @@ function store(array $file, string $directory, string $kind, string $field, ?str
     $extension = strtolower((string)pathinfo($original, PATHINFO_EXTENSION));
 
     $allowed = $kind === 'audio'
-        ? ['mp3', 'm4a', 'aac', 'ogg', 'wav', 'flac']
+        ? ['mp3', 'm4a', 'aac', 'ogg', 'oga', 'wav', 'flac', 'webm']
         : ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
     if (!in_array($extension, $allowed, true)) {

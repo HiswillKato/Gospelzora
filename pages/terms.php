@@ -9,7 +9,7 @@ $page_header_content = '';
 require __DIR__ . '/../app/includes/partials/page-header.php';
 ?>
 <section class="py-5"><div class="container"><div class="row justify-content-center"><div class="col-lg-9">
-<div class="card border-0 shadow" style="border-radius:16px"><div class="card-body p-4 p-md-5">
+<div class="card tile"><div class="card-body p-4 p-md-5">
 <?= legal(sprintf(
 <<<TERMS_BODY
 <h5 class="fw-semibold text-primary">1. Introduction</h5>
@@ -75,7 +75,7 @@ require __DIR__ . '/../app/includes/partials/page-header.php';
 <p>Questions about these Terms can be sent via our <a href="%s">contact page</a>
   or by email to <a href="mailto:admin@gospelzora.com">admin@gospelzora.com</a>.</p>
 
-<p class="small text-muted mt-4 mb-0">This page is provided for general information and is not legal advice. If you need legal guidance, please consult a qualified Ugandan attorney.</p>
+<p class="small text-body-secondary mt-4 mb-0">This page is provided for general information and is not legal advice. If you need legal guidance, please consult a qualified Ugandan attorney.</p>
 TERMS_BODY, SITE_NAME, url('contact')
 )) ?>
 </div></div></div></div></div></section>

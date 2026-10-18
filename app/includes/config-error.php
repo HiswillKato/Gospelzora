@@ -22,20 +22,20 @@ if (!defined('APP_BOOTSTRAPPED')) { http_response_code(404); exit; } ?><!doctype
 <?php require __DIR__ . '/partials/theme-script.php';
 require __DIR__ . '/partials/css-links.php'; ?>
 </head>
-<body class="d-flex align-items-center justify-content-center min-vh-100" style="background:var(--light-bg,#f7f8fc)">
+<body class="d-flex align-items-center justify-content-center min-vh-100">
 <div class="container" style="max-width:680px">
-<div class="card border-0 shadow-lg" style="border-radius:16px">
+<div class="card tile shadow-lg">
 <div class="card-body p-5">
 <?= icon('wrench', 'display-5 text-warning d-block mb-3') ?>
-<h1 class="fw-bold mb-3 h4" style="color:var(--modern-ink,#172033)">This site needs one configuration change</h1>
-<p class="text-muted mb-4">It has not been switched over to this server yet, so it is being held back rather than shown to visitors half-working. The details are in the server error log.</p>
+<h1 class="fw-bold mb-3 h4">This site needs one configuration change</h1>
+<p class="text-body-secondary mb-4">It has not been switched over to this server yet, so it is being held back rather than shown to visitors half-working. The details are in the server error log.</p>
 <div class="list-group list-group-flush">
 <?php foreach ($configProblems as $configProblem) { ?>
 <div class="list-group-item px-0"><?= $configProblem ?></div>
 <?php } ?>
 </div>
 <hr>
-<p class="small text-muted mb-0">Set the values in <code>app/config.php</code>, then reload the page.</p>
+<p class="small text-body-secondary mb-0">Set the values in <code>app/config.php</code>, then reload the page.</p>
 </div>
 </div>
 </div>

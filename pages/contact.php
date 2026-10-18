@@ -46,16 +46,16 @@ require_once __DIR__ . '/../app/includes/public/header.php';
         <div class="row justify-content-center">
             <div class="col-lg-7">
                 <div class="text-center mb-5">
-                    <h1 class="fw-bold">Contact Us</h1>
-                    <p class="text-muted">We’d love to hear from you. Send us a message and we’ll respond as soon as possible.</p>
+                    <h1 class="fw-bold">Contact us</h1>
+                    <p class="text-body-secondary">We’d love to hear from you. Send us a message and we’ll respond as soon as possible.</p>
                 </div>
-                
+
                 <?php $alert_type = 'success'; $alert_text = $success;
                 require __DIR__ . '/../app/includes/partials/alert.php'; ?>
                 <?php $alert_type = 'danger'; $alert_text = $error;
                 require __DIR__ . '/../app/includes/partials/alert.php'; ?>
-                
-                <div class="card border-0 shadow" style="border-radius: 16px;">
+
+                <div class="card tile">
                     <div class="card-body p-4 p-md-5">
                         <form method="POST">
                             <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
@@ -77,7 +77,7 @@ require_once __DIR__ . '/../app/includes/public/header.php';
                                     <textarea name="message" class="form-control" rows="5" required><?= e($_POST['message'] ?? '') ?></textarea>
                                 </div>
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-gold btn-lg w-100">Send Message</button>
+                                    <button type="submit" class="btn btn-gold btn-lg w-100">Send message</button>
                                 </div>
                             </div>
                         </form>

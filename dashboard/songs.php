@@ -55,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $my_songs = $music->manage($dash_id);
+$header_actions = '<a class="btn btn-gold btn-sm" href="' . url('dashboard/add-song') . '">' . icon('plus') . "Add Song" . '</a>';
 
 require __DIR__ . '/../app/includes/member/header.php';
 define('DASHBOARD_PARTIAL_GUARD', true);

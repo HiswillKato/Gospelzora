@@ -32,8 +32,8 @@ require __DIR__ . '/../../app/includes/admin/header.php';
 ?>
 <?php $alert_type = 'danger'; $alert_text = $err;
 require __DIR__ . '/../../app/includes/partials/alert.php'; ?>
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body">
-<h5 class="fw-semibold mb-3"><?= e($edit ? "Edit Category" : "Add Category") ?></h5>
+<div class="card tile">
+<div class="card-body">
 <form method="POST"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="save">
 <?php if ($edit) { ?><input type="hidden" name="id" value="<?= $edit['id'] ?>"><?php } ?>
 <div class="row g-3">
@@ -55,12 +55,13 @@ $usesTxt = $uses ? implode(', ', $uses) : '';
 <span class="icon-picker-name"><?= e($iconTitle) ?></span>
 <span class="icon-picker-use"><?= e($usesTxt) ?></span>
 </span>
-<span class="ms-auto"><?= icon('chevron-down', 'text-muted') ?></span>
+<span class="ms-auto"><?= icon('chevron-down', 'text-body-secondary') ?></span>
 </button>
 </div>
 <div class="form-text">Click to choose an icon — search by name or its use.</div>
 </div>
 <div class="col-md-5"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3"><?= e($edit['description']??'') ?></textarea></div>
-<div class="col-12"><button type="submit" class="btn btn-gold">Save</button> <a href="<?= url('dashboard/admin/categories') ?>" class="btn btn-outline-secondary">Cancel</a></div>
-</div></form></div></div>
+<div class="col-12"><button type="submit" class="btn btn-gold">Save</button> <a href="<?= url('dashboard/admin/categories') ?>" class="btn btn-ghost">Cancel</a></div>
+</div></form>
+</div></div>
 <?php require __DIR__ . '/../../app/includes/admin/footer.php'; 

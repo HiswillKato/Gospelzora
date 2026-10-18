@@ -10,5 +10,5 @@
 if (!defined('APP_BOOTSTRAPPED')) { http_response_code(404); exit; } ?><form method="POST" class="<?= e($delete_form_class) ?>" onsubmit="return confirm('<?= e(str_replace("'", "\\'", $delete_confirm)) ?>');">
 <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
 <input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="<?= $delete_id ?>">
-<button type="submit" class="btn btn-sm btn-outline-danger"><?= icon('trash') ?></button>
+<button type="submit" class="btn btn-ghost btn-sm rounded-circle text-danger" title="Delete"><?= icon('trash') ?></button>
 </form>

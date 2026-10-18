@@ -24,23 +24,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
 $messages = $db->select("SELECT * FROM messages ORDER BY created DESC");
 require __DIR__ . '/../../app/includes/admin/header.php';
 ?>
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body">
-<?php if (empty($messages)) { ?><p class="text-muted">No messages.</p>
+<div class="card tile">
+<?php if (empty($messages)) { ?>
+<div class="p-5 text-center">
+    <?= icon('envelope', '', 'fa-2x text-primary d-block mb-3') ?>
+    <p class="text-body-secondary mb-0">No messages yet. When somebody uses the contact form, it lands here.</p>
+</div>
 <?php } else { ?><div class="list-group list-group-flush">
 <?php foreach ($messages as $m) { ?>
-<div class="list-group-item <?= !$m['seen']?'bg-light':'' ?>">
-<div class="d-flex justify-content-between"><div>
-<strong><?= e($m['name']) ?></strong> &lt;<?= e($m['email']) ?>&gt;
-<span class="badge bg-<?= $m['seen']?'secondary':'primary' ?> ms-2"><?= $m['seen'] ? "Read" : "Unread" ?></span>
-<div class="fw-semibold mt-1"><?= e($m['subject']) ?></div>
-<p class="mb-1 text-muted"><?= nl2br(e($m['message'])) ?></p>
-<small class="text-muted"><?= ago($m['created']) ?></small>
+<div class="list-group-item<?= !$m['seen'] ? ' bg-body-tertiary' : '' ?>">
+<div class="d-flex flex-column flex-sm-row gap-3">
+<span class="brand-mark brand-initials" aria-hidden="true"><?= e(mb_strtoupper(mb_substr($m['name'], 0, 1))) ?></span>
+<div class="flex-grow-1 min-width-0">
+<div class="d-flex flex-wrap align-items-center gap-2">
+<strong><?= e($m['name']) ?></strong>
+<a class="small text-break" href="mailto:<?= e($m['email']) ?>"><?= e($m['email']) ?></a>
+<span class="badge rounded-pill bg-<?= $m['seen']?'secondary':'primary' ?>"><?= $m['seen'] ? "Read" : "Unread" ?></span>
 </div>
-<div class="text-end">
-<?php if (!$m['seen']) { ?><form method="POST" class="d-inline mb-1"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="read"><input type="hidden" name="id" value="<?= $m['id'] ?>"><button type="submit" class="btn btn-sm btn-outline-primary">Mark Read</button></form><br><?php } ?>
+<div class="fw-semibold mt-1"><?= e($m['subject']) ?></div>
+<p class="mb-1 text-body-secondary"><?= nl2br(e($m['message'])) ?></p>
+<small class="text-body-secondary"><?= ago($m['created']) ?></small>
+</div>
+<div class="d-flex flex-sm-column gap-2 align-items-sm-end flex-shrink-0">
+<?php if (!$m['seen']) { ?><form method="POST" class="d-inline"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="read"><input type="hidden" name="id" value="<?= $m['id'] ?>"><button type="submit" class="btn btn-ghost btn-sm">Mark read</button></form><?php } ?>
 <?php $delete_id = (int)$m['id']; $delete_confirm = 'Delete this message?'; $delete_form_class = 'd-inline';
 require __DIR__ . '/../../app/includes/partials/delete-button.php'; ?>
-</div></div></div>
-<?php } ?></div><?php } ?>
+</div>
 </div></div>
+<?php } ?></div><?php } ?>
+</div>
 <?php require __DIR__ . '/../../app/includes/admin/footer.php'; 

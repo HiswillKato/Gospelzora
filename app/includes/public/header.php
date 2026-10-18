@@ -9,7 +9,8 @@ $current_path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?= e(csrf()) ?>">
-    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" href="<?= asset('images/logo.svg') ?>" type="image/svg+xml">
+    <link rel="icon" href="<?= asset('images/favicon.ico') ?>" sizes="any">
     <meta name="theme-color" content="#241440">
     <?php
     $meta_description = isset($page_description) && $page_description !== ''

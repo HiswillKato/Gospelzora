@@ -9,7 +9,7 @@ $page_header_content = '';
 require __DIR__ . '/../app/includes/partials/page-header.php';
 ?>
 <section class="py-5"><div class="container"><div class="row justify-content-center"><div class="col-lg-9">
-<div class="card border-0 shadow" style="border-radius:16px"><div class="card-body p-4 p-md-5">
+<div class="card tile"><div class="card-body p-4 p-md-5">
 <?= legal(sprintf(
 <<<COPYRIGHT_BODY
 <p class="lead">%s respects intellectual property rights and is committed to complying with the <strong>Copyright and Neighbouring Rights Act, 2006</strong> (Uganda) and other applicable copyright laws. This policy explains how we handle copyright and related (neighbouring) right claims.</p>
@@ -48,7 +48,7 @@ require __DIR__ . '/../app/includes/partials/page-header.php';
 <h5 class="fw-semibold text-primary">7. Good-Faith Notice</h5>
 <p>We ask that notices be submitted in good faith. Knowingly submitting a false copyright claim could render the claimant liable for damages as provided under applicable law.</p>
 
-<p class="small text-muted mt-4 mb-0">This page is provided for general information and is not legal advice. If you have a copyright or licensing question, please consult a qualified Ugandan attorney.</p>
+<p class="small text-body-secondary mt-4 mb-0">This page is provided for general information and is not legal advice. If you have a copyright or licensing question, please consult a qualified Ugandan attorney.</p>
 COPYRIGHT_BODY, SITE_NAME, url('contact')
 )) ?>
 </div></div></div></div></div></section>

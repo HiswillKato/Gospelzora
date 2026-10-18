@@ -17,7 +17,7 @@ if (!$playlist || !$music->visible($playlist, $viewer_id, $viewer_role)) {
     $page_header_title = '';
     $page_header_subtitle = '';
     $page_header_content = '<h1 class="fw-bold mb-2">' . "Playlist not found" . '</h1>'
-        . '<p class="text-muted mb-0">This playlist does not exist, or it is private.</p>';
+        . '<p class="text-body-secondary mb-0">This playlist does not exist, or it is private.</p>';
     require __DIR__ . '/../app/includes/partials/page-header.php';
     require __DIR__ . '/../app/includes/public/footer.php';
     exit;
@@ -59,11 +59,11 @@ $page_header_title = '';
 $page_header_subtitle = '';
 $page_header_content = '
 <div class="d-flex flex-column flex-md-row align-items-center gap-4">
-<div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width:140px;height:140px;background:var(--navy);color:var(--gold);font-size:3rem">' . icon('list-music') . '</div>
+<div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width:140px;height:140px;background:var(--bs-primary-bg-subtle);color:var(--bs-primary-text-emphasis);font-size:3rem">' . icon('list') . '</div>
 <div class="text-center text-md-start flex-grow-1">
 <h1 class="fw-bold mb-1">' . e($playlist['name']) . '</h1>
-<p class="text-muted mb-1">' . sprintf("%d song%s", count($songs), count($songs) === 1 ? '' : 's') . '</p>
-<p class="small text-muted mb-2">' . icon($playlist['privacy'] === 'public' ? 'globe' : 'lock', 'me-1') . ($playlist['privacy'] === 'public' ? 'Public playlist' : 'Private playlist') . '</p>
+<p class="text-body-secondary mb-1">' . sprintf("%d song%s", count($songs), count($songs) === 1 ? '' : 's') . '</p>
+<p class="small text-body-secondary mb-2">' . icon($playlist['privacy'] === 'public' ? 'globe' : 'lock', 'me-1') . ($playlist['privacy'] === 'public' ? 'Public playlist' : 'Private playlist') . '</p>
 ' . (!empty($playlist['description']) ? '<p class="mb-3" style="max-width:640px">' . e($playlist['description']) . '</p>' : '') . '
 <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
 <button type="button" class="btn btn-gold" id="playAllPlaylist" data-songs="' . e(json_encode(array_map(
@@ -76,8 +76,8 @@ $page_header_content = '
         'duration' => (int)($s['duration'] ?? 0),
     ],
     $songs
-))) . '">' . icon('play', 'me-1') . 'Play all</button>
-' . ($is_owner ? '<a class="btn btn-outline-secondary" href="' . e(url('playlists?edit=' . (int)$playlist['id'])) . '">' . icon('pen', 'me-1') . 'Edit details</a>' : '') . '
+))) . '">' . icon('play') . 'Play all</button>
+' . ($is_owner ? '<a class="btn btn-outline-secondary" href="' . e(url('playlists?edit=' . (int)$playlist['id'])) . '">' . icon('pen') . 'Edit details</a>' : '') . '
 </div>
 </div></div>';
 require __DIR__ . '/../app/includes/partials/page-header.php';
@@ -86,7 +86,7 @@ require __DIR__ . '/../app/includes/partials/page-header.php';
 <section class="py-5"><div class="container">
 <?php if ($songs === []) { ?>
     <?php
-    $empty_icon = 'list-music';
+    $empty_icon = 'list';
     $empty_title = "This playlist is empty";
     $empty_text = "Add songs from the Music page using the playlist button on any song card.";
     $empty_cta = '<a href="' . e(url('music')) . '" class="btn btn-gold">' . "Browse Music" . '</a>';
@@ -104,9 +104,9 @@ require __DIR__ . '/../app/includes/partials/page-header.php';
                     </div>
                     <div class="flex-grow-1 min-width-0">
                         <h6 class="card-title text-truncate mb-1"><?= e($song['title'] ?? '') ?></h6>
-                        <p class="card-text small text-muted text-truncate mb-1"><?= e($song['artist_name'] ?? '') ?></p>
+                        <p class="card-text small text-body-secondary text-truncate mb-1"><?= e($song['artist_name'] ?? '') ?></p>
                         <?php if ((int)($song['duration'] ?? 0) > 0) { ?>
-                        <p class="small text-muted mb-0"><?= icon('clock', 'me-1') ?><?= duration((int)$song['duration']) ?></p>
+                        <p class="small text-body-secondary mb-0"><?= icon('clock', 'me-1') ?><?= duration((int)$song['duration']) ?></p>
                         <?php } ?>
                     </div>
                     <div class="d-flex align-items-center gap-1 flex-shrink-0 song-card-controls">
@@ -115,21 +115,21 @@ require __DIR__ . '/../app/includes/partials/page-header.php';
                          data-cover="<?= e(image($song['artwork'] ?? '', 'song')) ?>" data-audio="<?= e(asset($song['audio'] ?? '')) ?>"
                          data-duration="<?= e($song['duration'] ?? '') ?>"
                          aria-label="Play <?= e($song['title'] ?? '') ?>"><?= icon('play') ?></button>
-                        <a class="btn btn-outline-secondary btn-sm song-download" href="<?= e(url('download/' . ($song['slug'] ?? ''))) ?>" title="Download" aria-label="Download <?= e($song['title'] ?? '') ?>"><?= icon('download') ?></a>
+                        <a class="btn btn-ghost btn-sm rounded-circle song-download" href="<?= e(url('download/' . ($song['slug'] ?? ''))) ?>" title="Download" aria-label="Download <?= e($song['title'] ?? '') ?>"><?= icon('download') ?></a>
                         <?php if ($is_owner) { ?>
                         <div class="d-flex gap-1">
                             <form method="POST" action="<?= e(url('playlist/' . $playlist['slug'])) ?>" class="d-flex gap-1">
                                 <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
                                 <input type="hidden" name="action" value="move">
                                 <input type="hidden" name="song" value="<?= (int)$song['id'] ?>">
-                                <button class="btn btn-outline-secondary btn-sm" name="direction" value="up" title="Move up" aria-label="Move <?= e($song['title'] ?? '') ?> up" <?= $i === 0 ? 'disabled' : '' ?>><?= icon('arrow-up') ?></button>
-                                <button class="btn btn-outline-secondary btn-sm" name="direction" value="down" title="Move down" aria-label="Move <?= e($song['title'] ?? '') ?> down" <?= $i === count($songs) - 1 ? 'disabled' : '' ?>><?= icon('arrow-down') ?></button>
+                                <button class="btn btn-ghost btn-sm rounded-circle" name="direction" value="up" title="Move up" aria-label="Move <?= e($song['title'] ?? '') ?> up" <?= $i === 0 ? 'disabled' : '' ?>><?= icon('arrow-up') ?></button>
+                                <button class="btn btn-ghost btn-sm rounded-circle" name="direction" value="down" title="Move down" aria-label="Move <?= e($song['title'] ?? '') ?> down" <?= $i === count($songs) - 1 ? 'disabled' : '' ?>><?= icon('arrow-down') ?></button>
                             </form>
                             <form method="POST" action="<?= e(url('playlist/' . $playlist['slug'])) ?>" onsubmit="return confirm('Remove this song from the playlist?');">
                                 <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
                                 <input type="hidden" name="action" value="remove">
                                 <input type="hidden" name="song" value="<?= (int)$song['id'] ?>">
-                                <button class="btn btn-outline-danger btn-sm" title="Remove from playlist" aria-label="Remove <?= e($song['title'] ?? '') ?> from playlist"><?= icon('xmark') ?></button>
+                                <button class="btn btn-ghost btn-sm rounded-circle text-danger" title="Remove from playlist" aria-label="Remove <?= e($song['title'] ?? '') ?> from playlist"><?= icon('xmark') ?></button>
                             </form>
                         </div>
                         <?php } ?>

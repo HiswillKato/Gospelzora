@@ -62,8 +62,8 @@ require __DIR__ . '/../app/includes/member/header.php';
 
 $songs_active_tab = 'add-song';
 ?>
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body">
-<h5 class="fw-semibold mb-4"><?= e($edit_song ? "Edit Song" : "Add Song") ?></h5>
+<div class="card tile">
+<div class="card-body">
 <form method="POST" action="<?= url('dashboard/add-song') ?>" enctype="multipart/form-data" id="songForm" data-success-url="<?= url('dashboard/songs') ?>"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="save">
 <?php if ($edit_song) { ?><input type="hidden" name="id" value="<?= (int)$edit_song['id'] ?>"><input type="hidden" name="existing_audio" value="<?= e($edit_song['audio']) ?>"><input type="hidden" name="existing_artwork" value="<?= e($edit_song['artwork'] ?? '') ?>"><?php } ?>
 <input type="hidden" name="status" value="pending">
@@ -74,7 +74,7 @@ $songs_active_tab = 'add-song';
 <div class="col-md-6">
 <label class="form-label">Audio File <?= $edit_song ? "(leave empty to keep)" : '*' ?></label>
 <div class="modern-file-upload" data-file-dropzone>
-<input type="file" name="audio" id="songAudio" class="visually-hidden" accept=".mp3,.wav,.ogg,.oga,.aac,.m4a,.flac,.webm,audio/*" <?= $edit_song ? '' : 'required' ?>>
+<input type="file" name="audio" id="songAudio" class="visually-hidden" accept=".mp3,.m4a,.aac,.ogg,.oga,.wav,.flac,.webm" <?= $edit_song ? '' : 'required' ?>>
 <label for="songAudio" class="modern-file-upload__surface">
 <?= icon('cloud-arrow-up') ?>
 <span class="modern-file-upload__title">Choose an audio file or drag it here</span>
@@ -86,7 +86,7 @@ $songs_active_tab = 'add-song';
 <div class="col-md-6">
 <label class="form-label">Artwork <?= $edit_song ? "(leave empty to keep)" : '' ?></label>
 <div class="modern-file-upload modern-file-upload--image" data-file-dropzone data-file-type="image">
-<input type="file" name="artwork" id="songArtwork" class="visually-hidden" accept=".jpg,.jpeg,.png,.webp,.gif,image/*">
+<input type="file" name="artwork" id="songArtwork" class="visually-hidden" accept=".jpg,.jpeg,.png,.gif,.webp">
 <label for="songArtwork" class="modern-file-upload__surface">
 <?= icon('image') ?>
 <span class="modern-file-upload__title">Choose artwork or drag it here</span>
@@ -100,11 +100,11 @@ $songs_active_tab = 'add-song';
 <div class="col-md-3"><label class="form-label">Status</label><input class="form-control" value="Pending verification" readonly></div>
 <div class="col-12">
 <div class="upload-progress d-none" data-upload-progress>
-<div class="d-flex justify-content-between small text-muted mb-1"><span data-upload-status>Uploading…</span><span data-upload-percent>0%</span></div>
+<div class="d-flex justify-content-between small text-body-secondary mb-1"><span data-upload-status>Uploading…</span><span data-upload-percent>0%</span></div>
 <div class="progress" style="height:8px" role="progressbar" aria-label="Upload progress"><div class="progress-bar bg-warning" data-upload-bar role="presentation" style="width:0%"></div></div>
 </div>
-<button type="submit" class="btn btn-gold" data-save-btn><?= icon('floppy-disk', 'me-1') ?>Save Song</button>
-<a href="<?= url('dashboard/songs') ?>" class="btn btn-outline-secondary">Cancel</a>
+<button type="submit" class="btn btn-gold" data-save-btn><?= icon('floppy-disk') ?>Save Song</button>
+<a href="<?= url('dashboard/songs') ?>" class="btn btn-ghost">Cancel</a>
 </div>
 </div></form>
 </div></div>

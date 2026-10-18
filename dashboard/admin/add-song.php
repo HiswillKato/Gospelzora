@@ -57,8 +57,8 @@ require __DIR__ . '/../../app/includes/admin/header.php';
 ?>
 <?php $alert_type = 'danger'; $alert_text = $err;
 require __DIR__ . '/../../app/includes/partials/alert.php'; ?>
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body">
-<h5 class="fw-semibold mb-3"><?= e($edit ? "Edit Song" : "Add Song") ?></h5>
+<div class="card tile">
+<div class="card-body">
 <form method="POST" action="<?= $edit ? url('dashboard/admin/songs/edit') . '?edit=' . (int)$edit['id'] : url('dashboard/admin/songs/add') ?>" enctype="multipart/form-data" id="songForm" data-success-url="<?= url('dashboard/admin/songs') ?>"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="save">
 <?php if ($edit) { ?><input type="hidden" name="id" value="<?= $edit['id'] ?>"><input type="hidden" name="existing_audio" value="<?= e($edit['audio']) ?>"><input type="hidden" name="existing_artwork" value="<?= e($edit['artwork']??'') ?>"><?php } ?>
 <div class="row g-3">
@@ -83,7 +83,7 @@ if ($edit) {
 <div class="col-md-6">
 <label class="form-label">Audio File <?= $edit ? "(leave empty to keep)" : '*' ?></label>
 <div class="modern-file-upload" data-file-dropzone>
-    <input type="file" name="audio" id="songAudio" class="visually-hidden" accept=".mp3,.wav,.ogg,.oga,.aac,.m4a,.flac,.webm,audio/*" <?= $edit?'':'required' ?>>
+    <input type="file" name="audio" id="songAudio" class="visually-hidden" accept=".mp3,.m4a,.aac,.ogg,.oga,.wav,.flac,.webm" <?= $edit?'':'required' ?>>
     <label for="songAudio" class="modern-file-upload__surface">
         <?= icon('cloud-arrow-up') ?>
         <span class="modern-file-upload__title">Choose an audio file or drag it here</span>
@@ -95,7 +95,7 @@ if ($edit) {
 <div class="col-md-6">
 <label class="form-label">Artwork <?= $edit ? "(leave empty to keep)" : '' ?></label>
 <div class="modern-file-upload modern-file-upload--image" data-file-dropzone data-file-type="image">
-    <input type="file" name="artwork" id="songArtwork" class="visually-hidden" accept=".jpg,.jpeg,.png,.webp,.gif,image/*">
+    <input type="file" name="artwork" id="songArtwork" class="visually-hidden" accept=".jpg,.jpeg,.png,.gif,.webp">
     <label for="songArtwork" class="modern-file-upload__surface">
         <?= icon('image') ?>
         <span class="modern-file-upload__title">Choose artwork or drag it here</span>
@@ -109,10 +109,10 @@ if ($edit) {
 <?php if (!$artist_mode) { ?><div class="col-md-4"><label class="form-label">Status</label><select name="status" class="form-select"><option value="pending" <?= ($edit['status']??'')==='pending'?'selected':'' ?>>Pending</option><option value="published" <?= ($edit['status']??'')==='published'?'selected':'' ?>>Published</option><option value="draft" <?= ($edit['status']??'')==='draft'?'selected':'' ?>>Draft</option><option value="requested" <?= ($edit['status']??'')==='requested'?'selected':'' ?>>Requested</option><option value="approved" <?= ($edit['status']??'')==='approved'?'selected':'' ?>>Approved</option></select></div><?php } else { ?><div class="col-md-4"><label class="form-label">Status</label><input class="form-control" value="Pending verification" readonly></div><?php } ?>
 <div class="col-12">
 <div class="upload-progress d-none" data-upload-progress>
-<div class="d-flex justify-content-between small text-muted mb-1"><span data-upload-status>Uploading…</span><span data-upload-percent>0%</span></div>
+<div class="d-flex justify-content-between small text-body-secondary mb-1"><span data-upload-status>Uploading…</span><span data-upload-percent>0%</span></div>
 <div class="progress" style="height:8px" role="progressbar" aria-label="Upload progress"><div class="progress-bar bg-warning" data-upload-bar role="presentation" style="width:0%"></div></div>
 </div>
-<button type="submit" class="btn btn-gold" data-save-btn><?= icon('floppy-disk', 'me-1') ?>Save Song</button> <a href="<?= url('dashboard/admin/songs') ?>" class="btn btn-outline-secondary">Cancel</a>
+<button type="submit" class="btn btn-gold" data-save-btn><?= icon('floppy-disk') ?>Save Song</button> <a href="<?= url('dashboard/admin/songs') ?>" class="btn btn-ghost">Cancel</a>
 </div>
 </div></form></div></div>
 <?php require __DIR__ . '/../../app/includes/admin/footer.php'; 

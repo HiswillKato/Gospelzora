@@ -30,21 +30,29 @@ $favorites = $music->favorites($dash_id, $dash_type);
 
 require __DIR__ . '/../app/includes/member/header.php';
 ?>
-<div class="card border-0 shadow" style="border-radius:12px"><div class="card-body">
-<div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold mb-0">My Favorites</h5>
-<a href="<?= url('favorites') ?>" class="btn btn-sm btn-outline-secondary">View on site</a></div>
-<div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>Title</th><th>Artist</th><th>Plays</th><th></th></tr></thead><tbody>
+<div class="card tile">
+<div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+<span class="fw-semibold">My Favorites</span>
+<a href="<?= url('favorites') ?>" class="btn btn-ghost btn-sm">View on site</a>
+</div>
 <?php if (empty($favorites)) { ?>
-<tr><td colspan="4" class="text-center text-muted py-4">No favorites yet</td></tr>
-<?php } else { foreach ($favorites as $f) { ?>
+<div class="p-5 text-center">
+<?= icon('heart', '', 'fa-2x text-primary d-block mb-3') ?>
+<p class="text-body-secondary mb-0">No favorites yet. Tap the heart on any song to save it here.</p>
+</div>
+<?php } else { ?>
+<div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>Title</th><th>Artist</th><th>Plays</th><th></th></tr></thead><tbody>
+<?php foreach ($favorites as $f) { ?>
 <tr>
-<td><a href="<?= url('song/' . $f['slug']) ?>" class="text-decoration-none"><?= e($f['title']) ?></a></td>
+<td><a href="<?= url('song/' . $f['slug']) ?>"><?= e($f['title']) ?></a></td>
 <td><?= e($f['artist_name']) ?></td>
 <td><?= abbrev($f['plays']) ?></td>
 <td class="text-end">
 <form method="POST" class="d-inline"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="unfavorite"><input type="hidden" name="id" value="<?= (int)$f['id'] ?>">
-<button class="btn btn-sm btn-outline-danger" title="Remove from favorites"><?= icon('heart') ?></button></form>
+<button class="btn btn-ghost btn-sm rounded-circle text-danger" title="Remove from favorites"><?= icon('heart') ?></button></form>
 </td></tr>
-<?php } } ?>
-</tbody></table></div></div></div>
+<?php } ?>
+</tbody></table></div>
+<?php } ?>
+</div>
 <?php require __DIR__ . '/../app/includes/member/footer.php'; 

@@ -91,71 +91,57 @@ $extra_js = '
 ';
 
 require_once __DIR__ . '/../app/includes/public/header.php';
+
+ob_start();
+$alert_type = 'danger'; $alert_text = $error;
+require __DIR__ . '/../app/includes/partials/alert.php';
 ?>
+<form method="POST" action="">
+<input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
+<div class="mb-3">
+<label class="form-label">Full Name</label>
+<input type="text" name="name" class="form-control" required maxlength="100" value="<?= e($_POST['name'] ?? '') ?>">
+</div>
+<div class="mb-3">
+<label class="form-label">Email</label>
+<input type="email" name="email" class="form-control" required maxlength="150" value="<?= e($_POST['email'] ?? '') ?>">
+</div>
+<div class="mb-3">
+<label class="form-label d-block">Are you an artist?</label>
+<div class="d-flex gap-2">
+<input type="radio" class="btn-check" name="role" id="role-yes" value="artist" <?= (($_POST['role'] ?? '') === 'artist') ? 'checked' : '' ?>>
+<label class="btn btn-outline-secondary btn-sm" for="role-yes">Yes</label>
+<input type="radio" class="btn-check" name="role" id="role-no" value="user" <?= (($_POST['role'] ?? 'user') !== 'artist') ? 'checked' : '' ?>>
+<label class="btn btn-outline-secondary btn-sm" for="role-no">No</label>
+</div>
+</div>
+<div class="mb-3">
+<label class="form-label">Country</label>
+<select name="country" class="form-select">
+<?php
+$country_selected = $_POST['country'] ?? '';
+$country_required = false;
+require __DIR__ . '/../app/includes/partials/country-options.php';
+?>
+</select>
+</div>
+<div class="mb-3">
+<label class="form-label">Password</label>
+<input type="password" name="password" class="form-control" required minlength="8">
+</div>
+<div class="mb-4">
+<label class="form-label">Confirm Password</label>
+<input type="password" name="confirm_password" class="form-control" required>
+</div>
+<button type="submit" class="btn btn-gold w-100 btn-lg">Create Account</button>
+</form>
+<?php
+$auth_body = ob_get_clean();
+$auth_icon = 'user-plus';
+$auth_icon_class = 'text-gold fs-1';
+$auth_title = 'Create account';
+$auth_text = 'Join ' . SITE_NAME . ' and start your worship journey';
+$auth_footer = 'Already have an account? <a href="' . e(url('login')) . '" class="fw-semibold">Log in</a>';
+require __DIR__ . '/../app/includes/partials/auth-panel.php';
 
-<section class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5">
-                <div class="card border-0 shadow" style="border-radius: 16px;">
-                    <div class="card-body p-4 p-md-5">
-                        <div class="text-center mb-4">
-                            <?= icon('user-plus', 'text-gold fs-1') ?>
-                            <h1 class="fw-bold mt-2 fs-2">Create Account</h1>
-                            <p class="text-muted">Join Gospelzora and start your worship journey</p>
-                        </div>
-                        
-                        <?php $alert_type = 'danger'; $alert_text = $error;
-                        require __DIR__ . '/../app/includes/partials/alert.php'; ?>
-                        
-                        <form method="POST" action="">
-                            <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
-                            <div class="mb-3">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" name="name" class="form-control" required maxlength="100" value="<?= e($_POST['name'] ?? '') ?>">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" required maxlength="150" value="<?= e($_POST['email'] ?? '') ?>">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label d-block">Are you an artist?</label>
-                                <div class="d-flex gap-2">
-                                    <input type="radio" class="btn-check" name="role" id="role-yes" value="artist" <?= (($_POST['role'] ?? '') === 'artist') ? 'checked' : '' ?>>
-                                    <label class="btn btn-sm btn-outline-secondary" for="role-yes">Yes</label>
-                                    <input type="radio" class="btn-check" name="role" id="role-no" value="user" <?= (($_POST['role'] ?? 'user') !== 'artist') ? 'checked' : '' ?>>
-                                    <label class="btn btn-sm btn-outline-secondary" for="role-no">No</label>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Country</label>
-                                <select name="country" class="form-select">
-                                    <?php
-                                    $country_selected = $_POST['country'] ?? '';
-                                    $country_required = false;
-                                    require __DIR__ . '/../app/includes/partials/country-options.php';
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <input type="password" name="password" class="form-control" required minlength="8">
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label">Confirm Password</label>
-                                <input type="password" name="confirm_password" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-gold w-100 btn-lg">Create Account</button>
-                        </form>
-                        
-                        <p class="text-center mt-4 mb-0 text-muted">
-                            Already have an account? <a href="<?= url('login') ?>" class="text-primary fw-semibold">Login</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<?php require_once __DIR__ . '/../app/includes/public/footer.php'; 
+require_once __DIR__ . '/../app/includes/public/footer.php'; 

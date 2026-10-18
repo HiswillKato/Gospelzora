@@ -311,7 +311,7 @@ class Music {
         $title = trim($data['title'] ?? '');
         $description = trim($data['description'] ?? '');
         $duration = duration((string)($data['duration'] ?? 0), true);
-        $categoryId = (int)($data['category'] ?? 0);
+        $categoryId = $this->categorize($data['category'] ?? 0);
         $artistMode = $ownerArtistId !== null && $ownerArtistId > 0;
         $artistId = $artistMode ? $ownerArtistId : (int)($data['artist'] ?? 0);
         $status = $artistMode
@@ -336,6 +336,10 @@ class Music {
         // "amazing-grace-hiswill") so it reads differently across artists.
         $slug = slug($title . ' ' . $artist['name'], 'songs', $id ?: 0);
 
+        // Files THIS request writes. If the row below never lands they are
+        // removed again, so a failed save cannot orphan them on disk.
+        $stored = [];
+
         // Audio upload (keeps the existing file when none was uploaded).
         // store() validates the file first, and only then saves it to
         // the audio folder — nothing is written on its own.
@@ -349,6 +353,7 @@ class Music {
             if ($upload['error'] === null) {
                 $audioFile = 'audio/' . $upload['path'];
                 $replacedAudio = true;
+                $stored[] = $audioFile;
             } else {
                 $err = $upload['error'];
             }
@@ -360,6 +365,7 @@ class Music {
             $upload = store($artworkUpload, ARTWORK_PATH . '/', 'image', 'artwork');
             if ($upload['error'] === null) {
                 $artwork = 'images/artwork/' . $upload['path'];
+                $stored[] = $artwork;
             } else {
                 $err = $upload['error'];
             }
@@ -372,8 +378,6 @@ class Music {
         if (!$title || !$artistId || ($needsAudio && !$audioFile) || !$description) {
             return ['success' => false, 'message' => "Please provide a title, an artist, a description and an audio file."];
         }
-
-        $categoryId = $categoryId > 0 ? $categoryId : null;
 
         // The audio file the song currently points at (before any UPDATE) —
         // the only file that may safely be removed when it gets replaced.
@@ -410,6 +414,15 @@ class Music {
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [$artistId, $categoryId, $title, $slug, $description, $audioFile, $artwork, $duration, $status]
             );
+        }
+
+        // A write that did not land is not a save: report it and take back the
+        // files just written, rather than claiming success with a phantom row.
+        if ($this->db->errno() !== 0 || $songId <= 0) {
+            foreach ($stored as $path) {
+                $this->unlink($path);
+            }
+            return ['success' => false, 'message' => "The song could not be saved. Please try again."];
         }
 
         // Once the replacement is safely recorded, remove the previous version's
@@ -476,9 +489,8 @@ class Music {
         if (!$artist) {
             return ['success' => false, 'message' => "Please choose an artist for your song request."];
         }
-        // Category is optional but must reference a real category when given.
-        $categoryId = ($categoryId > 0 && $this->db->scalar("SELECT id FROM categories WHERE id = ?", [$categoryId])) ? $categoryId : 0;
-        $categoryId = $categoryId > 0 ? $categoryId : null;
+        // Category is optional, but the column is NOT NULL: "no choice" is 0, not NULL.
+        $categoryId = $this->categorize($categoryId);
         $duplicate = $this->db->row(
             "SELECT id FROM songs WHERE artist = ? AND title = ? AND status = 'requested' LIMIT 1",
             [$artistId, $title]
@@ -492,6 +504,9 @@ class Music {
              VALUES (?, ?, ?, ?, ?, '', 'requested', ?)",
             [$artistId, $categoryId, $title, slug($title . ' ' . $artist['name'], 'songs', 0), $description, $userId]
         );
+        if ($songId <= 0) {
+            return ['success' => false, 'message' => "Your request could not be saved. Please try again."];
+        }
 
         $this->analytics->log('song.request', sprintf("Song requested: #%s \"%s\" by %s", $songId, $title, $artist['name']));
         return ['success' => true, 'message' => "Song request sent. Thank you!", 'id' => $songId];
@@ -599,18 +614,26 @@ class Music {
     }
 
     /**
-     * Best-effort removal of a song's audio file. Stored paths look like `audio/<filename>`; only
-     * files that resolve inside AUDIO_PATH are ever touched, so arbitrary paths cannot be fed in
-     * here.
+     * Best-effort removal of a stored file. Stored paths are relative to assets/
+     * (`audio/<filename>`, `images/artwork/<filename>`); only files that resolve inside
+     * ASSETS_PATH are ever touched, so arbitrary paths cannot be fed in here.
      */
     private function unlink(string $path): void {
-        $file = AUDIO_PATH . '/' . basename($path);
-        $real = realpath($file);
-        $root = realpath(AUDIO_PATH);
+        $real = realpath(ASSETS_PATH . '/' . ltrim(str_replace('\\', '/', $path), '/'));
+        $root = realpath(ASSETS_PATH);
         if ($real === false || $root === false || !str_starts_with($real, $root . '/')) {
             return;
         }
         @unlink($real);
+    }
+
+    /**
+     * The category to store: the chosen id when it names a real category, 0 otherwise.
+     * songs.category is NOT NULL, so "no choice" is 0 and never NULL.
+     */
+    private function categorize(mixed $value): int {
+        $id = (int)$value;
+        return $id > 0 && $this->db->scalar("SELECT id FROM categories WHERE id = ?", [$id]) ? $id : 0;
     }
 
     /** Song rows for the admin/artist panel, with artist names. */

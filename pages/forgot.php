@@ -25,48 +25,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $page_title = "Forgot Password";
 require_once __DIR__ . '/../app/includes/public/header.php';
-?>
 
-<section class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5">
-                <div class="card border-0 shadow" style="border-radius: 16px;">
-                    <div class="card-body p-4 p-md-5">
-                        <div class="text-center mb-4">
-                            <?= icon('key', 'text-gold fs-1') ?>
-                            <h1 class="fw-bold mt-2 fs-2">Forgot Password?</h1>
-                            <p class="text-muted">Enter your email and we'll send you a reset link.</p>
-                        </div>
-                        
-                        <?php $alert_type = 'success'; $alert_text = $done;
-                        require __DIR__ . '/../app/includes/partials/alert.php'; ?>
-                        <?php $alert_type = 'danger'; $alert_text = $error;
-                        require __DIR__ . '/../app/includes/partials/alert.php'; ?>
-                        
-                        <?php if ($done === '') { ?>
-                        <form method="POST" action="">
-                            <input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" required value="<?= e($_POST['email'] ?? '') ?>" autofocus>
-                            </div>
-                            <button type="submit" class="btn btn-gold w-100 btn-lg">Send Reset Link</button>
-                        </form>
-                        <?php } else { ?>
-                        <p class="text-center mt-2 mb-0">
-                            <a href="<?= url('login') ?>" class="text-primary fw-semibold">Back to login</a>
-                        </p>
-                        <?php } ?>
-                        
-                        <p class="text-center mt-4 mb-0 text-muted">
-                            Remembered it? <a href="<?= url('login') ?>" class="text-primary fw-semibold">Login</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+ob_start();
+$alert_type = 'success'; $alert_text = $done;
+require __DIR__ . '/../app/includes/partials/alert.php';
+$alert_type = 'danger'; $alert_text = $error;
+require __DIR__ . '/../app/includes/partials/alert.php';
 
-<?php require_once __DIR__ . '/../app/includes/public/footer.php'; 
+if ($done === '') { ?>
+<form method="POST" action="">
+<input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>">
+<div class="mb-3">
+<label class="form-label">Email</label>
+<input type="email" name="email" class="form-control" required value="<?= e($_POST['email'] ?? '') ?>" autofocus>
+</div>
+<button type="submit" class="btn btn-gold w-100 btn-lg">Send reset link</button>
+</form>
+<?php } else { ?>
+<p class="text-center mt-2 mb-0"><a href="<?= url('login') ?>" class="fw-semibold">Back to login</a></p>
+<?php }
+
+$auth_body = ob_get_clean();
+$auth_icon = 'key';
+$auth_icon_class = 'text-gold fs-1';
+$auth_title = 'Forgot password?';
+$auth_text = "Enter your email and we'll send you a reset link.";
+$auth_footer = 'Remembered it? <a href="' . e(url('login')) . '" class="fw-semibold">Log in</a>';
+require __DIR__ . '/../app/includes/partials/auth-panel.php';
+
+require_once __DIR__ . '/../app/includes/public/footer.php'; 
