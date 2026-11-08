@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Controllers;
 
 /**
  * JSON endpoints extracted from the legacy api/*.php scripts.
@@ -9,7 +9,7 @@ namespace App\Http\Controllers;
  * Existing request methods, CSRF checks, authorization rules and response
  * payloads are intentionally preserved during this migration.
  */
-final class ApiController
+final class Api
 {
     public function player(): void
     {

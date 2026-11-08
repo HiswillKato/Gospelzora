@@ -1,15 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Controllers;
 
-/**
- * Homepage controller.
- *
- * Keeps data preparation out of the template while the legacy bootstrap and
- * shared domain services are migrated incrementally.
- */
-final class HomeController
+final class Home
 {
     public function index(): void
     {
@@ -20,11 +14,10 @@ final class HomeController
 
         $latest = $music->ranked('latest', 8);
         $popular = $music->ranked('popular', 8);
-
         $result = $user->artists(['limit' => 6, 'order' => 'songs']);
         $artists = $result['artists'];
         $categories = $music->categories();
 
-        require BASE_PATH . '/app/Views/home/index.php';
+        require BASE_PATH . '/app/views/public/home.php';
     }
 }
