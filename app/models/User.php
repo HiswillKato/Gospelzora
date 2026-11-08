@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\\Models;
+namespace App\Models;
 
 /**
  * User — accounts, auth, profile and admin management. One `users` table; the
@@ -42,10 +42,10 @@ class User {
     private const REGISTER_WINDOW_MINUTES = 60;
     private const REGISTER_SESSION_SECONDS = 30;
 
-    private \\DB $db;
+    private \DB $db;
     private Analytics $analytics;
     private Settings $settings;
-    private \\App\\Services\\Mailer $mail;
+    private \App\Services\Mailer $mail;
 
     /** The signed-in account for this request (null = nobody signed in). */
     private ?array $currentUser = null;
@@ -56,7 +56,7 @@ class User {
     /** Set when the account row could not be read (guards fall back to the session). */
     private bool $dbUnavailable = false;
 
-    public function __construct(\\DB $db, Analytics $analytics, Settings $settings, \\App\\Services\\Mailer $mail) {
+    public function __construct(\DB $db, Analytics $analytics, Settings $settings, \App\Services\Mailer $mail) {
         $this->db = $db;
         $this->analytics = $analytics;
         $this->settings = $settings;
@@ -1063,7 +1063,7 @@ class User {
         try {
             $db = $this->db;
             $now = time();
-            foreach ($db->select("SELECT name, value FROM settings WHERE name LIKE 'login\\_lock\\_%'") as $r) {
+            foreach ($db->select("SELECT name, value FROM settings WHERE name LIKE 'login\_lock\_%'") as $r) {
                 $decoded = json_decode($r['value'] ?? '', true);
                 $lockUntil = is_array($decoded) ? (int)($decoded['lock_until'] ?? 0) : 0;
                 if ($lockUntil <= 0 || $now >= $lockUntil) {
