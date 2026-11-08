@@ -56,7 +56,10 @@ require_once __DIR__ . '/user.class.php';
 require_once __DIR__ . '/music.class.php';
 require_once __DIR__ . '/analytics.class.php';
 require_once __DIR__ . '/mail.class.php';
-require_once __DIR__ . '/pages.class.php';
+require_once __DIR__ . '/models/Pages.php';
+
+/* Transitional global alias: legacy templates can keep using Pages until migrated. */
+class_alias(\\App\\Models\\Pages::class, 'Pages');
 
 /* ---------------------------------------------------------- */
 /* Shared instances                                            */
