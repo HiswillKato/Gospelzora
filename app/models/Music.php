@@ -107,7 +107,7 @@ class Music {
         $extension = strtolower(pathinfo((string)($song['audio'] ?? ''), PATHINFO_EXTENSION));
         $extension = preg_replace('/[^a-z0-9]/', '', $extension) ?? '';
         $filename = trim($title . ' - ' . $artist);
-        $filename = str_replace(['"', '\', '/'], '', $filename);
+        $filename = str_replace(['"', '\\', '/'], '', $filename);
         $filename = preg_replace('/[\x00-\x1F\x7F]+/', '', $filename) ?? $filename;
         $filename = trim($filename, " .\t\n\r\0\x0B");
         if ($filename === '') {
