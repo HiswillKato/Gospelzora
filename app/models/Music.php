@@ -623,7 +623,7 @@ class Music {
      * ASSETS_PATH are ever touched, so arbitrary paths cannot be fed in here.
      */
     private function unlink(string $path): void {
-        $real = realpath(ASSETS_PATH . '/' . ltrim(str_replace('\', '/', $path), '/'));
+        $real = realpath(ASSETS_PATH . '/' . ltrim(str_replace('\\', '/', $path), '/'));
         $root = realpath(ASSETS_PATH);
         if ($real === false || $root === false || !str_starts_with($real, $root . '/')) {
             return;
