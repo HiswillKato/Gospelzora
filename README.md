@@ -35,11 +35,13 @@ I'm developing Gospelzora in a Linux-based nginx environment. To work with the p
    git clone https://github.com/HiswillKato/Gospelzora.git
    ```
 2. Place the project in your nginx document root, or point an nginx server block to it.
-3. Set up the database and update the local database settings in `app/config.php` to match your environment.
+3. Copy `.env.example` to `.env` and set the database, domain and mail values for your environment. Keep `.env` private and outside Git.
 4. Routing lives in `.htaccess`, which nginx does not read natively — run the [`.htaccess`-for-nginx](https://github.com/e404/htaccess-for-nginx) Lua module (this project uses it) if the short routes must work.
 5. Open the configured local address in your browser.
 
-Database setup may require additional steps depending on the current version of the project. Keep local credentials out of Git.
+4. Install PHP dependencies with `composer install` and regenerate the autoloader with `composer dump-autoload`.
+
+Database setup may require additional steps depending on the current version of the project. Never put credentials in tracked source files.
 
 ## Why Gospelzora?
 
@@ -58,3 +60,18 @@ Built and maintained by **Hiswill Kato**.
 ---
 
 *Gospelzora — Transforming Lives Through Worship.*
+
+
+## Application architecture
+
+Gospelzora is being migrated incrementally toward the application foundation used in Martazi. Existing pages, dashboard routes, APIs and domain classes remain in place during this migration so the site's current behavior is not replaced all at once.
+
+The new foundation includes:
+
+- `app/core/`: database connection provider, request, response, router, environment loader and exception handler.
+- `bootstrap/app.php`: environment, autoloading and application configuration bootstrap.
+- `bootstrap/session.php`: session and security-header setup.
+- `config/config.php`: structured application, database and mail configuration.
+- `app/`: existing Gospelzora domain logic and presentation components.
+
+The current Apache rewrite rules and legacy page entry points remain authoritative for routing until those routes are migrated and tested. The new PHP router is available for that later step; it is not yet the production request dispatcher.

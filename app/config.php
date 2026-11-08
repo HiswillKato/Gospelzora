@@ -1,17 +1,11 @@
 <?php
 /**
- * Zora — configuration.
+ * Gospelzora configuration.
  *
- * THIS IS THE ONE CONFIG FILE. There is no app/config.local.php any more: the
- * settings for this machine live in section 2 below, marked "this machine".
- * Everything else in this file is a fallback default, written as
- * `defined('X') || define('X', …)`, so the values in section 2 win simply by
- * being defined first. That ordering is load-bearing: a value defined here
- * after its default would collide with an already-defined constant, emit a
- * warning and be ignored.
- *
- * If app/config.local.php ever comes back it is still honoured, and still wins,
- * because it is required before anything else is defined — see section 2.
+ * Runtime secrets and machine-specific settings are loaded from the untracked
+ * .env file or the optional ignored app/config.local.php override. This file
+ * defines the legacy constants still used by existing domain classes while
+ * exposing a structured configuration array through config/config.php.
  */
 
 /* ---------------------------------------------------------------------------
