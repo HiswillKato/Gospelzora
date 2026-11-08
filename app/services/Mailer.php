@@ -18,7 +18,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 // PHPMailer 7 is namespaced, so nothing resolves without Composer's autoloader.
 // Loaded here rather than in bootstrap.php because this is the only consumer.
-require_once ROOT_PATH . '/vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 class Mailer {
 
