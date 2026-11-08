@@ -55,7 +55,8 @@ require_once __DIR__ . '/models/Settings.php';
 class_alias(\\App\\Models\\Settings::class, 'Settings');
 require_once __DIR__ . '/user.class.php';
 require_once __DIR__ . '/music.class.php';
-require_once __DIR__ . '/analytics.class.php';
+require_once __DIR__ . '/models/Analytics.php';
+class_alias(\\App\\Models\\Analytics::class, 'Analytics');
 require_once __DIR__ . '/mail.class.php';
 require_once __DIR__ . '/models/Pages.php';
 
