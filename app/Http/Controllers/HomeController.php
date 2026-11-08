@@ -4,16 +4,27 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 /**
- * Transitional controller for the existing homepage.
+ * Homepage controller.
  *
- * The page remains responsible for its current data queries and template while
- * the view/controller split is introduced incrementally. This controller gives
- * the Router a stable entry point without changing the live rewrite rules.
+ * Keeps data preparation out of the template while the legacy bootstrap and
+ * shared domain services are migrated incrementally.
  */
 final class HomeController
 {
     public function index(): void
     {
-        require BASE_PATH . '/pages/index.php';
+        global $music, $user;
+
+        $page_title = sprintf('Welcome to %s', SITE_NAME);
+        $page_description = 'Browse gospel music, top charts, artists and categories - free streaming and downloads.';
+
+        $latest = $music->ranked('latest', 8);
+        $popular = $music->ranked('popular', 8);
+
+        $result = $user->artists(['limit' => 6, 'order' => 'songs']);
+        $artists = $result['artists'];
+        $categories = $music->categories();
+
+        require BASE_PATH . '/app/Views/home/index.php';
     }
 }
