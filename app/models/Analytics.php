@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\\Models;
+namespace App\Models;
 
 /**
  * Analytics — activity log, login records and visitor stats.
@@ -28,7 +28,7 @@ class Analytics {
         'visitors' => ['visitors', ''],
     ];
 
-    private \\DB $db;
+    private \DB $db;
 
     /**
      * Canonical registry of every activity-log action. Single source of truth for the raw
@@ -123,7 +123,7 @@ class Analytics {
         return self::ACTIONS[(string)$value]['badge'] ?? 'bg-secondary text-white';
     }
 
-    public function __construct(\\DB $db) {
+    public function __construct(\DB $db) {
         $this->db = $db;
     }
 
