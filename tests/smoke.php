@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+ob_start();
+
 require_once dirname(__DIR__) . '/app/core/Request.php';
 require_once dirname(__DIR__) . '/app/core/Response.php';
 require_once dirname(__DIR__) . '/app/core/Router.php';
@@ -49,3 +51,4 @@ check(dispatch($router, 'GET', '/songs/a/b') === ['<h1>404</h1><p>Page Not Found
 check(dispatch($router, 'HEAD', '/songs/amazing-grace') === ['', 200], 'HEAD response has no body');
 
 echo 'All architecture smoke tests passed.' . PHP_EOL;
+ob_end_flush();
