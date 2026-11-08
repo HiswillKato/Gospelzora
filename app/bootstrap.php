@@ -191,7 +191,7 @@ if (PHP_SAPI !== 'cli') {
         }
 
         $script = basename((string)($_SERVER['SCRIPT_FILENAME'] ?? ''));
-        $scriptPath = strtr((string)($_SERVER['SCRIPT_FILENAME'] ?? ''), '\', '/');
+        $scriptPath = strtr((string)($_SERVER['SCRIPT_FILENAME'] ?? ''), '\\', '/');
         // The login form stays reachable so an admin who signed out (or a
         // fresh one) can still authenticate; non-admins are rejected in
         // login(). Everything else — public browsing, dashboard,
