@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controllers;
+namespace App\controllers;
 
 /**
  * JSON endpoints extracted from the legacy api/*.php scripts.

@@ -3,4 +3,4 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../app/bootstrap.php';
 
-(new \\App\\Controllers\\Api())->playlist();
+(new \App\controllers\Api())->playlist();

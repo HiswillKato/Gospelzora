@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use App\core\Router;
-use App\Controllers\Home;
+use App\controllers\Home;
 
 return static function (Router $router): void {
     $home = new Home();
