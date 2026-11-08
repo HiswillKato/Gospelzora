@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use App\\core\\Router;
-use App\\Http\\Controllers\\HomeController;
+use App\core\Router;
+use App\Http\Controllers\HomeController;
 
 /**
  * Register the first framework-managed web route.
