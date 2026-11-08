@@ -52,16 +52,16 @@ require_once __DIR__ . '/functions.php';
 
 require_once __DIR__ . '/db.class.php';
 require_once __DIR__ . '/models/Settings.php';
-class_alias(\\App\\Models\\Settings::class, 'Settings');
+class_alias(\App\Models\Settings::class, 'Settings');
 require_once __DIR__ . '/user.class.php';
 require_once __DIR__ . '/music.class.php';
 require_once __DIR__ . '/models/Analytics.php';
-class_alias(\\App\\Models\\Analytics::class, 'Analytics');
+class_alias(\App\Models\Analytics::class, 'Analytics');
 require_once __DIR__ . '/mail.class.php';
 require_once __DIR__ . '/models/Pages.php';
 
 /* Transitional global alias: legacy templates can keep using Pages until migrated. */
-class_alias(\\App\\Models\\Pages::class, 'Pages');
+class_alias(\App\Models\Pages::class, 'Pages');
 
 /* ---------------------------------------------------------- */
 /* Shared instances                                            */
@@ -188,7 +188,7 @@ if (PHP_SAPI !== 'cli') {
         }
 
         $script = basename((string)($_SERVER['SCRIPT_FILENAME'] ?? ''));
-        $scriptPath = strtr((string)($_SERVER['SCRIPT_FILENAME'] ?? ''), '\\', '/');
+        $scriptPath = strtr((string)($_SERVER['SCRIPT_FILENAME'] ?? ''), '\', '/');
         // The login form stays reachable so an admin who signed out (or a
         // fresh one) can still authenticate; non-admins are rejected in
         // login(). Everything else — public browsing, dashboard,
