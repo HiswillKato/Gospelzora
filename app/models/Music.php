@@ -14,9 +14,9 @@ class Music {
 
     private \DB $db;
     private Analytics $analytics;
-    private \User $user;
+    private User $user;
 
-    public function __construct(\DB $db, Analytics $analytics, \User $user) {
+    public function __construct(\DB $db, Analytics $analytics, User $user) {
         $this->db = $db;
         $this->analytics = $analytics;
         $this->user = $user;
