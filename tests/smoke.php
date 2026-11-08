@@ -52,8 +52,8 @@ check(dispatch($router, 'GET', '/songs') === ['<h1>405</h1><p>Method Not Allowed
 check(dispatch($router, 'GET', '/songs/a/b') === ['<h1>404</h1><p>Page Not Found</p>', 404], 'route parameter cannot span slash');
 check(dispatch($router, 'HEAD', '/songs/amazing-grace') === ['', 200], 'HEAD response has no body');
 
-check(class_exists(\App\Http\Controllers\ApiController::class), 'API controller loads');
-check(class_exists(\App\Http\Controllers\HomeController::class), 'home controller loads');
+check(class_exists(\App\controllers\Api::class), 'API controller loads');
+check(class_exists(\App\controllers\Home::class), 'home controller loads');
 
 echo 'All architecture smoke tests passed.' . PHP_EOL;
 ob_end_flush();
