@@ -51,7 +51,8 @@ require_once __DIR__ . '/functions.php';
      Pages     per-page SEO metadata. */
 
 require_once __DIR__ . '/db.class.php';
-require_once __DIR__ . '/settings.class.php';
+require_once __DIR__ . '/models/Settings.php';
+class_alias(\\App\\Models\\Settings::class, 'Settings');
 require_once __DIR__ . '/user.class.php';
 require_once __DIR__ . '/music.class.php';
 require_once __DIR__ . '/analytics.class.php';
