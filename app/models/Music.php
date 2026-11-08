@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\\Models;
+namespace App\Models;
 
 /**
  * Music — song, category & favorites management.
@@ -12,11 +12,11 @@ namespace App\\Models;
 
 class Music {
 
-    private \\DB $db;
+    private \DB $db;
     private Analytics $analytics;
-    private \\User $user;
+    private \User $user;
 
-    public function __construct(\\DB $db, Analytics $analytics, \\User $user) {
+    public function __construct(\DB $db, Analytics $analytics, \User $user) {
         $this->db = $db;
         $this->analytics = $analytics;
         $this->user = $user;
@@ -107,7 +107,7 @@ class Music {
         $extension = strtolower(pathinfo((string)($song['audio'] ?? ''), PATHINFO_EXTENSION));
         $extension = preg_replace('/[^a-z0-9]/', '', $extension) ?? '';
         $filename = trim($title . ' - ' . $artist);
-        $filename = str_replace(['"', '\\', '/'], '', $filename);
+        $filename = str_replace(['"', '\', '/'], '', $filename);
         $filename = preg_replace('/[\x00-\x1F\x7F]+/', '', $filename) ?? $filename;
         $filename = trim($filename, " .\t\n\r\0\x0B");
         if ($filename === '') {
@@ -623,7 +623,7 @@ class Music {
      * ASSETS_PATH are ever touched, so arbitrary paths cannot be fed in here.
      */
     private function unlink(string $path): void {
-        $real = realpath(ASSETS_PATH . '/' . ltrim(str_replace('\\', '/', $path), '/'));
+        $real = realpath(ASSETS_PATH . '/' . ltrim(str_replace('\', '/', $path), '/'));
         $root = realpath(ASSETS_PATH);
         if ($real === false || $root === false || !str_starts_with($real, $root . '/')) {
             return;
