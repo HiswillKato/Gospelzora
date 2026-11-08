@@ -6,8 +6,8 @@ ob_start();
 require_once dirname(__DIR__) . '/app/core/Request.php';
 require_once dirname(__DIR__) . '/app/core/Response.php';
 require_once dirname(__DIR__) . '/app/core/Router.php';
-require_once dirname(__DIR__) . '/app/Http/Controllers/ApiController.php';
-require_once dirname(__DIR__) . '/app/Http/Controllers/HomeController.php';
+require_once dirname(__DIR__) . '/app/controllers/Api.php';
+require_once dirname(__DIR__) . '/app/controllers/Home.php';
 
 use App\core\Request;
 use App\core\Response;
