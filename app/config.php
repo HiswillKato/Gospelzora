@@ -28,54 +28,10 @@ if (!defined('ROOT_PATH')) {
 }
 
 /* ---------------------------------------------------------------------------
- * 2. Settings for THIS machine
+ * 2. Optional machine-specific override
  *
- * Defined first, before every default below, so they take effect. This is the
- * block that used to live in app/config.local.php.
- *
- * The password is in this file rather than an untracked override, so treat it
- * as a secret: app/ is denied by both .htaccess and the vhost, and the file is
- * mode 0640 (group www-data, so Apache reads it and nobody else does).
- * ------------------------------------------------------------------------- */
-
-/* 'production' also arms the deployment self-check in app/bootstrap.php, which
-   turns an unpinned BASE_URL into a visible 503 card instead of a site that
-   renders unstyled. */
-define('APP_ENV', 'production');
-
-define('DB_HOST', '127.0.0.1');
-define('DB_USER', 'root');
-define('DB_PASS', 'root');
-define('DB_NAME', 'zora');
-
-/* PINNED, because the vhost terminates TLS and redirects plain http, so
-   https://zora/ is the one true address. With this set the Host header is never
-   consulted, which is the reliable posture: it does not depend on the vhost
-   being right. */
-define('BASE_URL', 'https://zora/');
-
-define('GOSPELZORA_HOSTS', ['zora', 'www.zora', 'localhost', '127.0.0.1']);
-
-define('MAIL_HOST', '127.0.0.1');
-define('MAIL_PORT', 25);
-define('MAIL_FROM', 'gospelzora@gmail.com');
-define('MAIL_FROM_NAME', 'Gospelzora');
-define('MAIL_USER', '');
-define('MAIL_PASS', '');
-define('MAIL_ADMIN', 'gospelzora@gmail.com');
-define('MAIL_SUBJECT_PREFIX', '[Gospelzora] ');
-define('MAIL_VERIFY_EXPIRY_HOURS', 48);
-define('MAIL_RESET_EXPIRY_HOURS', 1);
-
-/* ---------------------------------------------------------------------------
- * 2a. Optional override file
- *
- * Gone on this machine, and that is the normal case. The guard is kept so that
- * dropping a config.local.php back in still works and still wins: it is required
- * here, before any default below, and it guards itself with the CONFIG_ACTIVE
- * sentinel rather than a bare exit — it is require()d from here, so an
- * unconditional deny would kill every request with a 404 instead of just
- * refusing a direct request for that one file.
+ * Secrets belong in the untracked .env file or app/config.local.php, never in
+ * this public repository. Environment variables are loaded by bootstrap/app.php.
  * ------------------------------------------------------------------------- */
 
 define('CONFIG_ACTIVE', true);
@@ -83,12 +39,16 @@ if (is_file(__DIR__ . '/config.local.php')) {
     require_once __DIR__ . '/config.local.php';
 }
 
-/*
- * Whether the site URL was pinned above (or by the local file) rather than
- * derived from the Host header on every request. Captured here, before the
- * defaults below run, because once those have executed BASE_URL is defined
- * either way and the evidence is gone.
- */
+$zoraEnv = static function (string $name, mixed $default = null): mixed {
+    return \App\core\Environment::get($name, $default);
+};
+
+$zoraBaseUrl = trim((string)$zoraEnv('BASE_URL', ''));
+if (!defined('BASE_URL') && $zoraBaseUrl !== '') {
+    define('BASE_URL', rtrim($zoraBaseUrl, '/') . '/');
+}
+
+/* Capture whether the public URL was explicitly pinned before fallback logic. */
 $zoraPinned = defined('BASE_URL');
 
 /* ---------------------------------------------------------------------------
@@ -109,11 +69,12 @@ defined('ASSETS_PATH')  || define('ASSETS_PATH', ROOT_PATH . '/assets');
  * 4. Environment
  * ------------------------------------------------------------------------- */
 
-defined('APP_ENV') || define('APP_ENV', 'development');
-defined('APP_TIMEZONE') || define('APP_TIMEZONE', 'Africa/Kampala');
+defined('APP_ENV') || define('APP_ENV', (string)$zoraEnv('APP_ENV', 'development'));
+defined('APP_TIMEZONE') || define('APP_TIMEZONE', (string)$zoraEnv('APP_TIMEZONE', 'Africa/Kampala'));
 
 /* Consulted only when BASE_URL is NOT set. Keep in step with ServerName/ServerAlias. */
-defined('GOSPELZORA_HOSTS') || define('GOSPELZORA_HOSTS', []);
+$zoraHosts = array_filter(array_map('trim', explode(',', (string)$zoraEnv('GOSPELZORA_HOSTS', ''))));
+defined('GOSPELZORA_HOSTS') || define('GOSPELZORA_HOSTS', array_values($zoraHosts));
 
 /*
  * Reverse-proxy addresses, as literal IPs — never a range or a hostname. If a
@@ -122,10 +83,11 @@ defined('GOSPELZORA_HOSTS') || define('GOSPELZORA_HOSTS', []);
  * cookie loses its Secure flag and logins appear to break, and
  * upgrade-insecure-requests is dropped from the CSP.
  */
-defined('TRUSTED_PROXY_IPS') || define('TRUSTED_PROXY_IPS', []);
+$zoraProxyIps = array_filter(array_map('trim', explode(',', (string)$zoraEnv('TRUSTED_PROXY_IPS', ''))));
+defined('TRUSTED_PROXY_IPS') || define('TRUSTED_PROXY_IPS', array_values($zoraProxyIps));
 
 /* Only needed when logins fail silently because session.save_path is not writable. */
-defined('SESSION_SAVE_PATH') || define('SESSION_SAVE_PATH', '');
+defined('SESSION_SAVE_PATH') || define('SESSION_SAVE_PATH', (string)$zoraEnv('SESSION_SAVE_PATH', ''));
 
 /* -----------------------------------------------------------
  * The request's scheme, then the public URL
@@ -198,10 +160,11 @@ if ($zoraPinned) {
  * 5. Database
  * ------------------------------------------------------------------------- */
 
-defined('DB_HOST') || define('DB_HOST', '127.0.0.1');
-defined('DB_USER') || define('DB_USER', 'gospelzora');
-defined('DB_PASS') || define('DB_PASS', '');
-defined('DB_NAME') || define('DB_NAME', 'gospelzora');
+defined('DB_HOST') || define('DB_HOST', (string)$zoraEnv('DB_HOST', '127.0.0.1'));
+defined('DB_PORT') || define('DB_PORT', (int)$zoraEnv('DB_PORT', 3306));
+defined('DB_USER') || define('DB_USER', (string)$zoraEnv('DB_USER', 'gospelzora'));
+defined('DB_PASS') || define('DB_PASS', (string)$zoraEnv('DB_PASS', ''));
+defined('DB_NAME') || define('DB_NAME', (string)$zoraEnv('DB_NAME', 'gospelzora'));
 
 /* ---------------------------------------------------------------------------
  * 6. Site copy and limits
@@ -241,13 +204,13 @@ defined('LOGIN_LOCK_MINUTES')    || define('LOGIN_LOCK_MINUTES', 15);
  * set — leave MAIL_USER empty for an unauthenticated relay on localhost.
  * ------------------------------------------------------------------------- */
 
-defined('MAIL_HOST')     || define('MAIL_HOST', '127.0.0.1');
-defined('MAIL_PORT')     || define('MAIL_PORT', 25);
-defined('MAIL_FROM')     || define('MAIL_FROM', 'gospelzora@gmail.com');
-defined('MAIL_FROM_NAME') || define('MAIL_FROM_NAME', SITE_NAME);
-defined('MAIL_USER')     || define('MAIL_USER', '');
-defined('MAIL_PASS')     || define('MAIL_PASS', '');
-defined('MAIL_ADMIN')    || define('MAIL_ADMIN', 'gospelzora@gmail.com');
+defined('MAIL_HOST')     || define('MAIL_HOST', (string)$zoraEnv('MAIL_HOST', '127.0.0.1'));
+defined('MAIL_PORT')     || define('MAIL_PORT', (int)$zoraEnv('MAIL_PORT', 25));
+defined('MAIL_FROM')     || define('MAIL_FROM', (string)$zoraEnv('MAIL_FROM', 'gospelzora@gmail.com'));
+defined('MAIL_FROM_NAME') || define('MAIL_FROM_NAME', (string)$zoraEnv('MAIL_FROM_NAME', SITE_NAME));
+defined('MAIL_USER')     || define('MAIL_USER', (string)$zoraEnv('MAIL_USER', ''));
+defined('MAIL_PASS')     || define('MAIL_PASS', (string)$zoraEnv('MAIL_PASS', ''));
+defined('MAIL_ADMIN')    || define('MAIL_ADMIN', (string)$zoraEnv('MAIL_ADMIN', 'gospelzora@gmail.com'));
 defined('MAIL_SUBJECT_PREFIX')       || define('MAIL_SUBJECT_PREFIX', '[' . SITE_NAME . '] ');
 defined('MAIL_VERIFY_EXPIRY_HOURS')  || define('MAIL_VERIFY_EXPIRY_HOURS', 48);
 defined('MAIL_RESET_EXPIRY_HOURS')   || define('MAIL_RESET_EXPIRY_HOURS', 1);
@@ -260,54 +223,7 @@ date_default_timezone_set(APP_TIMEZONE);
 
 /* $zoraHttps was settled above, before BASE_URL was resolved. */
 
-if (session_status() === PHP_SESSION_NONE) {
-    if (SESSION_SAVE_PATH !== '' && is_dir(SESSION_SAVE_PATH)) {
-        session_save_path(SESSION_SAVE_PATH);
-    }
-
-    session_name('GOSPELZORA');
-    session_set_cookie_params([
-        'lifetime' => 0,
-        'path'     => '/',
-        'domain'   => '',
-        'secure'   => $zoraHttps,
-        'httponly' => true,
-        'samesite' => 'Lax',
-    ]);
-    ini_set('session.use_strict_mode', '1');
-    ini_set('session.use_only_cookies', '1');
-    session_start();
-}
-
-if (!headers_sent()) {
-    header('X-Content-Type-Options: nosniff');
-    header('X-Frame-Options: SAMEORIGIN');
-    header('Referrer-Policy: strict-origin-when-cross-origin');
-    header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
-
-    /*
-     * A self-hosted site needs no external script at all: Bootstrap, Font Awesome,
-     * app.js and the webfonts are all committed under assets/. 'unsafe-inline' is
-     * required for the handful of inline <script> blocks the shells and partials
-     * emit; 'unsafe-eval' is deliberately NOT granted.
-     */
-    $csp = "default-src 'self'; "
-        . "script-src 'self' 'unsafe-inline'; "
-        . "style-src 'self' 'unsafe-inline'; "
-        . "img-src 'self' data:; "
-        . "font-src 'self'; "
-        . "media-src 'self'; "
-        . "form-action 'self'; "
-        . "frame-ancestors 'self'; "
-        . "base-uri 'self'; "
-        . "object-src 'none'";
-
-    if ($zoraHttps) {
-        $csp .= '; upgrade-insecure-requests';
-    }
-
-    header('Content-Security-Policy: ' . $csp);
-}
+require_once ROOT_PATH . '/bootstrap/session.php';
 
 /* ---------------------------------------------------------------------------
  * 9. Countries

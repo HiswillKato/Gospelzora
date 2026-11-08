@@ -26,6 +26,20 @@ class DB
     /** Opened on the first query, not in the constructor. */
     private ?mysqli $connection = null;
 
+    private \App\core\Database $database;
+
+    public function __construct(?\App\core\Database $database = null)
+    {
+        $this->database = $database ?? new \App\core\Database([
+            'host' => DB_HOST,
+            'port' => defined('DB_PORT') ? DB_PORT : 3306,
+            'user' => DB_USER,
+            'password' => DB_PASS,
+            'name' => DB_NAME,
+            'charset' => 'utf8mb4',
+        ]);
+    }
+
     /** Driver error number for the most recent statement; 0 when it worked. */
     private int $errno = 0;
 
@@ -56,27 +70,20 @@ class DB
             throw new RuntimeException('Technical difficulties: the database is unavailable. Please try again shortly.');
         }
 
-        $previous = mysqli_report(MYSQLI_REPORT_OFF);
-        $connection = @new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-        mysqli_report($previous);
-
-        if ($connection->connect_errno) {
+        try {
+            $this->connection = $this->database->connection();
+            return $this->connection;
+        } catch (Throwable $exception) {
             $this->dead = true;
-            $this->errno = $connection->connect_errno;
-            $this->error = $connection->connect_error;
-            /*
-             * The wording matters. bootstrap's exception handler matches a
-             * RuntimeException on the phrase "technical difficulties" to decide
-             * this is a database outage and serve app/includes/db-error.php
-             * instead of a bare 500 — so this must not be reworded casually.
-             */
-            throw new RuntimeException('Technical difficulties: the database is unavailable. Please try again shortly.');
+            $this->errno = (int)$exception->getCode();
+            $this->error = $exception->getMessage();
+
+            throw new RuntimeException(
+                'Technical difficulties: the database is unavailable. Please try again shortly.',
+                0,
+                $exception
+            );
         }
-
-        $connection->set_charset('utf8mb4');
-        $this->connection = $connection;
-
-        return $connection;
     }
 
     /** The driver error number from the most recent statement, 0 when it worked. */

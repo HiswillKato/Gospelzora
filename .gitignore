@@ -1,6 +1,11 @@
 # Runtime artifacts
 install.lock
 
+# Environment secrets
+.env
+.env.*
+!.env.example
+
 # Per-server configuration. app/config.php holds the committed defaults;
 # app/config.local.php holds the real database password, mail password and the
 # production domain, and is loaded on top of it. It must never be committed.
