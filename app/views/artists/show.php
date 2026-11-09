@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../bootstrap.php';
 $slug = $_GET['slug'] ?? '';
 $artist = $user->artist($slug);
-if (!$artist) { require dirname(__DIR__, 3) . '/pages/404.php'; exit; }
+if (!$artist) { require BASE_PATH . '/app/views/public/404.php'; exit; }
 $id = (int)$artist['id'];
 
 $songs = $music->songs($id);
