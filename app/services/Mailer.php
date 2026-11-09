@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Analytics;
+use Throwable;
 /**
  * Mail — transactional email via local Postfix (SMTP on loopback).
  *
