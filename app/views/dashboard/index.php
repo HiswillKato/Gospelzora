@@ -114,7 +114,6 @@ if ($dash_type === 'artist') {
     );
 }
 
-require __DIR__ . '/../shared/header.php';
-define('DASHBOARD_PARTIAL_GUARD', true);
-require __DIR__ . '/includes/overview.php';
-require __DIR__ . '/../shared/footer.php';
+require __DIR__ . '/../shared/member/header.php';
+require __DIR__ . '/partials/overview.php';
+require __DIR__ . '/../shared/member/footer.php';
