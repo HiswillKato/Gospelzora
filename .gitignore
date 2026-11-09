@@ -17,8 +17,7 @@ Thumbs.db
 *.swp
 *~
 
-# VS Code workspace files: per-machine, and they leak absolute local paths if
-# they end up inside the docroot (dashboard/ is served).
+# VS Code workspace files are machine-specific and should not be committed.
 *.code-workspace
 AGENTS.md
 

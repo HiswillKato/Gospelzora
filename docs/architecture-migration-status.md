@@ -1,43 +1,43 @@
-# Architecture migration status
+# Public document-root migration
 
-The application now uses `public/` as its only web document root. `public/index.php` loads the application bootstrap and dispatches requests through `app/core/Router.php` using `routes/web.php`. There is no `/pages/` URL directory or standalone root dashboard/API entry-point architecture.
+The repository migration to a single public document root is complete.
 
-## View structure
+## Request flow
 
-- `app/views/shared/`: the actual public header, navigation and footer markup.
+- The web server document root is `public/`.
+- `public/index.php` is the only application front controller.
+- `routes/web.php` registers public, authentication, music, dashboard, administration and API endpoints.
+- `app/core/Router.php` matches request paths and HTTP methods and returns 404/405 responses when appropriate.
+- Request implementations remain in the canonical `app/controllers/`, `app/models/`, `app/services/` and `app/views/` trees.
+- The installer entry point is `public/install.php`; its implementation remains at repository root in `install.php`.
+
+## Canonical views
+
+- `app/views/shared/`: shared public, member, admin, error and partial templates.
 - `app/views/public/`: homepage and informational/legal pages.
-- `app/views/music/`: catalogue, song detail and download-independent music page templates.
-- `app/views/artists/`, `categories/`, `playlists/`, `charts/`, `search/`: feature page templates.
+- `app/views/music/`, `artists/`, `categories/`, `playlists/`, `charts/`, and `search/`: feature templates.
 - `app/views/auth/`: login, registration, recovery, reset, verification and logout.
 - `app/views/dashboard/`: member dashboard, profile, favorites, playlists, songs and requests.
 - `app/views/admin/`: administration screens.
-- Root `public/` (web document root) is distinct from `app/views/public/` (miscellaneous site pages).
 
-## Migrated
+There is no root `pages/`, `dashboard/`, `api/`, or `assets/` directory. Those old URL families are handled by routes, and their implementations are kept outside the web root. Do not recreate the legacy entry-point directories.
 
-- Actual page implementations have been moved from `pages/` and `dashboard/` into the corresponding view folders.
-- Public, authentication, music, dashboard, admin and API URLs are registered in `routes/web.php`.
-- All shared markup, partials, admin/member shells and error templates live under `app/views/shared/`. There is no separate `app/includes/` directory.
-- Homepage data preparation is in `app/controllers/Home.php`; homepage markup is in `app/views/public/home.php`.
-- API behavior is in `app/controllers/Api.php` and is reached through the router.
-- The `playlist_items` table name is reflected in the schema and model queries.
+## Public assets and uploads
 
-- `app/includes/` has been removed; all references now target the canonical `app/views/shared/` tree.
+All browser-accessible static files are stored under `public/assets/`: `css/`, `js/`, `images/`, `audio/`, `artwork/`, and `webfonts/`. The `fonts/`, `icons/`, and `uploads/` directories are reserved for additional font, icon and uploaded files. New uploads use the public asset paths configured in `app/config.php`.
 
-## Public document root and assets
+The temporary asset fallback has been removed. For an existing deployment that still has a repository-root `assets/` directory, run `php deploy/migrate-public-assets.php` from the repository root to copy and verify it. Back up and inspect the media before optionally running the helper with `--move`.
 
-- Configure the web-server document root as `public/`.
-- New assets and uploads use `public/assets/`.
-- Run `php deploy/migrate-public-assets.php` to copy the legacy root `assets/` tree; verify the site, then use `--move` to remove the source.
-- `public/asset-fallback.php` temporarily serves files from the old asset tree until migration is complete.
+## Deployment requirements
 
-## Remaining architectural work
+- Point Apache or nginx at the repository's `public/` directory, never the repository root.
+- Apache rewrite rules are in `public/.htaccess`; nginx can use `deploy/nginx.conf.example`.
+- Keep `.env`, `app/config.local.php`, Composer dependencies, database schema, installer implementation and tests outside the document root.
+- Configure the PHP-FPM socket and domain in the nginx example for the target server.
+- Run the installer once, verify its lock file is created, and remove `public/install.php` from production after installation.
 
-This is a working front-controller migration, not yet a full MVC extraction. Some migrated page files still contain request handling, authorization, form processing and data retrieval alongside their markup. The next refactor should move those responsibilities into feature controllers/services and leave the views presentation-only, one feature at a time.
+## Scope boundary
 
-## Safety and deployment
+This is a completed public-root and front-controller migration, not a claim that every page has been fully decomposed into thin MVC layers. Some feature views still contain legacy request handling and data operations. Move those responsibilities into feature controllers/services incrementally without changing route contracts or weakening authorization and CSRF checks.
 
-- Keep this branch separate from `master`; do not deploy it directly.
-- No live database has been changed. Existing installations need a separate, data-preserving rename from `playlistitems` to `playlist_items`.
-- Keep rewrite rules and URL contracts until route parity is verified.
-- Test full browser flows and staging against a copy of the production schema before merging or deploying.
+No live server, production database, DNS, or uploaded media outside this Git repository is modified by this repository migration.
