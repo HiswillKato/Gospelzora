@@ -22,6 +22,26 @@ foreach ($required as $relative) {
         exit(1);
     }
 }
+
+$authContracts = [
+    'login' => '$user->login(',
+    'register' => '$user->register(',
+    'forgot' => '$user->recover(',
+    'logout' => '$user->logout(',
+    'reset' => '$user->reset(',
+    'verify-email' => "$user->consume('email_verify'",
+];
+foreach ($authContracts as $view => $contract) {
+    $source = file_get_contents($root . '/app/views/auth/' . $view . '.php');
+    if ($source === false || !str_contains($source, $contract)) {
+        fwrite(STDERR, "FAIL: authentication view {$view} is missing its workflow implementation" . PHP_EOL);
+        exit(1);
+    }
+    if (str_contains($source, '/app/views/auth/' . $view . '.php')) {
+        fwrite(STDERR, "FAIL: authentication view {$view} contains a self-referencing compatibility include" . PHP_EOL);
+        exit(1);
+    }
+}
 if (is_dir($root . '/dashboard/includes') || is_dir($root . '/dashboard/admin/includes') || is_dir($root . '/app/includes')) {
     fwrite(STDERR, "FAIL: a retired includes directory remains" . PHP_EOL);
     exit(1);
