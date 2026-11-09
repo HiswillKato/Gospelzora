@@ -20,7 +20,7 @@
 require_once dirname(__DIR__) . '/bootstrap/app.php';
 
 /* Marks the app as live. Every shared markup partial in app/views/shared/partials/ and both
- * standalone error pages in app/includes/ guard on this constant and 404 without it, so they
+ * standalone error pages in app/views/shared/ guard on this constant and 404 without it, so they
  * cannot render outside a bootstrapped request. app/ is already denied over HTTP twice
  * (.htaccess + zora.conf); this is the in-process guard. */
 define('APP_BOOTSTRAPPED', true);
