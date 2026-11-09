@@ -3,7 +3,7 @@ name: PHP checks
 on:
   push:
     branches:
-      - refactor/martazi-architecture
+      - '**'
   pull_request:
     branches:
       - master
@@ -30,3 +30,9 @@ jobs:
 
       - name: Run architecture smoke tests
         run: php tests/smoke.php
+
+      - name: Run trusted-proxy security tests
+        run: php tests/security.php
+
+      - name: Check canonical view layout
+        run: php tests/views.php
