@@ -329,6 +329,9 @@ class Music {
         if (mb_strlen($title) > 200) {
             return ['success' => false, 'message' => "Title must be 200 characters or fewer."];
         }
+        if ($title === '' || $artistId <= 0 || $description === '') {
+            return ['success' => false, 'message' => "Please provide a title, an artist and a description."];
+        }
 
         // Resolve the artist and song slug up front — the audio filename is
         // derived from them (e.g. amazing-grace-hiswill.mp3).
@@ -352,7 +355,7 @@ class Music {
         if (is_array($audioUpload) && !empty($audioUpload['name'])) {
             $ext = strtolower(pathinfo($audioUpload['name'], PATHINFO_EXTENSION));
             // The slug already carries the artist name, so it is the filename.
-            $audioName = substr($slug, 0, 120) . '.' . $ext;
+            $audioName = substr($slug, 0, 100) . '-' . bin2hex(random_bytes(6)) . '.' . $ext;
             $upload = store($audioUpload, AUDIO_PATH . '/', 'audio', 'audio', $audioName);
             if ($upload['error'] === null) {
                 $audioFile = 'audio/' . $upload['path'];
@@ -375,26 +378,36 @@ class Music {
             }
         }
 
-        if ($err) return ['success' => false, 'message' => $err];
+        if ($err) {
+            foreach ($stored as $path) $this->unlink($path);
+            return ['success' => false, 'message' => $err];
+        }
         // 'requested'/'approved' songs genuinely have no audio yet — only
         // the playable statuses require a file.
         $needsAudio = in_array($status, ['published', 'pending', 'draft'], true);
-        if (!$title || !$artistId || ($needsAudio && !$audioFile) || !$description) {
-            return ['success' => false, 'message' => "Please provide a title, an artist, a description and an audio file."];
+        if ($needsAudio && !$audioFile) {
+            foreach ($stored as $path) $this->unlink($path);
+            return ['success' => false, 'message' => "Please provide an audio file for this song."];
         }
 
         // The audio file the song currently points at (before any UPDATE) —
         // the only file that may safely be removed when it gets replaced.
         // The POST `existing_audio` hint is never trusted for deletion.
         $previousAudio = '';
+        $previousArtwork = '';
         if ($id) {
             $prev = $this->db->row(
                 $artistMode
-                    ? "SELECT audio FROM songs WHERE id = ? AND artist = ?"
-                    : "SELECT audio FROM songs WHERE id = ?",
+                    ? "SELECT audio, artwork FROM songs WHERE id = ? AND artist = ?"
+                    : "SELECT audio, artwork FROM songs WHERE id = ?",
                 $artistMode ? [$id, $artistId] : [$id]
             );
+            if (!$prev) {
+                foreach ($stored as $path) $this->unlink($path);
+                return ['success' => false, 'message' => "That song could not be found."];
+            }
             $previousAudio = (string)($prev['audio'] ?? '');
+            $previousArtwork = (string)($prev['artwork'] ?? '');
         }
 
         if ($id) {
@@ -433,6 +446,9 @@ class Music {
         // audio file — sourced from the DB row above, never from the request.
         if ($replacedAudio && $previousAudio !== '' && $previousAudio !== $audioFile) {
             $this->unlink($previousAudio);
+        }
+        if (is_array($artworkUpload) && !empty($artworkUpload['name']) && $previousArtwork !== '' && $previousArtwork !== $artwork) {
+            $this->unlink($previousArtwork);
         }
 
         $this->analytics->log($id ? 'song.update' : 'song.create', sprintf("Song #%s \"%s\" (status: %s)", $songId, $title, $status));
