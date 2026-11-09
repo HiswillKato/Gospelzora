@@ -10,6 +10,6 @@ declare(strict_types=1);
  */
 require_once dirname(__DIR__) . '/app/bootstrap.php';
 
-$router = new \\App\\core\\Router($response);
+$router = new \App\core\Router($response);
 require BASE_PATH . '/routes/web.php';
 $router->dispatch($request);
