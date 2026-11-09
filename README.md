@@ -39,7 +39,7 @@ The repository contains the public music experience, member and artist areas, ad
 
 ## Local setup
 
-Gospelzora is developed in a Linux environment with Apache rewrite rules or equivalent web-server routing.
+Gospelzora is developed in a Linux environment. The web server document root MUST be the repository's `public/` directory.
 
 1. Clone the repository:
    ```bash
@@ -56,8 +56,9 @@ Gospelzora is developed in a Linux environment with Apache rewrite rules or equi
    ```bash
    composer install
    ```
-6. Configure the web server to serve the project root and apply the repository's rewrite rules. nginx does not process `.htaccess`; configure equivalent rules when using nginx.
-7. Run the installer only when setting up a new environment. It checks for the complete required table set; do not treat it as a schema migration tool.
+6. Configure the web server to serve `Gospelzora/public/` as its document root. Apache uses `public/.htaccess`; nginx must use the provided `deploy/nginx.conf.example`. Never expose the repository root.
+7. If upgrading an existing deployment, run `php deploy/migrate-public-assets.php` from the repository root to copy old `assets/` files into `public/assets/`. Verify the copied media before optionally using `--move` to remove the legacy directory. New uploads are written under `public/assets/`.
+8. Run the installer only when setting up a new environment. It is available at `/install.php`, with its implementation outside the document root. It checks for the complete required table set; do not treat it as a schema migration tool.
 
 ## Automated checks
 
