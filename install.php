@@ -159,7 +159,7 @@ function exists($con, $name) {
 }
 
 function missing($con) {
-    $all = ['users', 'categories', 'songs', 'favorites', 'messages'];
+    $all = ['users', 'categories', 'songs', 'playlists', 'playlist_items', 'favorites', 'pages', 'settings', 'tokens', 'logs', 'logins', 'visitors', 'messages', 'events', 'charts', 'icons'];
     $stmt = $con->prepare("SHOW TABLES");
     $stmt->execute();
     $existing = array_map('current', $stmt->get_result()->fetch_all(MYSQLI_NUM));
