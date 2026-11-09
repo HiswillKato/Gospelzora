@@ -74,7 +74,7 @@ $admin=[
     '/dashboard/admin/users/add'=>'add-user.php','/dashboard/admin/users/edit'=>'add-user.php',
     '/dashboard/admin/admins/add'=>'add-admin.php','/dashboard/admin/admins/edit'=>'add-admin.php',
     '/dashboard/admin/pages/add'=>'page-edit.php','/dashboard/admin/pages/edit'=>'page-edit.php',
-};
+];
 foreach($admin as $path=>$file) {
     $handler=$render('app/views/admin/'.$file);
     if(str_ends_with($path,'/add')||str_ends_with($path,'/edit')||in_array($path,['/dashboard/admin/pages','/dashboard/admin/maintenance'],true)) $getPost($path,$handler);
