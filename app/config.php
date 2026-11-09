@@ -54,10 +54,10 @@ $zoraPinned = defined('BASE_URL');
  * serve them or audio and artwork 404.
  * ------------------------------------------------------------------------- */
 
-defined('AUDIO_PATH')   || define('AUDIO_PATH', ROOT_PATH . '/assets/audio');
-defined('IMAGE_PATH')   || define('IMAGE_PATH', ROOT_PATH . '/assets/images');
+defined('AUDIO_PATH')   || define('AUDIO_PATH', ROOT_PATH . '/public/assets/audio');
+defined('IMAGE_PATH')   || define('IMAGE_PATH', ROOT_PATH . '/public/assets/images');
 defined('ARTWORK_PATH') || define('ARTWORK_PATH', IMAGE_PATH . '/artwork');
-defined('ASSETS_PATH')  || define('ASSETS_PATH', ROOT_PATH . '/assets');
+defined('ASSETS_PATH')  || define('ASSETS_PATH', ROOT_PATH . '/public/assets');
 
 /* ---------------------------------------------------------------------------
  * 4. Environment

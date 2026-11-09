@@ -1,0 +1,29 @@
+# Gospelzora nginx virtual host (document root MUST be public/).
+server {
+    listen 80;
+    listen [::]:80;
+    server_name example.com www.example.com;
+
+    root /var/www/gospelzora/public;
+    index index.php;
+
+    # Hide dotfiles and sensitive repository/config artifacts.
+    location ~ /\. { deny all; }
+    location ~* \.(?:env|ini|log|sql|lock|bak|swp|dist)$ { deny all; }
+
+    # Never execute PHP or other scripts uploaded as media.
+    location ~* ^/(?:assets|uploads)/.*\.(?:php[0-9]?|phtml|phar|cgi|pl|py|sh)$ { deny all; }
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # Only the front controller and public installer are PHP entry points.
+    location ~ ^/(?:index|install)\.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    }
+    location ~ \.php$ { return 404; }
+
+    client_max_body_size 32m;
+}

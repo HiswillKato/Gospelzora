@@ -1,6 +1,6 @@
 # Architecture migration status
 
-The application now has its page implementations under `app/views/`. Legacy URL scripts remain thin compatibility entry points so existing rewrite rules and URLs continue to work while routing is migrated separately.
+The application now uses `public/` as its only web document root. `public/index.php` loads the application bootstrap and dispatches requests through `app/core/Router.php` using `routes/web.php`. There is no `/pages/` URL directory or standalone root dashboard/API entry-point architecture.
 
 ## View structure
 
@@ -16,17 +16,24 @@ The application now has its page implementations under `app/views/`. Legacy URL 
 ## Migrated
 
 - Actual page implementations have been moved from `pages/` and `dashboard/` into the corresponding view folders.
-- Legacy page paths now act as compatibility adapters that include the migrated implementation.
+- Public, authentication, music, dashboard, admin and API URLs are registered in `routes/web.php`.
 - All shared markup, partials, admin/member shells and error templates live under `app/views/shared/`. There is no separate `app/includes/` directory.
 - Homepage data preparation is in `app/controllers/Home.php`; homepage markup is in `app/views/public/home.php`.
-- API behavior is in `app/controllers/Api.php`; existing `api/*.php` paths remain adapters.
+- API behavior is in `app/controllers/Api.php` and is reached through the router.
 - The `playlist_items` table name is reflected in the schema and model queries.
 
 - `app/includes/` has been removed; all references now target the canonical `app/views/shared/` tree.
 
+## Public document root and assets
+
+- Configure the web-server document root as `public/`.
+- New assets and uploads use `public/assets/`.
+- Run `php deploy/migrate-public-assets.php` to copy the legacy root `assets/` tree; verify the site, then use `--move` to remove the source.
+- `public/asset-fallback.php` temporarily serves files from the old asset tree until migration is complete.
+
 ## Remaining architectural work
 
-This is a **view/file migration**, not yet a full MVC extraction. Some migrated page files still contain request handling, authorization, form processing and data retrieval alongside their markup. The next refactor should move those responsibilities into feature controllers/services and leave the views presentation-only, one feature at a time.
+This is a working front-controller migration, not yet a full MVC extraction. Some migrated page files still contain request handling, authorization, form processing and data retrieval alongside their markup. The next refactor should move those responsibilities into feature controllers/services and leave the views presentation-only, one feature at a time.
 
 ## Safety and deployment
 

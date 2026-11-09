@@ -6,7 +6,7 @@ Gospelzora is a PHP/MySQL gospel music platform for discovering songs, exploring
 
 ## Application status
 
-The repository contains the public music experience, member and artist areas, administration tools, authentication flows, and the supporting database schema. It remains in active development and is **not yet declared production-ready**.
+The repository contains the public music experience, member and artist areas, administration tools, authentication flows, and the supporting database schema. Only `public/` is exposed by the web server. It remains in active development and is **not yet declared production-ready**.
 
 ### Implemented areas
 
@@ -24,8 +24,10 @@ The repository contains the public music experience, member and artist areas, ad
 - `app/views/` is the canonical location for page markup and reusable feature partials.
 - Shared layout and UI components live in `app/views/shared/`; feature-specific partials live with their feature views.
 - The old `app/includes/`, `dashboard/includes/`, and `dashboard/admin/includes/` trees have been removed. Do not recreate them.
-- Existing `pages/` and `dashboard/` scripts remain as URL-compatible entry points while request routing is migrated incrementally. They should delegate to canonical views rather than duplicate page markup.
-- `app/core/Router.php` is covered by smoke tests, but the current Apache rewrite rules still dispatch through the compatibility entry points. A complete front-controller migration is separate work.
+- `public/` is the only web document root. Set the web server root to this directory, never the repository root.
+- `public/index.php` is the single front controller. `routes/web.php` maps public, authentication, music, dashboard, admin and API URLs through `app/core/Router.php`.
+- There is no `/pages/` directory or standalone root `dashboard/` or `api/` entry-point architecture. Those URLs are handled by routes, while implementations remain under `app/views/` and `app/controllers/`.
+- Application source, configuration, Composer dependencies, database schema, installer implementation and tests remain outside `public/`.
 
 ## Technology
 
@@ -37,7 +39,7 @@ The repository contains the public music experience, member and artist areas, ad
 
 ## Local setup
 
-Gospelzora is developed in a Linux environment with Apache rewrite rules or equivalent web-server routing.
+Gospelzora is developed in a Linux environment. The web server document root MUST be the repository's `public/` directory.
 
 1. Clone the repository:
    ```bash
@@ -54,8 +56,9 @@ Gospelzora is developed in a Linux environment with Apache rewrite rules or equi
    ```bash
    composer install
    ```
-6. Configure the web server to serve the project root and apply the repository's rewrite rules. nginx does not process `.htaccess`; configure equivalent rules when using nginx.
-7. Run the installer only when setting up a new environment. It checks for the complete required table set; do not treat it as a schema migration tool.
+6. Configure the web server to serve `Gospelzora/public/` as its document root. Apache uses `public/.htaccess`; nginx can adapt `deploy/nginx.conf.example` (update the domain, PHP-FPM socket, and upload size). Never expose the repository root.
+7. If upgrading an existing deployment, run `php deploy/migrate-public-assets.php` from the repository root to copy old `assets/` files into `public/assets/`. Verify the copied media before optionally using `--move` to remove the legacy directory. New uploads are written under `public/assets/`.
+8. Run the installer only when setting up a new environment. It is available at `/install.php`, with its implementation outside the document root. It checks for the complete required table set; do not treat it as a schema migration tool.
 
 ## Automated checks
 

@@ -2,7 +2,7 @@
 /**
  * Gospelzora Installer — step-by-step setup wizard, one self-contained file.
  *
- * Use only once, via /install.php. Once the admin account is created a lock
+ * Use only once, via /install.php (served by public/install.php). Once the admin account is created a lock
  * file (install.lock) is written and the installer refuses to run again (delete
  * install.lock, or this file, after installation).
  *
@@ -207,7 +207,7 @@ function checks() {
     $checks[] = ['openssl extension', extension_loaded('openssl'), 'used for password hashing', false];
     $checks[] = ['mbstring extension', extension_loaded('mbstring'), 'used for string handling', false];
     $checks[] = ['session support', function_exists('session_start'), 'used for login & security tokens', false];
-    foreach (['assets/audio', 'assets/images', 'assets/uploads'] as $d) {
+    foreach (['public/assets/audio', 'public/assets/images', 'public/assets/uploads'] as $d) {
         $checks[] = [$d . ' writable', is_writable(ROOT_PATH . '/' . $d), 'upload directory must be writable by the web server', false];
     }
     $checks[] = ['web root writable', is_writable(ROOT_PATH), 'needed to create install.lock', false];
@@ -215,7 +215,7 @@ function checks() {
     $checks[] = [basename($configTarget) . ' writable', is_writable($configTarget), 'needed to save mail settings', false];
     $checks[] = ['upload_max_filesize >= 100M', (int)ini_get('upload_max_filesize') >= 100, ini_get('upload_max_filesize') . ' current', false];
     $checks[] = ['post_max_size >= 100M', (int)ini_get('post_max_size') >= 100, ini_get('post_max_size') . ' current', false];
-    $checks[] = ['.htaccess present (pretty URLs)', file_exists(ROOT_PATH . '/.htaccess'), 'recommended, can be added later', true];
+    $checks[] = ['public/.htaccess present (pretty URLs)', file_exists(ROOT_PATH . '/public/.htaccess'), 'recommended, can be added later', true];
     return $checks;
 }
 
