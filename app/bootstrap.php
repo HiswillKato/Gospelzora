@@ -185,7 +185,8 @@ if (PHP_SAPI !== 'cli') {
     }
 
     if ($appMaintenance && !$user->check('admin')) {
-        if (str_contains((string)($_SERVER['SCRIPT_FILENAME'] ?? ''), '/api/')) {
+        $requestPath = parse_url((string)($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?: '/';
+        if (str_starts_with($requestPath, '/api/')) {
             http_response_code(503);
             json(['success' => false, 'message' => "Sorry, this website is undergoing maintenance. We apologize for the inconvenience. Please try again later."], 503);
         }
@@ -196,10 +197,10 @@ if (PHP_SAPI !== 'cli') {
         // fresh one) can still authenticate; non-admins are rejected in
         // login(). Everything else — public browsing, dashboard,
         // register/forgot/reset/verify-email — is gated.
-        if (!in_array($script, ['login.php'], true)) {
+        if (!$isLoginRoute) {
             // Admin-panel pages during maintenance go to /login instead of
             // the 503 card, so a signed-out admin can sign straight back in.
-            if (str_contains($scriptPath, '/dashboard/admin/')) {
+            if (str_starts_with($requestPath, '/dashboard/admin/')) {
                 redirect('login');
             }
             $page_title = "Website under Maintenance";
