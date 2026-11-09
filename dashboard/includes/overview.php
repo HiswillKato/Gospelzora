@@ -17,7 +17,7 @@ if ($dash_type === 'user') {
 ?>
 <div class="row g-3 mb-3 mb-lg-4">
 <?php foreach ($cards as [$stat_label, $stat_value, $stat_icon, $stat_color, $stat_link]) { $stat_href = url($stat_link); ?>
-<div class="col-6 col-lg-3"><?php require __DIR__ . '/../../app/includes/partials/stat-card.php'; ?></div>
+<div class="col-6 col-lg-3"><?php require __DIR__ . '/../../app/views/shared/partials/stat-card.php'; ?></div>
 <?php } ?>
 </div>
 

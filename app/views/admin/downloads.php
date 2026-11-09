@@ -8,7 +8,7 @@ $top = $analytics->top(10);
 $events = $analytics->downloads(['page' => (int)($_GET['page'] ?? 1)]);
 $pagination = $events['pagination'];
 
-require __DIR__ . '/../../app/includes/admin/header.php';
+require __DIR__ . '/../shared/admin/header.php';
 ?>
 <div class="row g-3 mb-4">
 <?php
@@ -21,7 +21,7 @@ $cards = [
 foreach ($cards as [$stat_label, $stat_value, $stat_icon, $stat_color]) {
     $stat_href = '';
     ?>
-<div class="col-md-6 col-lg-3"><?php require __DIR__ . '/../../includes/partials/stat-card.php'; ?></div>
+<div class="col-md-6 col-lg-3"><?php require __DIR__ . '/../shared/partials/stat-card.php'; ?></div>
     <?php
 }
 ?>
@@ -89,6 +89,6 @@ foreach ($stats['daily'] as $d) { ?>
 </tbody></table>
 </div>
 <?php } ?>
-<?php if ($pagination['total_pages'] > 1) { $base_url = url('dashboard/admin/downloads'); ?><div class="p-3 border-top"><?php require __DIR__ . '/../../includes/partials/pagination.php'; ?></div><?php } ?>
+<?php if ($pagination['total_pages'] > 1) { $base_url = url('dashboard/admin/downloads'); ?><div class="p-3 border-top"><?php require __DIR__ . '/../shared/partials/pagination.php'; ?></div><?php } ?>
 </div>
-<?php require __DIR__ . '/../../app/includes/admin/footer.php'; 
+<?php require __DIR__ . '/../shared/admin/footer.php'; 

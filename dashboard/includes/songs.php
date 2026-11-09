@@ -42,7 +42,7 @@ $songs_active_tab = 'dashboard-songs';
 <form method="POST" class="d-inline" title="Draft"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="status"><input type="hidden" name="id" value="<?= (int)$s['id'] ?>"><input type="hidden" name="status" value="draft"><button class="btn btn-ghost btn-sm rounded-circle" <?= $s['status'] === 'draft' ? 'disabled' : '' ?>><?= icon('pause') ?></button></form>
 <a href="<?= url('dashboard/add-song') ?>?id=<?= (int)$s['id'] ?>" class="btn btn-ghost btn-sm rounded-circle text-primary" title="Edit"><?= icon('pen') ?></a>
 <?php $delete_id = (int)$s['id']; $delete_confirm = 'Delete this song?'; $delete_form_class = 'd-inline';
-require __DIR__ . '/../../app/includes/partials/delete-button.php'; ?>
+require __DIR__ . '/../../app/views/shared/partials/delete-button.php'; ?>
 <?php } ?>
 </td></tr>
 <?php } ?>

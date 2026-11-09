@@ -45,7 +45,7 @@ require_once __DIR__ . '/../shared/header.php';
 $page_header_title = "My Playlists";
 $page_header_subtitle = "Group your favourite songs into collections you control";
 $page_header_content = '';
-require __DIR__ . '/../../includes/partials/page-header.php';
+require __DIR__ . '/../shared/partials/page-header.php';
 ?>
 
 <section class="py-5"><div class="container">
@@ -104,7 +104,7 @@ require __DIR__ . '/../../includes/partials/page-header.php';
                 $empty_title = "No playlists yet";
                 $empty_text = "Use the form to create your first playlist, then add songs to it from any song card.";
                 $empty_cta = '';
-                require __DIR__ . '/../../includes/partials/empty-state.php';
+                require __DIR__ . '/../shared/partials/empty-state.php';
                 ?>
             <?php } else { ?>
                 <div class="row g-4">

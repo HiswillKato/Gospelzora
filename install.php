@@ -484,7 +484,7 @@ if (!$error && !$done && !$installed) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
 <title>Install <?= SITE_NAME ?> | Setup Wizard</title>
-<?php require __DIR__ . '/app/includes/partials/css-links.php'; ?>
+<?php require __DIR__ . '/app/views/shared/partials/css-links.php'; ?>
 <style>
     .install-wrap { max-width: 760px; margin: 3rem auto 4rem; }
     .install-step { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
@@ -727,7 +727,7 @@ if (!$error && !$done && !$installed) {
                     <select name="country" class="form-select"><?php
                     $country_selected = $_POST['country'] ?? '';
                     $country_required = false;
-                    require __DIR__ . '/app/includes/partials/country-options.php';
+                    require __DIR__ . '/app/views/shared/partials/country-options.php';
                     ?></select></div>
             </div>
             <button type="submit" class="btn btn-gold w-100 mt-4">Create Administrator &amp; Finish</button>

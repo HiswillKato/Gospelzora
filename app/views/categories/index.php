@@ -9,12 +9,12 @@ require_once __DIR__ . '/../shared/header.php';
 $page_header_title = "Categories";
 $page_header_subtitle = "Browse music by style and mood";
 $page_header_content = '';
-require __DIR__ . '/../../includes/partials/page-header.php';
+require __DIR__ . '/../shared/partials/page-header.php';
 ?>
 <section class="py-5"><div class="container">
 <?php if (empty($categories)) {
     $empty_icon = 'tags'; $empty_title = "No categories yet"; $empty_text = "Categories will appear here once they're added."; $empty_cta = '';
-    require __DIR__ . '/../../includes/partials/empty-state.php';
+    require __DIR__ . '/../shared/partials/empty-state.php';
 } else { ?><div class="row g-4">
 <?php foreach ($categories as $c) { ?>
 <div class="col-6 col-md-4 col-lg-3"><a href="<?= url('category/'.$c['slug']) ?>" class="card category-card text-decoration-none text-dark h-100">

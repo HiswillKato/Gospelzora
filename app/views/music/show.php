@@ -87,7 +87,7 @@ require_once __DIR__ . '/../shared/header.php';
         <div class="row g-4">
             <?php foreach ($related as $song) {
                 $card_opt = ['compact' => true];
-                require __DIR__ . '/../../includes/partials/song-card.php';
+                require __DIR__ . '/../shared/partials/song-card.php';
             } ?>
         </div>
     </div>

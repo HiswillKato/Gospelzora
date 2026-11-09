@@ -53,10 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
 
 $artists = $artist_mode ? [$artist_user] : $user->options();
 $categories = $music->categories();
-require __DIR__ . '/../../app/includes/admin/header.php';
+require __DIR__ . '/../shared/admin/header.php';
 ?>
 <?php $alert_type = 'danger'; $alert_text = $err;
-require __DIR__ . '/../../includes/partials/alert.php'; ?>
+require __DIR__ . '/../shared/partials/alert.php'; ?>
 <div class="card tile">
 <div class="card-body">
 <form method="POST" action="<?= $edit ? url('dashboard/admin/songs/edit') . '?edit=' . (int)$edit['id'] : url('dashboard/admin/songs/add') ?>" enctype="multipart/form-data" id="songForm" data-success-url="<?= url('dashboard/admin/songs') ?>"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="save">
@@ -115,4 +115,4 @@ if ($edit) {
 <button type="submit" class="btn btn-gold" data-save-btn><?= icon('floppy-disk') ?>Save Song</button> <a href="<?= url('dashboard/admin/songs') ?>" class="btn btn-ghost">Cancel</a>
 </div>
 </div></form></div></div>
-<?php require __DIR__ . '/../../app/includes/admin/footer.php'; 
+<?php require __DIR__ . '/../shared/admin/footer.php'; 

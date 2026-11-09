@@ -17,7 +17,7 @@ require_once __DIR__ . '/../shared/header.php';
 $page_header_title = "Top Charts";
 $page_header_subtitle = sprintf("The most popular gospel songs on %s", SITE_NAME);
 $page_header_content = '';
-require __DIR__ . '/../../includes/partials/page-header.php';
+require __DIR__ . '/../shared/partials/page-header.php';
 ?>
 
 <section class="py-4">
@@ -38,10 +38,10 @@ require __DIR__ . '/../../includes/partials/page-header.php';
         <?php if (empty($songs)) {
             if (isset(Music::PERIOD_CHARTS[$type])) {
                 $empty_icon = 'chart-simple'; $empty_title = "No plays recorded yet"; $empty_text = "This chart fills up as soon as listeners start playing songs."; $empty_cta = '';
-                require __DIR__ . '/../../includes/partials/empty-state.php';
+                require __DIR__ . '/../shared/partials/empty-state.php';
             } else {
                 $empty_icon = 'chart-simple'; $empty_title = "No charted songs yet"; $empty_text = "Songs show up here as soon as they are published."; $empty_cta = '';
-                require __DIR__ . '/../../includes/partials/empty-state.php';
+                require __DIR__ . '/../shared/partials/empty-state.php';
             }
         } else { ?>
         <div class="card tile overflow-hidden">

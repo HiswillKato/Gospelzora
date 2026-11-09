@@ -30,10 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
     $err = "Invalid security token. Please try again.";
 }
 
-require __DIR__ . '/../../app/includes/admin/header.php';
+require __DIR__ . '/../shared/admin/header.php';
 ?>
 <?php $alert_type = 'danger'; $alert_text = $err;
-require __DIR__ . '/../../includes/partials/alert.php'; ?>
+require __DIR__ . '/../shared/partials/alert.php'; ?>
 <div class="card tile">
 <div class="card-body">
 <form method="POST" enctype="multipart/form-data"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="save">
@@ -41,10 +41,10 @@ require __DIR__ . '/../../includes/partials/alert.php'; ?>
 <div class="row g-3">
 <div class="col-md-6"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required maxlength="100" value="<?= e($edit['name']??'') ?>"></div>
 <div class="col-md-3"><label class="form-label">Country</label><select name="country" class="form-select"><?php $country_selected = country($edit['country'] ?? '', 'code'); $country_required = false;
-require __DIR__ . '/../../includes/partials/country-options.php'; ?></select></div>
+require __DIR__ . '/../shared/partials/country-options.php'; ?></select></div>
 <div class="col-md-3"><label class="form-label">Image</label><input type="file" name="image" class="form-control" accept=".jpg,.jpeg,.png,.gif,.webp"></div>
 <div class="col-12"><label class="form-label">Biography</label><textarea name="bio" class="form-control" rows="3"><?= e($edit['bio']??'') ?></textarea></div>
 <div class="col-12"><button type="submit" class="btn btn-gold">Save</button> <a href="<?= url('dashboard/admin/artists') ?>" class="btn btn-ghost">Cancel</a></div>
 </div></form>
 </div></div>
-<?php require __DIR__ . '/../../app/includes/admin/footer.php'; 
+<?php require __DIR__ . '/../shared/admin/footer.php'; 

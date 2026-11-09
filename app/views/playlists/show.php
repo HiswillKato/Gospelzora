@@ -18,7 +18,7 @@ if (!$playlist || !$music->visible($playlist, $viewer_id, $viewer_role)) {
     $page_header_subtitle = '';
     $page_header_content = '<h1 class="fw-bold mb-2">' . "Playlist not found" . '</h1>'
         . '<p class="text-body-secondary mb-0">This playlist does not exist, or it is private.</p>';
-    require __DIR__ . '/../../includes/partials/page-header.php';
+    require __DIR__ . '/../shared/partials/page-header.php';
     require __DIR__ . '/../shared/footer.php';
     exit;
 }
@@ -80,7 +80,7 @@ $page_header_content = '
 ' . ($is_owner ? '<a class="btn btn-outline-secondary" href="' . e(url('playlists?edit=' . (int)$playlist['id'])) . '">' . icon('pen') . 'Edit details</a>' : '') . '
 </div>
 </div></div>';
-require __DIR__ . '/../../includes/partials/page-header.php';
+require __DIR__ . '/../shared/partials/page-header.php';
 ?>
 
 <section class="py-5"><div class="container">
@@ -90,7 +90,7 @@ require __DIR__ . '/../../includes/partials/page-header.php';
     $empty_title = "This playlist is empty";
     $empty_text = "Add songs from the Music page using the playlist button on any song card.";
     $empty_cta = '<a href="' . e(url('music')) . '" class="btn btn-gold">' . "Browse Music" . '</a>';
-    require __DIR__ . '/../../includes/partials/empty-state.php';
+    require __DIR__ . '/../shared/partials/empty-state.php';
     ?>
 <?php } else { ?>
     <div class="row g-3">

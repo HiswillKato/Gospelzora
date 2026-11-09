@@ -51,9 +51,9 @@ require_once __DIR__ . '/../shared/header.php';
                 </div>
 
                 <?php $alert_type = 'success'; $alert_text = $success;
-                require __DIR__ . '/../../includes/partials/alert.php'; ?>
+                require __DIR__ . '/../shared/partials/alert.php'; ?>
                 <?php $alert_type = 'danger'; $alert_text = $error;
-                require __DIR__ . '/../../includes/partials/alert.php'; ?>
+                require __DIR__ . '/../shared/partials/alert.php'; ?>
 
                 <div class="card tile">
                     <div class="card-body p-4 p-md-5">

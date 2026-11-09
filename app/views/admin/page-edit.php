@@ -68,7 +68,7 @@ if ($edit) {
     }
 }
 
-require __DIR__ . '/../../app/includes/admin/header.php';
+require __DIR__ . '/../shared/admin/header.php';
 ?>
 <div class="row g-4">
 <div class="col-lg-9">
@@ -109,4 +109,4 @@ require __DIR__ . '/../../app/includes/admin/header.php';
 </div></div>
 </div>
 </div>
-<?php require __DIR__ . '/../../app/includes/admin/footer.php'; 
+<?php require __DIR__ . '/../shared/admin/footer.php'; 

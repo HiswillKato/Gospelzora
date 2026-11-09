@@ -19,7 +19,7 @@
 
 require_once dirname(__DIR__) . '/bootstrap/app.php';
 
-/* Marks the app as live. Every shared markup partial in app/includes/partials/ and both
+/* Marks the app as live. Every shared markup partial in app/views/shared/partials/ and both
  * standalone error pages in app/includes/ guard on this constant and 404 without it, so they
  * cannot render outside a bootstrapped request. app/ is already denied over HTTP twice
  * (.htaccess + zora.conf); this is the in-process guard. */
@@ -162,7 +162,7 @@ if (APP_ENV === 'production' && PHP_SAPI !== 'cli') {
             header('Retry-After: 3600');
         }
         $page_title = "Site configuration needed";
-        require __DIR__ . '/includes/config-error.php';
+        require __DIR__ . '/views/shared/errors/config-error.php';
         exit;
     }
 }
@@ -205,7 +205,7 @@ if (PHP_SAPI !== 'cli') {
             $page_title = "Website under Maintenance";
             $page_description = "Sorry, this website is undergoing maintenance. We apologize for the inconvenience. Please try again later.";
             http_response_code(503);
-            require __DIR__ . '/includes/maintenance.php';
+            require __DIR__ . '/views/shared/errors/maintenance.php';
             exit;
         }
     }

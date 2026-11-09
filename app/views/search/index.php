@@ -20,24 +20,24 @@ $page_header_content = '
 <form method="GET" class="mt-3"><div class="input-group" style="max-width:500px">
 <input type="search" name="q" class="form-control form-control-lg" placeholder="' . "Songs or artists..." . '" aria-label="' . "Search songs or artists" . '" value="' . e($q) . '" autofocus>
 <button class="btn btn-gold btn-lg" type="submit">' . icon('magnifying-glass') . '</button></div></form>';
-require __DIR__ . '/../../includes/partials/page-header.php';
+require __DIR__ . '/../shared/partials/page-header.php';
 ?>
 <section class="py-5"><div class="container">
 <?php if ($q === '') {
     $empty_icon = 'magnifying-glass'; $empty_title = "Enter a search term"; $empty_text = ''; $empty_cta = '';
-    require __DIR__ . '/../../includes/partials/empty-state.php';
+    require __DIR__ . '/../shared/partials/empty-state.php';
 } elseif (empty($songs) && empty($artists) && empty($categories)) {
     $empty_icon = 'magnifying-glass'; $empty_title = e(sprintf("No results for \"%s\"", $q)); $empty_text = ''; $empty_cta = '';
-    require __DIR__ . '/../../includes/partials/empty-state.php';
+    require __DIR__ . '/../shared/partials/empty-state.php';
 } else { ?>
 <?php if ($songs) { ?><h3 class="section-title mb-3">Songs</h3><div class="row g-4 mb-5"><?php
 $grid_items = $songs; $grid_row_open = true;
 $grid_card_opt = ['favorite' => false, 'download' => false];
-require __DIR__ . '/../../includes/partials/song-grid.php';
+require __DIR__ . '/../shared/partials/song-grid.php';
 ?></div><?php } ?>
 <?php if ($artists) { ?><h3 class="section-title mb-3">Artists</h3><div class="row g-4 mb-5"><?php foreach ($artists as $artist) {
     $card_opt = ['compact' => true, 'cell' => 'col-6 col-md-3 col-lg-2'];
-    require __DIR__ . '/../../includes/partials/artist-card.php';
+    require __DIR__ . '/../shared/partials/artist-card.php';
 } ?></div><?php } ?>
 <?php if ($categories) { ?><h3 class="section-title mb-3">Categories</h3><div class="d-flex flex-wrap gap-2"><?php foreach ($categories as $c) { ?>
 <a href="<?= url('category/'.$c['slug']) ?>" class="category-pill"><?= e($c['name']) ?></a>

@@ -20,7 +20,7 @@ $page_header_content = '
 ' . (!empty($artist['country']) ? '<p class="text-body-secondary mb-1">' . icon('location-dot', 'me-1') . e(country($artist['country'])) . '</p>' : '') . '
 ' . (!empty($artist['bio']) ? '<p class="mb-0" style="max-width:640px">' . e($artist['bio']) . '</p>' : '') . '
 </div></div>';
-require __DIR__ . '/../../includes/partials/page-header.php';
+require __DIR__ . '/../shared/partials/page-header.php';
 ?>
 <section class="py-5"><div class="container">
 <h2 class="section-title mb-4"><?= e(sprintf("Songs by %s", $artist['name'])) ?></h2>
@@ -28,6 +28,6 @@ require __DIR__ . '/../../includes/partials/page-header.php';
 $grid_items = $songs;
 $grid_card_opt = ['favorite' => false];
 $grid_empty_icon = 'music'; $grid_empty_title = "No songs yet."; $grid_empty_text = "This artist hasn't published any songs yet."; $grid_empty_cta = '';
-require __DIR__ . '/../../includes/partials/song-grid.php';
+require __DIR__ . '/../shared/partials/song-grid.php';
 ?>
 <?php require_once __DIR__ . '/../shared/footer.php'; 

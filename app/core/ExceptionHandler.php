@@ -31,7 +31,7 @@ final class ExceptionHandler
             if (!headers_sent()) {
                 http_response_code(503);
             }
-            require ROOT_PATH . '/app/includes/db-error.php';
+            require ROOT_PATH . '/app/views/shared/errors/db-error.php';
             exit;
         }
 

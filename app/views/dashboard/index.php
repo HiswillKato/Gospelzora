@@ -20,7 +20,7 @@ if ($user->check('admin')) {
         'failedLogin24h' => $login['failed24h'],
     ];
     $recentLogs = $analytics->activity(['per_page' => 8]);
-    require __DIR__ . '/../app/includes/admin/header.php';
+    require __DIR__ . '/../shared/admin/header.php';
     ?>
     <div class="row g-3 mb-3 mb-lg-4">
     <?php
@@ -38,7 +38,7 @@ if ($user->check('admin')) {
     ];
     foreach ($cards as [$stat_label, $stat_value, $stat_icon, $stat_color, $stat_link]) {
         $stat_href = url($stat_link); ?>
-    <div class="col-6 col-lg-3"><?php require __DIR__ . '/../../includes/partials/stat-card.php'; ?></div>
+    <div class="col-6 col-lg-3"><?php require __DIR__ . '/../shared/partials/stat-card.php'; ?></div>
     <?php } ?>
     </div>
 
@@ -83,7 +83,7 @@ if ($user->check('admin')) {
     </div>
     </div>
     <?php
-    require __DIR__ . '/../app/includes/admin/footer.php';
+    require __DIR__ . '/../shared/admin/footer.php';
     exit;
 }
 

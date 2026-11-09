@@ -62,10 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
     $err = "Invalid security token. Please try again.";
 }
 
-require __DIR__ . '/../../../app/includes/admin/header.php';
+require __DIR__ . '/../../../app/views/shared/admin/header.php';
 ?>
 <?php $alert_type = 'danger'; $alert_text = $err;
-require __DIR__ . '/../../../app/includes/partials/alert.php'; ?>
+require __DIR__ . '/../../../app/views/shared/partials/alert.php'; ?>
 <div class="card tile">
 <div class="card-body">
 <form method="POST"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="save">
@@ -78,7 +78,7 @@ require __DIR__ . '/../../../app/includes/partials/alert.php'; ?>
 <option value="disabled" <?= ($edit['status']??'')==='disabled'?'selected':'' ?>>Disabled</option>
 </select></div>
 <div class="col-md-3"><label class="form-label">Country</label><select name="country" class="form-select"><?php $country_selected = country($edit['country'] ?? '', 'code'); $country_required = false;
-require __DIR__ . '/../../../app/includes/partials/country-options.php'; ?></select></div>
+require __DIR__ . '/../../../app/views/shared/partials/country-options.php'; ?></select></div>
 <div class="col-md-3">
 <label class="form-label">Password <?= $edit ? '' : '*' ?></label>
 <input type="password" name="password" class="form-control" <?= $edit?'':'required' ?> autocomplete="new-password" title="<?= $edit ? "Leave empty to keep the current password unchanged" : '' ?>">
@@ -87,4 +87,4 @@ require __DIR__ . '/../../../app/includes/partials/country-options.php'; ?></sel
 <div class="col-md-3 d-flex align-items-end gap-2"><button type="submit" class="btn btn-gold">Save</button> <a href="<?= url($type['list']) ?>" class="btn btn-ghost">Cancel</a></div>
 </div></form>
 </div></div>
-<?php require __DIR__ . '/../../../app/includes/admin/footer.php'; 
+<?php require __DIR__ . '/../../../app/views/shared/admin/footer.php'; 

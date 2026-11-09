@@ -40,7 +40,7 @@ require_once BASE_PATH . '/app/views/shared/header.php';
             $grid_items = $latest; $grid_row_open = true;
             $grid_card_opt = ['music' => $music];
             $grid_empty_icon = 'music'; $grid_empty_title = "No songs yet."; $grid_empty_text = "New releases will appear here as songs are added."; $grid_empty_cta = '';
-            require BASE_PATH . '/app/includes/partials/song-grid.php';
+            require BASE_PATH . '/app/views/shared/partials/song-grid.php';
             ?>
         </div>
     </div>
@@ -59,7 +59,7 @@ require_once BASE_PATH . '/app/views/shared/header.php';
             $grid_items = $popular; $grid_row_open = true;
             $grid_card_opt = ['music' => $music, 'plays' => true];
             $grid_empty_icon = 'fire'; $grid_empty_title = "No popular songs yet"; $grid_empty_text = "Most-played tracks will show up here once songs get some plays."; $grid_empty_cta = '';
-            require BASE_PATH . '/app/includes/partials/song-grid.php';
+            require BASE_PATH . '/app/views/shared/partials/song-grid.php';
             ?>
         </div>
     </div>
@@ -77,10 +77,10 @@ require_once BASE_PATH . '/app/views/shared/header.php';
         <div class="row g-4">
             <?php if (empty($artists)) {
                 $empty_icon = 'user-group'; $empty_title = "No artists yet"; $empty_text = "Featured artists will appear here as they join the platform."; $empty_cta = '';
-                require BASE_PATH . '/app/includes/partials/empty-state.php';
+                require BASE_PATH . '/app/views/shared/partials/empty-state.php';
             } else { foreach ($artists as $artist) {
                 $card_opt = [];
-                require BASE_PATH . '/app/includes/partials/artist-card.php';
+                require BASE_PATH . '/app/views/shared/partials/artist-card.php';
             } } ?>
         </div>
     </div>

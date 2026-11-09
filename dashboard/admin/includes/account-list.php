@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
 
 $accounts = $user->roster($role);
 $header_actions = '<a class="btn btn-gold btn-sm" href="' . url($type['add']) . '">' . icon('plus') . "Add " . $type['One'] . '</a>';
-require __DIR__ . '/../../../app/includes/admin/header.php';
+require __DIR__ . '/../../../app/views/shared/admin/header.php';
 ?>
 <div class="card tile"><div class="table-responsive">
 <table class="table table-hover align-middle mb-0"><thead><tr><th>Name</th><th>Email</th><th>Status</th><th class="d-none d-md-table-cell">Joined</th><th class="d-none d-lg-table-cell">Last Login</th><th></th></tr></thead><tbody>
@@ -97,7 +97,7 @@ require __DIR__ . '/../../../app/includes/admin/header.php';
 <a href="<?= url($type['edit']) ?>?edit=<?= $u['id'] ?>" class="btn btn-ghost btn-sm rounded-circle" title="Edit <?= $one ?>"><?= icon('pen') ?></a>
 <form method="POST" class="d-inline"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="toggle"><input type="hidden" name="id" value="<?= $u['id'] ?>"><button class="btn btn-ghost btn-sm rounded-circle" title="Toggle status" aria-label="<?= e(sprintf("Toggle status of %s", $u['name'])) ?>"><?= icon('toggle-on') ?></button></form>
 <?php if ($self_id !== (int)$u['id']) { $delete_id = (int)$u['id']; $delete_confirm = sprintf("Delete this %s?", $one); $delete_form_class = 'd-inline';
-require __DIR__ . '/../../../app/includes/partials/delete-button.php'; ?><?php } ?>
+require __DIR__ . '/../../../app/views/shared/partials/delete-button.php'; ?><?php } ?>
 </div>
 </td></tr><?php } } ?></tbody></table></div></div>
-<?php require __DIR__ . '/../../../app/includes/admin/footer.php'; 
+<?php require __DIR__ . '/../../../app/views/shared/admin/footer.php'; 

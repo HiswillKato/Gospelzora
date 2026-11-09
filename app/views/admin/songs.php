@@ -33,9 +33,9 @@ $header_actions = '<a class="btn btn-gold btn-sm" href="' . url('dashboard/admin
 require __DIR__ . '/../shared/header.php';
 ?>
 <?php $alert_type = 'success'; $alert_text = $msg;
-require __DIR__ . '/../../includes/partials/alert.php'; ?>
+require __DIR__ . '/../shared/partials/alert.php'; ?>
 <?php $alert_type = 'danger'; $alert_text = $err;
-require __DIR__ . '/../../includes/partials/alert.php'; ?>
+require __DIR__ . '/../shared/partials/alert.php'; ?>
 <div class="card tile">
 <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>Title</th><th class="d-none d-md-table-cell">Artist</th><th>Plays</th><th class="d-none d-lg-table-cell">Downloads</th><th>Status</th><th></th></tr></thead><tbody>
 <?php if (empty($songs)) { ?><tr><td colspan="6" class="text-center text-body-secondary py-4">No songs found</td></tr>
@@ -54,7 +54,7 @@ require __DIR__ . '/../../includes/partials/alert.php'; ?>
 <?php if ($user->check('admin') && $s['status'] === 'requested') { ?><form method="POST" class="d-inline"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="approve"><input type="hidden" name="id" value="<?= $s['id'] ?>"><button class="btn btn-sm btn-primary" title="Approve request"><?= icon('check') ?>Approve</button></form><?php } ?>
 <a href="<?= url('dashboard/admin/songs/edit') ?>?edit=<?= $s['id'] ?>" class="btn btn-ghost btn-sm rounded-circle" title="Edit"><?= icon('pen') ?></a>
 <?php $delete_id = (int)$s['id']; $delete_confirm = 'Delete this song?'; $delete_form_class = 'd-inline';
-require __DIR__ . '/../../includes/partials/delete-button.php'; ?>
+require __DIR__ . '/../shared/partials/delete-button.php'; ?>
 </div>
 </td></tr><?php } } ?>
 </tbody></table></div>

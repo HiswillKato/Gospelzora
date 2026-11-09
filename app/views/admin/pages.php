@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $rows = $pages->all();
 
-require __DIR__ . '/../../app/includes/admin/header.php';
+require __DIR__ . '/../shared/admin/header.php';
 ?>
 <div class="card tile">
 <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -70,4 +70,4 @@ require __DIR__ . '/../../app/includes/admin/header.php';
 </table>
 </div>
 </div>
-<?php require __DIR__ . '/../../app/includes/admin/footer.php'; 
+<?php require __DIR__ . '/../shared/admin/footer.php'; 

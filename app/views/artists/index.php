@@ -20,25 +20,25 @@ $page_header_content = '
 '" placeholder="' . "Search artists..." . '" aria-label="' . "Search artists" . '">
 <button class="btn btn-gold" type="submit">' . icon('magnifying-glass') . '</button>
 </div></form>';
-require __DIR__ . '/../../includes/partials/page-header.php';
+require __DIR__ . '/../shared/partials/page-header.php';
 ?>
 <section class="py-5"><div class="container">
 <?php if (empty($artists)) {
     $empty_icon = 'user-group'; $empty_title = "No artists found";
     $empty_text = $q ? "Try a different search term." : "No artists have joined yet. Check back soon."; $empty_cta = '';
-    require __DIR__ . '/../../includes/partials/empty-state.php';
+    require __DIR__ . '/../shared/partials/empty-state.php';
 } else { ?>
 <div class="row g-4">
 <?php foreach ($artists as $artist) {
     $card_opt = [];
-    require __DIR__ . '/../../includes/partials/artist-card.php';
+    require __DIR__ . '/../shared/partials/artist-card.php';
 } ?>
 </div>
 <?php
 $filter_qs = http_build_query(array_filter(['q' => $q]));
 $base_url = url('artists') . ($filter_qs !== '' ? '?' . $filter_qs : '');
 ?>
-<div class="mt-5"><?php require __DIR__ . '/../../includes/partials/pagination.php'; ?></div>
+<div class="mt-5"><?php require __DIR__ . '/../shared/partials/pagination.php'; ?></div>
 <?php } ?>
 </div></section>
 <?php require_once __DIR__ . '/../shared/footer.php'; 

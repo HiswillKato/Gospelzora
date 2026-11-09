@@ -85,7 +85,7 @@ $current_year = date('Y');
 
     <!-- Global Music Player -->
     <!-- jQuery, Bootstrap JS, App JS (local) -->
-    <?php require __DIR__ . '/../../includes/partials/js-links.php'; ?>
+    <?php require __DIR__ . '/partials/js-links.php'; ?>
 
     <?php if (isset($extra_js)) { ?>
         <?= $extra_js ?>

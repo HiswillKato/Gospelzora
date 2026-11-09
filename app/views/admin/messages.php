@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
     redirect('dashboard/admin/messages');
 }
 $messages = $db->select("SELECT * FROM messages ORDER BY created DESC");
-require __DIR__ . '/../../app/includes/admin/header.php';
+require __DIR__ . '/../shared/admin/header.php';
 ?>
 <div class="card tile">
 <?php if (empty($messages)) { ?>
@@ -48,9 +48,9 @@ require __DIR__ . '/../../app/includes/admin/header.php';
 <div class="d-flex flex-sm-column gap-2 align-items-sm-end flex-shrink-0">
 <?php if (!$m['seen']) { ?><form method="POST" class="d-inline"><input type="hidden" name="csrf_token" value="<?= e(csrf()) ?>"><input type="hidden" name="action" value="read"><input type="hidden" name="id" value="<?= $m['id'] ?>"><button type="submit" class="btn btn-ghost btn-sm">Mark read</button></form><?php } ?>
 <?php $delete_id = (int)$m['id']; $delete_confirm = 'Delete this message?'; $delete_form_class = 'd-inline';
-require __DIR__ . '/../../includes/partials/delete-button.php'; ?>
+require __DIR__ . '/../shared/partials/delete-button.php'; ?>
 </div>
 </div></div>
 <?php } ?></div><?php } ?>
 </div>
-<?php require __DIR__ . '/../../app/includes/admin/footer.php'; 
+<?php require __DIR__ . '/../shared/admin/footer.php'; 

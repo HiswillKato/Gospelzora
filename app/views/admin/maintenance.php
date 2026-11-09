@@ -16,12 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
     $err = "Invalid security token. Please try again.";
 }
 
-require __DIR__ . '/../../app/includes/admin/header.php';
+require __DIR__ . '/../shared/admin/header.php';
 ?>
 <?php $alert_type = 'success'; $alert_text = $msg;
-require __DIR__ . '/../../includes/partials/alert.php'; ?>
+require __DIR__ . '/../shared/partials/alert.php'; ?>
 <?php $alert_type = 'danger'; $alert_text = $err;
-require __DIR__ . '/../../includes/partials/alert.php'; ?>
+require __DIR__ . '/../shared/partials/alert.php'; ?>
 <div class="card tile">
 <div class="card-body">
 <div class="d-flex align-items-center gap-3 mb-3">
@@ -43,4 +43,4 @@ require __DIR__ . '/../../includes/partials/alert.php'; ?>
 </button>
 </form>
 </div></div>
-<?php require __DIR__ . '/../../app/includes/admin/footer.php'; 
+<?php require __DIR__ . '/../shared/admin/footer.php'; 

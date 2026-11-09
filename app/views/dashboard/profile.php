@@ -81,7 +81,7 @@ require __DIR__ . '/../shared/header.php';
 <div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control" maxlength="150" value="<?= e($dash_user['email']) ?>" required></div>
 <div class="mb-3"><label class="form-label">Current Password</label><input type="password" name="current_password" class="form-control" autocomplete="current-password"><div class="form-text">Optional</div></div>
 <div class="mb-3"><label class="form-label">Country</label><select name="country" class="form-select"><?php $country_selected = country($dash_user['country'] ?? '', 'code'); $country_required = false;
-require __DIR__ . '/../../includes/partials/country-options.php'; ?></select></div>
+require __DIR__ . '/../../app/views/shared/partials/country-options.php'; ?></select></div>
 <button type="submit" class="btn btn-gold">Save Changes</button></form>
 </div></div>
 <div class="card tile">

@@ -34,10 +34,10 @@ $current_path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
     <meta name="twitter:image" content="<?= e(asset('images/artwork.png')) ?>">
     <title><?= isset($page_title) ? $page_title . ' • ' : '' ?><?= SITE_NAME ?></title>
 
-    <?php require __DIR__ . '/../../includes/partials/theme-script.php'; ?>
+    <?php require __DIR__ . '/partials/theme-script.php'; ?>
 
     <!-- Bootstrap CSS (local) -->
-    <?php require __DIR__ . '/../../includes/partials/css-links.php'; ?>
+    <?php require __DIR__ . '/partials/css-links.php'; ?>
 
     <?php if (isset($extra_css)) { ?>
         <?= $extra_css ?>
@@ -51,7 +51,7 @@ $current_path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
     <!-- Flash Messages -->
     <?php $flash = flash(); if ($flash) { ?>
     <div class="container mt-3">
-        <?php require __DIR__ . '/../../includes/partials/flash.php'; ?>
+        <?php require __DIR__ . '/partials/flash.php'; ?>
     </div>
     <?php } ?>
 

@@ -30,7 +30,7 @@ require_once __DIR__ . '/../shared/header.php';
 $page_header_title = "Music";
 $page_header_subtitle = "Explore our collection of gospel songs";
 $page_header_content = '';
-require __DIR__ . '/../../includes/partials/page-header.php';
+require __DIR__ . '/../shared/partials/page-header.php';
 ?>
 
 <section class="py-4">
@@ -77,7 +77,7 @@ require __DIR__ . '/../../includes/partials/page-header.php';
         $grid_items = $songs;
         $grid_card_opt = ['music' => $music];
         $grid_empty_icon = 'list'; $grid_empty_title = "No songs found"; $grid_empty_text = "Try adjusting your filters"; $grid_empty_cta = '';
-        require __DIR__ . '/../../includes/partials/song-grid.php';
+        require __DIR__ . '/../shared/partials/song-grid.php';
         ?>
 
         <?php if ($songs) { ?>
@@ -85,7 +85,7 @@ require __DIR__ . '/../../includes/partials/page-header.php';
             <?php
             $filter_qs = http_build_query(array_filter(['q' => $q, 'category' => $category, 'artist' => $artist, 'sort' => $sort]));
             $base_url = url('music') . ($filter_qs !== '' ? '?' . $filter_qs : '');
-            require __DIR__ . '/../../includes/partials/pagination.php';
+            require __DIR__ . '/../shared/partials/pagination.php';
             ?>
         </div>
         <?php } ?>
