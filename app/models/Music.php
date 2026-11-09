@@ -601,10 +601,15 @@ class Music {
         }
         $audioFile = 'audio/' . $upload['path'];
 
-        $updated = $this->db->affected(
-            "UPDATE songs SET audio = ?, status = 'published', updated = NOW() WHERE id = ? AND artist = ? AND status = 'approved'",
-            [$audioFile, $songId, $artistId]
-        );
+        try {
+            $updated = $this->db->affected(
+                "UPDATE songs SET audio = ?, status = 'published', updated = NOW() WHERE id = ? AND artist = ? AND status = 'approved'",
+                [$audioFile, $songId, $artistId]
+            );
+        } catch (\Throwable $e) {
+            $this->unlink($audioFile);
+            throw $e;
+        }
         if ($updated !== 1 || $this->db->errno()) {
             $this->unlink($audioFile);
             return ['success' => false, 'message' => "The song could not be published. Please try again."];
@@ -1042,7 +1047,7 @@ class Music {
             }
             return ['success' => true, 'message' => "Song added to playlist."];
         } catch (\Throwable $e) {
-            $this->db->execute('ROLLBACK');
+            try { $this->db->execute('ROLLBACK'); } catch (\Throwable $ignored) {}
             throw $e;
         }
     }
@@ -1076,7 +1081,7 @@ class Music {
             }
             return ['success' => true, 'message' => "Song removed from playlist."];
         } catch (\Throwable $e) {
-            $this->db->execute('ROLLBACK');
+            try { $this->db->execute('ROLLBACK'); } catch (\Throwable $ignored) {}
             throw $e;
         }
     }
@@ -1144,7 +1149,7 @@ class Music {
             }
             return ['success' => true, 'message' => "Playlist reordered."];
         } catch (\Throwable $e) {
-            $this->db->execute('ROLLBACK');
+            try { $this->db->execute('ROLLBACK'); } catch (\Throwable $ignored) {}
             throw $e;
         }
     }
