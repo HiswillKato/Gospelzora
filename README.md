@@ -2,54 +2,63 @@
 
 **Transforming Lives Through Worship**
 
-Gospelzora is a gospel music website I'm building to make it easier for people to discover and enjoy music that encourages faith and worship. The idea is simple: give gospel music a welcoming space where listeners can find songs and learn more about the artists behind them.
+Gospelzora is a gospel music platform in active development, built to help listeners discover songs, explore artists, and engage with worship music.
 
-This project is also part of my journey as a developer. I'm building it step by step, learning from the challenges that come with turning an idea into a working website.
+## Current progress
 
-## What I'm building
+The repository contains a substantial PHP application with public music pages, member features, and an administration dashboard. The project is beyond the initial planning stage; development is currently focused on improving structure and maintainability while continuing feature work.
 
-Gospelzora is being developed around a few main areas:
+### Implemented application areas
 
-- **Music discovery:** A place to browse gospel songs and explore artists.
-- **Search:** A straightforward way to find music and related content.
-- **Artist and music pages:** Clear information and artwork for the music featured on the site.
-- **Administration:** Tools for managing the content shown to visitors.
-- **Responsive design:** A layout that works well on phones and computers.
+- **Music discovery:** home, music catalogue, song details, search, charts, categories, artists, and playlists.
+- **Playback and music APIs:** player endpoints and APIs for songs, artists, search, playlists, and favorites.
+- **Member features:** registration and login flows, email verification/password recovery pages, profiles, favorites, playlists, and song requests.
+- **Administration:** dashboard and management pages for songs, artists, categories, users, admins, site pages, visits, downloads, logs, messages, and maintenance.
+- **Reusable UI:** shared public, member, and admin layouts plus reusable partials (cards, alerts, pagination, empty states, and related components).
+- **Informational pages:** About, Contact, Privacy, Terms, and Copyright.
+- **Database:** MySQL/MariaDB schema and an installation entry point are included.
+- **Frontend assets:** Bootstrap, custom styles and JavaScript, icons, fonts, and image assets.
 
-Some parts are still under development, so the available features may change as the project grows.
+### Ongoing work
 
-## Built with
+- Organizing the application into clearer feature-oriented directories and separating routing/page entry points from view implementations.
+- Migrating existing public pages and shared markup into the new structure incrementally; some views still delegate to legacy scripts/includes during the transition.
+- Standardizing database naming (including `playlist_items`) and keeping application code aligned with the schema.
+- Improving maintainability, consistency, and production readiness.
 
-- **PHP** for the website's server-side logic
-- **MySQL / MariaDB** for storing data, accessed with MySQLi
-- **Bootstrap 5** for the interface and responsive layout
-- **HTML, CSS and JavaScript** for the frontend
-- **nginx** for local development and URL rewriting
+> Feature presence in the repository does not necessarily mean every flow has been fully tested or is production-ready. Deployment status and end-to-end test coverage are not currently documented here.
 
-## Running it locally
+## Technology
 
-I'm developing Gospelzora in a Linux-based nginx environment. To work with the project locally, you'll need PHP, a MySQL-compatible database and nginx.
+- **PHP** — server-side application
+- **MySQL / MariaDB** — relational database, accessed with MySQLi
+- **Bootstrap 5**, HTML, CSS, and JavaScript — interface
+- **nginx** — web server / local development environment
+- **Composer** — dependency management and autoloading
+- **PHPMailer** — email delivery
+
+## Local setup
+
+Gospelzora is developed in a Linux + nginx environment.
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/HiswillKato/Gospelzora.git
    ```
-2. Place the project in your nginx document root, or point an nginx server block to it.
-3. Set up the database and update the local database settings in `app/config.php` to match your environment.
-4. Routing lives in `.htaccess`, which nginx does not read natively — run the [`.htaccess`-for-nginx](https://github.com/e404/htaccess-for-nginx) Lua module (this project uses it) if the short routes must work.
-5. Open the configured local address in your browser.
-
-Database setup may require additional steps depending on the current version of the project. Keep local credentials out of Git.
-
-## Why Gospelzora?
-
-Gospel music has a way of bringing people together, offering hope and reminding us of what matters. I wanted to build something that reflects that experience while giving me room to improve my web development skills.
-
-My goal is to keep Gospelzora useful, easy to navigate and focused on the music and message rather than unnecessary complexity.
+2. Configure nginx to serve the project and ensure the required URL rewriting rules are supported. The repository includes `.htaccess`; nginx does not process it natively, so configure equivalent nginx rules or the rewrite solution used by your environment.
+3. Create a MySQL/MariaDB database and import `database.sql` (review it first for your environment).
+4. Configure the database and application settings in `app/config.php`. Keep secrets and production credentials out of Git.
+5. Install/refresh Composer dependencies if needed:
+   ```bash
+   composer install
+   ```
+6. Visit the configured local site. Review `install.php` and the current configuration before using them; setup requirements can change as development progresses.
 
 ## Project status
 
-**In development.** I'm still improving the design, organizing the code and working on the core features. This README will be updated as the website becomes more complete.
+**Active development — not yet declared production-ready.**
+
+Core public, member, and administrative areas exist. Refactoring and migration work is ongoing, and deployment, security review, and comprehensive end-to-end testing still need to be verified.
 
 ## Developer
 
