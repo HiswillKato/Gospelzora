@@ -343,6 +343,25 @@ class Music {
         // "amazing-grace-hiswill") so it reads differently across artists.
         $slug = slug($title . ' ' . $artist['name'], 'songs', $id ?: 0);
 
+        // The audio file the song currently points at (before any UPDATE) —
+        // the only file that may safely be removed when it gets replaced.
+        // The POST `existing_audio` hint is never trusted for deletion.
+        $previousAudio = '';
+        $previousArtwork = '';
+        if ($id) {
+            $prev = $this->db->row(
+                $artistMode
+                    ? "SELECT audio, artwork FROM songs WHERE id = ? AND artist = ?"
+                    : "SELECT audio, artwork FROM songs WHERE id = ?",
+                $artistMode ? [$id, $artistId] : [$id]
+            );
+            if (!$prev) {
+                return ['success' => false, 'message' => "That song could not be found."];
+            }
+            $previousAudio = (string)($prev['audio'] ?? '');
+            $previousArtwork = (string)($prev['artwork'] ?? '');
+        }
+
         // Files THIS request writes. If the row below never lands they are
         // removed again, so a failed save cannot orphan them on disk.
         $stored = [];
@@ -390,47 +409,32 @@ class Music {
             return ['success' => false, 'message' => "Please provide an audio file for this song."];
         }
 
-        // The audio file the song currently points at (before any UPDATE) —
-        // the only file that may safely be removed when it gets replaced.
-        // The POST `existing_audio` hint is never trusted for deletion.
-        $previousAudio = '';
-        $previousArtwork = '';
-        if ($id) {
-            $prev = $this->db->row(
-                $artistMode
-                    ? "SELECT audio, artwork FROM songs WHERE id = ? AND artist = ?"
-                    : "SELECT audio, artwork FROM songs WHERE id = ?",
-                $artistMode ? [$id, $artistId] : [$id]
-            );
-            if (!$prev) {
-                foreach ($stored as $path) $this->unlink($path);
-                return ['success' => false, 'message' => "That song could not be found."];
-            }
-            $previousAudio = (string)($prev['audio'] ?? '');
-            $previousArtwork = (string)($prev['artwork'] ?? '');
-        }
-
-        if ($id) {
-            if ($artistMode) {
-                $this->db->execute(
-                    "UPDATE songs SET title = ?, slug = ?, description = ?, audio = ?, artwork = ?,
-                        duration = ?, category = ?, status = ?, updated = NOW() WHERE id = ? AND artist = ?",
-                    [$title, $slug, $description, $audioFile, $artwork, $duration, $categoryId, $status, $id, $artistId]
-                );
+        try {
+            if ($id) {
+                if ($artistMode) {
+                    $saved = $this->db->execute(
+                        "UPDATE songs SET title = ?, slug = ?, description = ?, audio = ?, artwork = ?,
+                            duration = ?, category = ?, status = ?, updated = NOW() WHERE id = ? AND artist = ?",
+                        [$title, $slug, $description, $audioFile, $artwork, $duration, $categoryId, $status, $id, $artistId]
+                    );
+                } else {
+                    $saved = $this->db->execute(
+                        "UPDATE songs SET artist = ?, title = ?, slug = ?, description = ?, audio = ?, artwork = ?,
+                            duration = ?, category = ?, status = ?, updated = NOW() WHERE id = ?",
+                        [$artistId, $title, $slug, $description, $audioFile, $artwork, $duration, $categoryId, $status, $id]
+                    );
+                }
+                $songId = $saved && !$this->db->errno() ? $id : 0;
             } else {
-                $this->db->execute(
-                    "UPDATE songs SET artist = ?, title = ?, slug = ?, description = ?, audio = ?, artwork = ?,
-                        duration = ?, category = ?, status = ?, updated = NOW() WHERE id = ?",
-                    [$artistId, $title, $slug, $description, $audioFile, $artwork, $duration, $categoryId, $status, $id]
+                $songId = $this->db->insert(
+                    "INSERT INTO songs (artist, category, title, slug, description, audio, artwork, duration, status)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    [$artistId, $categoryId, $title, $slug, $description, $audioFile, $artwork, $duration, $status]
                 );
             }
-            $songId = $id;
-        } else {
-            $songId = $this->db->insert(
-                "INSERT INTO songs (artist, category, title, slug, description, audio, artwork, duration, status)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                [$artistId, $categoryId, $title, $slug, $description, $audioFile, $artwork, $duration, $status]
-            );
+        } catch (\Throwable $e) {
+            foreach ($stored as $path) $this->unlink($path);
+            throw $e;
         }
 
         // A write that did not land is not a save: report it and take back the
