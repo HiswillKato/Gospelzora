@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../bootstrap.php';
 $slug = $_GET['slug'] ?? '';
 $cat = $music->category($slug);
-if (!$cat || ($cat['status'] ?? 'active') !== 'active') { require dirname(__DIR__, 3) . '/pages/404.php'; exit; }
+if (!$cat || ($cat['status'] ?? 'active') !== 'active') { require BASE_PATH . '/app/views/public/404.php'; exit; }
 $id = (int)$cat['id'];
 $page = max(1, (int)($_GET['page'] ?? 1));
 $result = $music->browse($id, $page);
