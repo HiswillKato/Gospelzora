@@ -6,7 +6,7 @@ $song = $music->song($slug);
 
 if (!$song) {
     header('HTTP/1.0 404 Not Found');
-    require dirname(__DIR__, 3) . '/pages/404.php';
+    require BASE_PATH . '/app/views/public/404.php';
     exit;
 }
 
