@@ -1135,7 +1135,7 @@ class Music {
                 return ['success' => false, 'message' => "The playlist could not be reordered. Please try again."];
             }
             return ['success' => true, 'message' => "Playlist reordered."];
-        } catch (\\Throwable $e) {
+        } catch (\Throwable $e) {
             $this->db->execute('ROLLBACK');
             throw $e;
         }
