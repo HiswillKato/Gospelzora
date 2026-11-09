@@ -1082,119 +1082,63 @@ class Music {
         if (!in_array($direction, ['up', 'down'], true)) {
             return ['success' => false, 'message' => "Invalid move direction."];
         }
-        $row = $this->db->row(
-            "SELECT id, position FROM playlist_items WHERE playlist = ? AND song = ?",
-            [$playlistId, $songId]
-        );
-        if (!$row) {
-            return ['success' => false, 'message' => "That song is not in this playlist."];
+        if (!$this->db->execute('START TRANSACTION')) {
+            return ['success' => false, 'message' => "The playlist could not be reordered. Please try again."];
         }
 
-        $comparison = $direction === 'up' ? '<' : '>';
-        $order = $direction === 'up' ? 'DESC' : 'ASC';
-        // The neighbour is the nearest item on the requested side; ties break on id
-        // so two items that somehow share a position still swap deterministically.
-        $neighbour = $this->db->row(
-            "SELECT id, position FROM playlist_items
-             WHERE playlist = ? AND (position $comparison ? OR (position = ? AND id $comparison ?))
-             ORDER BY position $order, id $order LIMIT 1",
-            [$playlistId, (int)$row['position'], (int)$row['position'], (int)$row['id']]
-        );
-        if (!$neighbour) {
-            return ['success' => false, 'message' => "That song is already at the " . ($direction === 'up' ? 'top' : 'bottom') . " of the playlist."];
-        }
-
-        // A genuine swap, in three statements. Both rows are written to the OTHER
-        // row's value, so the pair never has to share a position at any point in
-        // between — which matters because (playlist, position) is indexed. Park the
-        // moved row on a sentinel far outside the contiguous 1..n range that
-        // attach() hands out, so a neighbour that happens to sit on the same
-        // position cannot collide with it either.
-        $movedId = (int)$row['id'];
-        $neighbourId = (int)$neighbour['id'];
-        $movedPosition = (int)$row['position'];
-        $neighbourPosition = (int)$neighbour['position'];
-        $parked = 1000000;
-
-        $this->db->execute("UPDATE playlist_items SET position = ? WHERE id = ?", [$parked, $movedId]);
-        $this->db->execute("UPDATE playlist_items SET position = ? WHERE id = ?", [$movedPosition, $neighbourId]);
-        $this->db->execute("UPDATE playlist_items SET position = ? WHERE id = ?", [$neighbourPosition, $movedId]);
-
-        return ['success' => true, 'message' => "Playlist reordered."];
-    }
-
-    /** Delete a whole playlist, but only for its owner. */
-    public function erase(int $playlistId, int $userId, ?string $type = null): array {
-        $type = $type ?? $this->user->role();
-        $deleted = $this->db->affected(
-            "DELETE FROM playlists WHERE id = ? AND user = ? AND type = ?",
-            [$playlistId, $userId, $type]
-        );
-        if ($deleted > 0) {
-            return ['success' => true, 'message' => "Playlist deleted."];
-        }
-        return ['success' => false, 'message' => "That playlist could not be found."];
-    }
-
-    /**
-     * Whether a song is already in a playlist (used to show the correct button state).
-     */
-    public function holds(int $playlistId, int $songId): bool {
-        return (bool)$this->db->scalar(
-            "SELECT COUNT(*) FROM playlist_items WHERE playlist = ? AND song = ?",
-            [$playlistId, $songId]
-        );
-    }
-
-    /* ---------------------------------------------------------- */
-    /* Categories                                                 */
-    /* ---------------------------------------------------------- */
-
-    /**
-     * Categories, both directions in one method:
-     *   categories()            every active category (dropdowns, filters)
-     *   categories($songId)     the categories one song belongs to
-     */
-    public function categories(?int $songId = null): array {
-        if ($songId !== null) {
-            return $this->db->select(
-                "SELECT c.* FROM categories c INNER JOIN songs s ON s.category = c.id WHERE s.id = ?",
-                [$songId]
+        try {
+            if (!$this->db->row("SELECT id FROM playlists WHERE id = ? FOR UPDATE", [$playlistId])) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "That playlist could not be found."];
+            }
+            $row = $this->db->row(
+                "SELECT id, position FROM playlist_items WHERE playlist = ? AND song = ?",
+                [$playlistId, $songId]
             );
+            if (!$row) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "That song is not in this playlist."];
+            }
+
+            $comparison = $direction === 'up' ? '<' : '>';
+            $order = $direction === 'up' ? 'DESC' : 'ASC';
+            $neighbour = $this->db->row(
+                "SELECT id, position FROM playlist_items
+                 WHERE playlist = ? AND (position $comparison ? OR (position = ? AND id $comparison ?))
+                 ORDER BY position $order, id $order LIMIT 1",
+                [$playlistId, (int)$row['position'], (int)$row['position'], (int)$row['id']]
+            );
+            if (!$neighbour) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "That song is already at the " . ($direction === 'up' ? 'top' : 'bottom') . " of the playlist."];
+            }
+
+            $movedId = (int)$row['id'];
+            $neighbourId = (int)$neighbour['id'];
+            $movedPosition = (int)$row['position'];
+            $neighbourPosition = (int)$neighbour['position'];
+            $parked = 1000000;
+
+            $steps = [
+                ["UPDATE playlist_items SET position = ? WHERE id = ?", [$parked, $movedId]],
+                ["UPDATE playlist_items SET position = ? WHERE id = ?", [$movedPosition, $neighbourId]],
+                ["UPDATE playlist_items SET position = ? WHERE id = ?", [$neighbourPosition, $movedId]],
+            ];
+            foreach ($steps as [$sql, $params]) {
+                if (!$this->db->execute($sql, $params) || $this->db->errno()) {
+                    $this->db->execute('ROLLBACK');
+                    return ['success' => false, 'message' => "The playlist could not be reordered. Please try again."];
+                }
+            }
+            if (!$this->db->execute('COMMIT')) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "The playlist could not be reordered. Please try again."];
+            }
+            return ['success' => true, 'message' => "Playlist reordered."];
+        } catch (\\Throwable $e) {
+            $this->db->execute('ROLLBACK');
+            throw $e;
         }
-        return $this->db->select("SELECT c.* FROM categories c WHERE c.status = 'active' ORDER BY c.name");
-    }
-
-    public function category(mixed $value): ?array {
-        ['column' => $column, 'param' => $param] = resolve($value);
-        return $this->db->row("SELECT * FROM categories WHERE $column = ? LIMIT 1", [$param]);
-    }
-
-    public function all(bool $publishedOnly = true, bool $includeInactive = false): array {
-        $statusFilter = $publishedOnly ? " AND s.status = 'published'" : '';
-        $activeFilter = $includeInactive ? '' : " AND c.status = 'active'";
-        return $this->db->select(
-            "SELECT c.*, (SELECT COUNT(*) FROM songs s WHERE s.category = c.id$statusFilter) as song_count
-             FROM categories c WHERE 1$activeFilter
-             ORDER BY c.status = 'inactive', c.name"
-        );
-    }
-
-    /** Paginated songs inside a category. */
-    public function browse(int $categoryId, int $page = 1, int $perPage = ITEMS_PER_PAGE): array {
-        $page = max(1, $page);
-        $total = (int)$this->db->scalar(
-            "SELECT COUNT(*) FROM songs s WHERE s.category = ? AND s.status = 'published'",
-            [$categoryId]
-        );
-        $pagination = paginate($total, $page, $perPage);
-        $songs = $this->db->select(
-            self::SONG_SELECT . ' ' . self::SONG_JOIN .
-            " WHERE s.category = ? AND s.status = 'published'
-             ORDER BY s.plays DESC LIMIT {$pagination['per_page']} OFFSET {$pagination['offset']}",
-            [$categoryId]
-        );
-        return ['songs' => $songs, 'total' => $total, 'pagination' => $pagination];
     }
 
 }
