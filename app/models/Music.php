@@ -955,6 +955,8 @@ class Music {
         if (!in_array($privacy, ['public', 'private'], true)) {
             $privacy = 'private';
         }
+        $description = $description !== null ? trim($description) : null;
+        $description = $description === '' ? null : $description;
 
         if ($id !== null && $id > 0) {
             $existing = $this->db->row(
@@ -965,66 +967,112 @@ class Music {
                 return ['success' => false, 'message' => "That playlist could not be found."];
             }
             $newSlug = slug($name, 'playlists', $id);
-            $this->db->execute(
-                "UPDATE playlists SET name = ?, slug = ?, description = ?, privacy = ? WHERE id = ?",
-                [$name, $newSlug, $description !== '' ? $description : null, $privacy, $id]
+            $ok = $this->db->execute(
+                "UPDATE playlists SET name = ?, slug = ?, description = ?, privacy = ? WHERE id = ? AND user = ? AND type = ?",
+                [$name, $newSlug, $description, $privacy, $id, $userId, $type]
             );
+            if (!$ok || $this->db->errno()) {
+                return ['success' => false, 'message' => "The playlist could not be updated. Please try again."];
+            }
             return ['success' => true, 'message' => "Playlist updated.", 'id' => $id, 'slug' => $newSlug];
         }
 
         $newSlug = slug($name, 'playlists', 0);
         $newId = $this->db->insert(
             "INSERT INTO playlists (user, type, name, slug, description, privacy) VALUES (?, ?, ?, ?, ?, ?)",
-            [$userId, $type, $name, $newSlug, $description !== '' ? $description : null, $privacy]
+            [$userId, $type, $name, $newSlug, $description, $privacy]
         );
+        if ($newId <= 0 || $this->db->errno()) {
+            return ['success' => false, 'message' => "The playlist could not be created. Please try again."];
+        }
         return ['success' => true, 'message' => "Playlist created.", 'id' => $newId, 'slug' => $newSlug];
     }
 
+
     /** Append a song to a playlist, ignoring duplicates. Maintains the songs counter. */
     public function attach(int $playlistId, int $songId): array {
-        if (!$this->db->row("SELECT id FROM playlists WHERE id = ?", [$playlistId])) {
-            return ['success' => false, 'message' => "That playlist could not be found."];
+        if (!$this->db->execute('START TRANSACTION')) {
+            return ['success' => false, 'message' => "The playlist could not be updated. Please try again."];
         }
-        if (!$this->song($songId)) {
-            return ['success' => false, 'message' => "That song could not be found."];
+
+        try {
+            // Serialize appends to the same playlist so position and count stay consistent.
+            $playlist = $this->db->row("SELECT id FROM playlists WHERE id = ? FOR UPDATE", [$playlistId]);
+            if (!$playlist) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "That playlist could not be found."];
+            }
+            if (!$this->song($songId)) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "That song could not be found."];
+            }
+            if ($this->db->row("SELECT id FROM playlist_items WHERE playlist = ? AND song = ? LIMIT 1", [$playlistId, $songId])) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "That song is already in this playlist."];
+            }
+
+            $maxPos = (int)$this->db->scalar(
+                "SELECT COALESCE(MAX(position), 0) FROM playlist_items WHERE playlist = ?",
+                [$playlistId]
+            );
+            $itemId = $this->db->insert(
+                "INSERT INTO playlist_items (playlist, song, position) VALUES (?, ?, ?)",
+                [$playlistId, $songId, $maxPos + 1]
+            );
+            if ($itemId <= 0 || $this->db->errno()) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "The song could not be added. Please try again."];
+            }
+
+            $updated = $this->db->execute(
+                "UPDATE playlists SET songs = (SELECT COUNT(*) FROM playlist_items WHERE playlist = ?) WHERE id = ?",
+                [$playlistId, $playlistId]
+            );
+            if (!$updated || $this->db->errno() || !$this->db->execute('COMMIT')) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "The playlist could not be updated. Please try again."];
+            }
+            return ['success' => true, 'message' => "Song added to playlist."];
+        } catch (\Throwable $e) {
+            $this->db->execute('ROLLBACK');
+            throw $e;
         }
-        $exists = (bool)$this->db->scalar(
-            "SELECT COUNT(*) FROM playlist_items WHERE playlist = ? AND song = ?",
-            [$playlistId, $songId]
-        );
-        if ($exists) {
-            return ['success' => false, 'message' => "That song is already in this playlist."];
-        }
-        $maxPos = (int)$this->db->scalar(
-            "SELECT COALESCE(MAX(position), 0) FROM playlist_items WHERE playlist = ?",
-            [$playlistId]
-        );
-        $this->db->insert(
-            "INSERT INTO playlist_items (playlist, song, position) VALUES (?, ?, ?)",
-            [$playlistId, $songId, $maxPos + 1]
-        );
-        $this->db->execute(
-            "UPDATE playlists SET songs = songs + 1 WHERE id = ?",
-            [$playlistId]
-        );
-        return ['success' => true, 'message' => "Song added to playlist."];
     }
+
 
     /** Remove a song from a playlist. Decrements the songs counter. */
     public function detach(int $playlistId, int $songId): array {
-        $deleted = $this->db->affected(
-            "DELETE FROM playlist_items WHERE playlist = ? AND song = ?",
-            [$playlistId, $songId]
-        );
-        if ($deleted > 0) {
-            $this->db->execute(
-                "UPDATE playlists SET songs = GREATEST(songs - 1, 0) WHERE id = ?",
-                [$playlistId]
-            );
-            return ['success' => true, 'message' => "Song removed from playlist."];
+        if (!$this->db->execute('START TRANSACTION')) {
+            return ['success' => false, 'message' => "The playlist could not be updated. Please try again."];
         }
-        return ['success' => false, 'message' => "That song is not in this playlist."];
+        try {
+            if (!$this->db->row("SELECT id FROM playlists WHERE id = ? FOR UPDATE", [$playlistId])) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "That playlist could not be found."];
+            }
+            $deleted = $this->db->affected(
+                "DELETE FROM playlist_items WHERE playlist = ? AND song = ?",
+                [$playlistId, $songId]
+            );
+            if ($deleted <= 0) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "That song is not in this playlist."];
+            }
+            $updated = $this->db->execute(
+                "UPDATE playlists SET songs = (SELECT COUNT(*) FROM playlist_items WHERE playlist = ?) WHERE id = ?",
+                [$playlistId, $playlistId]
+            );
+            if (!$updated || $this->db->errno() || !$this->db->execute('COMMIT')) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "The playlist could not be updated. Please try again."];
+            }
+            return ['success' => true, 'message' => "Song removed from playlist."];
+        } catch (\Throwable $e) {
+            $this->db->execute('ROLLBACK');
+            throw $e;
+        }
     }
+
 
     /**
      * Move a song up or down within a playlist. Only the relative direction is taken,
