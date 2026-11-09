@@ -191,8 +191,7 @@ if (PHP_SAPI !== 'cli') {
             json(['success' => false, 'message' => "Sorry, this website is undergoing maintenance. We apologize for the inconvenience. Please try again later."], 503);
         }
 
-        $script = basename((string)($_SERVER['SCRIPT_FILENAME'] ?? ''));
-        $scriptPath = strtr((string)($_SERVER['SCRIPT_FILENAME'] ?? ''), '\\', '/');
+        $isLoginRoute = in_array($requestPath, ['/login', '/dashboard/admin/login'], true);
         // The login form stays reachable so an admin who signed out (or a
         // fresh one) can still authenticate; non-admins are rejected in
         // login(). Everything else — public browsing, dashboard,
