@@ -33,27 +33,38 @@
  */
 function ip(): string
 {
-    $candidates = [];
+    $remote = trim((string)($_SERVER['REMOTE_ADDR'] ?? ''));
+    $trustedProxies = array_values(array_filter(
+        array_map('trim', (array)(defined('TRUSTED_PROXY_IPS') ? TRUSTED_PROXY_IPS : [])),
+        static fn(string $address): bool => filter_var($address, FILTER_VALIDATE_IP) !== false
+    ));
 
-    if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-        $candidates[] = trim((string)$_SERVER['HTTP_CF_CONNECTING_IP']);
+    // Forwarded headers are attacker-controlled unless the direct peer is a
+    // proxy explicitly trusted by this deployment.
+    if (!filter_var($remote, FILTER_VALIDATE_IP) || !in_array($remote, $trustedProxies, true)) {
+        return filter_var($remote, FILTER_VALIDATE_IP) ? $remote : '0.0.0.0';
     }
-    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        // "client, proxy1, proxy2" — the client is first.
-        $first = trim(explode(',', (string)$_SERVER['HTTP_X_FORWARDED_FOR'])[0]);
-        $candidates[] = $first;
-    }
-    $candidates[] = (string)($_SERVER['REMOTE_ADDR'] ?? '');
 
-    foreach ($candidates as $candidate) {
-        if (filter_var($candidate, FILTER_VALIDATE_IP)) {
+    $cloudflare = trim((string)($_SERVER['HTTP_CF_CONNECTING_IP'] ?? ''));
+    if ($cloudflare !== '' && filter_var($cloudflare, FILTER_VALIDATE_IP)) {
+        return $cloudflare;
+    }
+
+    // Walk X-Forwarded-For from the nearest proxy toward the client. Skip
+    // configured proxies; the first non-proxy address is the client address.
+    $forwarded = array_map('trim', explode(',', (string)($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '')));
+    for ($i = count($forwarded) - 1; $i >= 0; $i--) {
+        $candidate = $forwarded[$i];
+        if (!filter_var($candidate, FILTER_VALIDATE_IP)) {
+            continue;
+        }
+        if (!in_array($candidate, $trustedProxies, true)) {
             return $candidate;
         }
     }
 
-    return '0.0.0.0';
+    return $remote;
 }
-
 /**
  * The request's User-Agent, trimmed to what a log column can hold.
  *
