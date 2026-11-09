@@ -3,8 +3,8 @@ RewriteEngine On
 # RewriteBase is the one genuinely path-dependent line in this file. Serve the
 # project from the DOCUMENT ROOT (not a subdirectory) and this is correct as-is.
 # A subdirectory install needs this changed to the subdirectory, e.g.
-# `RewriteBase /gospelzora/`; deploy/check.php fails the deployment if the
-# detected base does not match, because every pretty URL would 404 otherwise.
+# `RewriteBase /gospelzora/`; deployment configuration must use the same base, because every pretty URL
+# would otherwise 404.
 #
 # Do not try to make it dynamic. Making the `admin/` 301 below use a relative
 # target instead (so it would not need a base) does not work: Apache resolves a
@@ -27,9 +27,9 @@ RewriteBase /
 # install.php at the root is deliberately NOT denied - it is
 # the setup wizard's entry point, and it refuses to run while install.lock exists.
 RewriteRule ^(?:app|vendor|deploy|bootstrap|config|tests|routes|\.git|\.vscode)(?:/|$) - [F,L]
-# Shared page partials. Unlike pages/ these are never a rewrite *target* - they
-# are only `require`d, which bypasses mod_rewrite entirely - so denying them
-# cannot break a route. Keeps add-user.php & friends from being runnable alone.
+# Defensive deny for any remaining or future legacy includes directory. The
+# canonical partials now live under app/views/ and are already denied by the
+# application-source rule above.
 RewriteRule .*/includes/ - [F,L]
 RewriteRule ^\.gitignore$ - [F,L]
 RewriteRule ^(?:database\.sql|\.env|composer\.(?:json|lock))$ - [F,L]
