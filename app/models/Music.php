@@ -582,14 +582,14 @@ class Music {
         if (empty($file['name'])) {
             return ['success' => false, 'message' => "Please choose an audio file to upload."];
         }
-        if ($file['error'] !== UPLOAD_ERR_OK) {
+        if ((int)($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
             return ['success' => false, 'message' => "The upload failed. Please try again."];
         }
 
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         // Requested-song slugs already include the artist name; the approved
         // slug is inherited, so it is the audio filename.
-        $audioName = substr($song['slug'], 0, 120) . '.' . $ext;
+        $audioName = substr($song['slug'], 0, 100) . '-' . bin2hex(random_bytes(6)) . '.' . $ext;
 
         $upload = store($file, AUDIO_PATH . '/', 'audio', 'audio', $audioName);
         if ($upload['error'] !== null) {
@@ -597,10 +597,14 @@ class Music {
         }
         $audioFile = 'audio/' . $upload['path'];
 
-        $this->db->execute(
+        $updated = $this->db->affected(
             "UPDATE songs SET audio = ?, status = 'published', updated = NOW() WHERE id = ? AND artist = ? AND status = 'approved'",
             [$audioFile, $songId, $artistId]
         );
+        if ($updated !== 1 || $this->db->errno()) {
+            $this->unlink($audioFile);
+            return ['success' => false, 'message' => "The song could not be published. Please try again."];
+        }
         $this->analytics->log('song.request.upload', sprintf("Artist uploaded audio for requested song #%s \"%s\"", $songId, $song['title']));
         return ['success' => true, 'message' => "Audio uploaded and the song is now published.", 'id' => $songId];
     }
@@ -611,8 +615,8 @@ class Music {
     public function delete(string $type, int $id, ?int $ownerArtistId = null): void {
         if ($type === 'category') {
             $cat = $this->db->row("SELECT name FROM categories WHERE id = ?", [$id]);
-            $this->db->execute("DELETE FROM categories WHERE id = ?", [$id]);
-            if ($cat) {
+            $deleted = $this->db->affected("DELETE FROM categories WHERE id = ?", [$id]);
+            if ($deleted > 0 && $cat) {
                 $this->analytics->log('category.delete', sprintf("Category deleted: %s", $cat['name']));
             }
             return;
@@ -621,16 +625,16 @@ class Music {
 
         $where = $ownerArtistId !== null ? 'id = ? AND artist = ?' : 'id = ?';
         $params = $ownerArtistId !== null ? [$id, $ownerArtistId] : [$id];
-        $song = $this->db->row("SELECT title, audio FROM songs WHERE $where", $params);
+        $song = $this->db->row("SELECT title, audio, artwork FROM songs WHERE $where", $params);
+        if (!$song) return;
 
-        $this->db->execute("DELETE FROM songs WHERE $where", $params);
+        $deleted = $this->db->affected("DELETE FROM songs WHERE $where", $params);
+        if ($deleted <= 0 || $this->db->errno()) return;
 
-        // Remove the physical file alongside the database row.
-        if ($song && !empty($song['audio'])) {
-            $this->unlink($song['audio']);
-        }
-
-        $this->analytics->log('song.delete', sprintf("Song #%s \"%s\"", $id, $song ? $song['title'] : ''));
+        // Remove files only after the database row is confirmed deleted.
+        if (!empty($song['audio'])) $this->unlink((string)$song['audio']);
+        if (!empty($song['artwork'])) $this->unlink((string)$song['artwork']);
+        $this->analytics->log('song.delete', sprintf("Song #%s \"%s\"", $id, $song['title']));
     }
 
     /**
