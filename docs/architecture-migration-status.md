@@ -32,3 +32,8 @@ These areas contain intertwined authorization, CSRF, session, upload, SQL and te
 - Keep existing rewrite rules and URL contracts until route parity is verified.
 - Configure production secrets outside Git, use a least-privilege database account, and verify Nginx access restrictions before deployment.
 - Run full CI and a staging smoke test with a copy of the production schema before merging.
+
+
+## Playlist table naming
+
+The playlist-song junction table is named `playlist_items` in the schema and model queries. Existing installations need a separate, data-preserving rename migration; the installer schema alone does not rename a live table.

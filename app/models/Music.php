@@ -915,7 +915,7 @@ class Music {
     /** Songs in a playlist, as an ordered list of song rows for the player. */
     public function tracks(int $playlistId): array {
         return $this->db->select(
-            "SELECT s.*, u.name as artist_name FROM playlistitems pi " .
+            "SELECT s.*, u.name as artist_name FROM playlist_items pi " .
             "INNER JOIN songs s ON s.id = pi.song " .
             self::ARTIST_JOIN .
             " WHERE pi.playlist = ? AND s.status = 'published' ORDER BY pi.position, pi.id",
@@ -973,18 +973,18 @@ class Music {
             return ['success' => false, 'message' => "That song could not be found."];
         }
         $exists = (bool)$this->db->scalar(
-            "SELECT COUNT(*) FROM playlistitems WHERE playlist = ? AND song = ?",
+            "SELECT COUNT(*) FROM playlist_items WHERE playlist = ? AND song = ?",
             [$playlistId, $songId]
         );
         if ($exists) {
             return ['success' => false, 'message' => "That song is already in this playlist."];
         }
         $maxPos = (int)$this->db->scalar(
-            "SELECT COALESCE(MAX(position), 0) FROM playlistitems WHERE playlist = ?",
+            "SELECT COALESCE(MAX(position), 0) FROM playlist_items WHERE playlist = ?",
             [$playlistId]
         );
         $this->db->insert(
-            "INSERT INTO playlistitems (playlist, song, position) VALUES (?, ?, ?)",
+            "INSERT INTO playlist_items (playlist, song, position) VALUES (?, ?, ?)",
             [$playlistId, $songId, $maxPos + 1]
         );
         $this->db->execute(
@@ -997,7 +997,7 @@ class Music {
     /** Remove a song from a playlist. Decrements the songs counter. */
     public function detach(int $playlistId, int $songId): array {
         $deleted = $this->db->affected(
-            "DELETE FROM playlistitems WHERE playlist = ? AND song = ?",
+            "DELETE FROM playlist_items WHERE playlist = ? AND song = ?",
             [$playlistId, $songId]
         );
         if ($deleted > 0) {
@@ -1019,7 +1019,7 @@ class Music {
             return ['success' => false, 'message' => "Invalid move direction."];
         }
         $row = $this->db->row(
-            "SELECT id, position FROM playlistitems WHERE playlist = ? AND song = ?",
+            "SELECT id, position FROM playlist_items WHERE playlist = ? AND song = ?",
             [$playlistId, $songId]
         );
         if (!$row) {
@@ -1031,7 +1031,7 @@ class Music {
         // The neighbour is the nearest item on the requested side; ties break on id
         // so two items that somehow share a position still swap deterministically.
         $neighbour = $this->db->row(
-            "SELECT id, position FROM playlistitems
+            "SELECT id, position FROM playlist_items
              WHERE playlist = ? AND (position $comparison ? OR (position = ? AND id $comparison ?))
              ORDER BY position $order, id $order LIMIT 1",
             [$playlistId, (int)$row['position'], (int)$row['position'], (int)$row['id']]
@@ -1052,9 +1052,9 @@ class Music {
         $neighbourPosition = (int)$neighbour['position'];
         $parked = 1000000;
 
-        $this->db->execute("UPDATE playlistitems SET position = ? WHERE id = ?", [$parked, $movedId]);
-        $this->db->execute("UPDATE playlistitems SET position = ? WHERE id = ?", [$movedPosition, $neighbourId]);
-        $this->db->execute("UPDATE playlistitems SET position = ? WHERE id = ?", [$neighbourPosition, $movedId]);
+        $this->db->execute("UPDATE playlist_items SET position = ? WHERE id = ?", [$parked, $movedId]);
+        $this->db->execute("UPDATE playlist_items SET position = ? WHERE id = ?", [$movedPosition, $neighbourId]);
+        $this->db->execute("UPDATE playlist_items SET position = ? WHERE id = ?", [$neighbourPosition, $movedId]);
 
         return ['success' => true, 'message' => "Playlist reordered."];
     }
@@ -1077,7 +1077,7 @@ class Music {
      */
     public function holds(int $playlistId, int $songId): bool {
         return (bool)$this->db->scalar(
-            "SELECT COUNT(*) FROM playlistitems WHERE playlist = ? AND song = ?",
+            "SELECT COUNT(*) FROM playlist_items WHERE playlist = ? AND song = ?",
             [$playlistId, $songId]
         );
     }
