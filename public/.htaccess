@@ -1,0 +1,18 @@
+Options -Indexes
+DirectoryIndex index.php
+RewriteEngine On
+RewriteBase /
+
+# Dotfiles and deployment/configuration artifacts are never public.
+RewriteRule (^|/)\\. - [F,L]
+RewriteRule \\.(?:env|ini|log|sql|lock|bak|swp|dist)$ - [F,NC,L]
+
+# Uploaded files are data, never executable PHP or scripts.
+RewriteRule ^(?:assets|uploads)/(?:.*/)?[^/]+\\.(?:php[0-9]?|phtml|phar|cgi|pl|py|sh)$ - [F,NC,L]
+
+# Let real public files (styles, scripts, images, audio, fonts, robots, favicon)
+# pass through. All application routes go to the single front controller.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteRule ^ index.php [L,QSA]
