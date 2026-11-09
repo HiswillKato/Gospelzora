@@ -58,7 +58,7 @@ if (isset($_GET['id'])) {
 }
 $categories = $music->categories();
 
-require __DIR__ . '/../shared/header.php';
+require __DIR__ . '/../shared/member/header.php';
 
 $songs_active_tab = 'add-song';
 ?>
@@ -108,4 +108,4 @@ $songs_active_tab = 'add-song';
 </div>
 </div></form>
 </div></div>
-<?php require __DIR__ . '/../shared/footer.php'; 
+<?php require __DIR__ . '/../shared/member/footer.php'; 
