@@ -122,13 +122,9 @@ $router->get('/admin/{section}', static function (string $section) use ($respons
 });
 
 $api = new \\App\\controllers\\Api();
-foreach ([
-    'icons' => [$api, 'icons'],
-    'player' => [$api, 'player'],
-    'search' => [$api, 'search'],
-    'artists' => [$api, 'artists'],
-    'favorite' => [$api, 'favorite'],
-    'playlist' => [$api, 'playlist'],
-] as $endpoint => $handler) {
-    $methods('/api/' . $endpoint, $handler);
-}
+$router->get('/api/icons', [$api, 'icons']);
+$router->post('/api/player', [$api, 'player']);
+$router->get('/api/search', [$api, 'search']);
+$router->get('/api/artists', [$api, 'artists']);
+$router->post('/api/favorite', [$api, 'favorite']);
+$router->post('/api/playlist', [$api, 'playlist']);
