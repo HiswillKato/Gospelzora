@@ -36,3 +36,6 @@ jobs:
 
       - name: Check canonical view layout
         run: php tests/views.php
+
+      - name: Check installer schema
+        run: php tests/schema.php
