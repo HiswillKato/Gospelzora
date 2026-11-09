@@ -20,16 +20,12 @@
 /* ---------------------------------------------------------- */
 
 /**
- * The real client IP address.
+ * Resolve the client IP only from trusted network metadata.
  *
- * Order matters and is the whole point of this helper: Cloudflare's
- * CF-Connecting-IP, then the FIRST entry of X-Forwarded-For (the original
- * client, before each proxy appended itself), then REMOTE_ADDR.
- *
- * Every candidate is validated as an actual IP address before being believed,
- * because all three headers are client-controllable unless a proxy overwrites
- * them — this returns something safe to store in the login and visit logs, not
- * something an attacker can type.
+ * REMOTE_ADDR is always the baseline. Forwarded headers are considered only
+ * when that direct peer is explicitly listed in TRUSTED_PROXY_IPS. Cloudflare's
+ * CF-Connecting-IP is preferred for a trusted Cloudflare peer; otherwise the
+ * X-Forwarded-For chain is walked from the nearest proxy toward the client.
  */
 function ip(): string
 {
