@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS `logins`;
 DROP TABLE IF EXISTS `logs`;
 DROP TABLE IF EXISTS `tokens`;
 DROP TABLE IF EXISTS `favorites`;
-DROP TABLE IF EXISTS `playlistitems`;
+DROP TABLE IF EXISTS `playlist_items`;
 DROP TABLE IF EXISTS `playlists`;
 DROP TABLE IF EXISTS `songs`;
 DROP TABLE IF EXISTS `categories`;
@@ -130,11 +130,11 @@ CREATE TABLE `songs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- playlists / playlistitems
+-- playlists / playlist_items
 --
 -- `type` is the list kind, and `privacy` decides whether the public pages show
 -- it. `songs` on the playlist is a denormalised counter kept in step by
--- Music::addSong()/removeSong() — the counts come from playlistitems directly.
+-- Music::addSong()/removeSong() — the counts come from playlist_items directly.
 -- ---------------------------------------------------------------------------
 CREATE TABLE `playlists` (
   `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -152,14 +152,14 @@ CREATE TABLE `playlists` (
   KEY `idx_playlists_created` (`created`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `playlistitems` (
+CREATE TABLE `playlist_items` (
   `id`       INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `playlist` INT UNSIGNED NOT NULL,
   `song`     INT UNSIGNED NOT NULL,
   `position` INT          NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_playlistitems_song` (`playlist`, `song`),
-  KEY `idx_playlistitems_position` (`playlist`, `position`)
+  UNIQUE KEY `uq_playlist_items_song` (`playlist`, `song`),
+  KEY `idx_playlist_items_position` (`playlist`, `position`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------

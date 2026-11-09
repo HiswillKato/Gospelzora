@@ -1,3 +1,3 @@
 <?php
-require_once __DIR__ . '/../../app/bootstrap.php';
-redirect('dashboard');
+// Compatibility entry point.
+require dirname(__DIR__, 2) . '/app/views/admin/index.php';

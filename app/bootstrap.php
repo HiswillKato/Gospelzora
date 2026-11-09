@@ -17,7 +17,7 @@
 /* ---------------------------------------------------------- */
 /* Constants, the secure session start and the security headers. */
 
-require_once __DIR__ . '/config.php';
+require_once dirname(__DIR__) . '/bootstrap/app.php';
 
 /* Marks the app as live. Every shared markup partial in app/includes/partials/ and both
  * standalone error pages in app/includes/ guard on this constant and 404 without it, so they
@@ -51,12 +51,20 @@ require_once __DIR__ . '/functions.php';
      Pages     per-page SEO metadata. */
 
 require_once __DIR__ . '/db.class.php';
-require_once __DIR__ . '/settings.class.php';
-require_once __DIR__ . '/user.class.php';
-require_once __DIR__ . '/music.class.php';
-require_once __DIR__ . '/analytics.class.php';
-require_once __DIR__ . '/mail.class.php';
-require_once __DIR__ . '/pages.class.php';
+require_once __DIR__ . '/models/Settings.php';
+class_alias(\App\Models\Settings::class, 'Settings');
+require_once __DIR__ . '/models/User.php';
+class_alias(\App\Models\User::class, 'User');
+require_once __DIR__ . '/models/Music.php';
+class_alias(\App\Models\Music::class, 'Music');
+require_once __DIR__ . '/models/Analytics.php';
+class_alias(\App\Models\Analytics::class, 'Analytics');
+require_once __DIR__ . '/services/Mailer.php';
+class_alias(\App\Services\Mailer::class, 'Mail');
+require_once __DIR__ . '/models/Pages.php';
+
+/* Transitional global alias: legacy templates can keep using Pages until migrated. */
+class_alias(\App\Models\Pages::class, 'Pages');
 
 /* ---------------------------------------------------------- */
 /* Shared instances                                            */
@@ -73,7 +81,9 @@ require_once __DIR__ . '/pages.class.php';
    the first query, so a database outage still reaches the maintenance gate's own
    try/catch rather than failing while wiring. */
 
-$db        = new DB();
+$request   = new \App\core\Request();
+$response  = new \App\core\Response();
+$db        = new DB(new \App\core\Database($config['database']));
 $analytics = new Analytics($db);
 $mail      = new Mail($analytics);
 $settings  = new Settings($db);
@@ -206,24 +216,5 @@ if (PHP_SAPI !== 'cli') {
    database / refused) as either a mysqli_sql_exception or a RuntimeException;
    both must resolve to the friendly card, so match on type rather than the
    message text. Per-call try/catch guards already absorb most DB touches. */
-set_exception_handler(function (Throwable $e): void {
-    error_log('Uncaught exception: ' . $e);
-    if ($e instanceof mysqli_sql_exception
-        || $e instanceof RuntimeException && str_contains($e->getMessage(), 'technical difficulties')) {
-        if (str_contains((string)($_SERVER['SCRIPT_FILENAME'] ?? ''), '/api/')) {
-            if (!headers_sent()) {
-                http_response_code(503);
-            }
-            json(['success' => false, 'message' => "Technical difficulties"], 503);
-        }
-        if (!headers_sent()) {
-            http_response_code(503);
-        }
-        require __DIR__ . '/includes/db-error.php';
-        exit;
-    }
-    if (!headers_sent()) {
-        http_response_code(500);
-    }
-    exit;
-});
+$exceptionHandler = new \App\core\ExceptionHandler();
+set_exception_handler([$exceptionHandler, 'handle']);
