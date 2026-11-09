@@ -24,7 +24,7 @@ $methods = static function (string $path, callable $handler) use ($router): void
 };
 
 $methods('/', static function (): void {
-    (new \\App\\controllers\\Home())->index();
+    (new \App\controllers\Home())->index();
 });
 
 $publicViews = [
@@ -121,7 +121,7 @@ $router->get('/admin/{section}', static function (string $section) use ($respons
     $response->redirect(url('dashboard/admin/' . $section), 301);
 });
 
-$api = new \\App\\controllers\\Api();
+$api = new \App\controllers\Api();
 $router->get('/api/icons', [$api, 'icons']);
 $router->post('/api/player', [$api, 'player']);
 $router->get('/api/search', [$api, 'search']);
