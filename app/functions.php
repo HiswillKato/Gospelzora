@@ -550,6 +550,28 @@ function store(array $file, string $directory, string $kind, string $field, ?str
         return ['path' => '', 'error' => "The $field file is not a valid image."];
     }
 
+    if ($kind === 'audio') {
+        $mime = '';
+        if (class_exists('finfo')) {
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mime = (string)($finfo->file($temporary) ?: '');
+        }
+        $audioMimes = [
+            'mp3' => ['audio/mpeg', 'audio/mp3', 'audio/x-mpeg', 'audio/mpeg3', 'audio/x-mpeg-3'],
+            'm4a' => ['audio/mp4', 'audio/x-m4a', 'video/mp4'],
+            'aac' => ['audio/aac', 'audio/x-aac', 'audio/aacp'],
+            'ogg' => ['audio/ogg', 'application/ogg', 'audio/vorbis', 'audio/opus'],
+            'oga' => ['audio/ogg', 'application/ogg', 'audio/vorbis', 'audio/opus'],
+            'wav' => ['audio/wav', 'audio/x-wav', 'audio/vnd.wave', 'audio/wave'],
+            'flac' => ['audio/flac', 'audio/x-flac'],
+            'webm' => ['audio/webm', 'video/webm'],
+        ];
+        $allowedForExtension = $audioMimes[$extension] ?? [];
+        if ($mime === '' || !in_array($mime, $allowedForExtension, true)) {
+            return ['path' => '', 'error' => "The $field file content does not match a supported audio format."];
+        }
+    }
+
     if ($temporary === '' || !is_uploaded_file($temporary)) {
         return ['path' => '', 'error' => "The $field file could not be verified as an upload."];
     }
