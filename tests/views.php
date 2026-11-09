@@ -29,7 +29,7 @@ $authContracts = [
     'forgot' => '$user->recover(',
     'logout' => '$user->logout(',
     'reset' => '$user->reset(',
-    'verify-email' => "$user->consume('email_verify'",
+    'verify-email' => '$user->consume(\'email_verify\'',
 ];
 foreach ($authContracts as $view => $contract) {
     $source = file_get_contents($root . '/app/views/auth/' . $view . '.php');
