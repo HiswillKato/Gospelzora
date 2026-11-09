@@ -349,7 +349,7 @@ function asset(string $path): string
  */
 function versioned(string $path): string
 {
-    $file = dirname(__DIR__) . '/assets/' . ltrim($path, '/');
+    $file = dirname(__DIR__) . '/public/assets/' . ltrim($path, '/');
     $time = is_file($file) ? filemtime($file) : 0;
 
     return asset($path) . ($time ? '?v=' . $time : '');
