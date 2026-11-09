@@ -22,7 +22,7 @@ if (is_file($file) && is_readable($file)) {
     $fallbackFilename = str_replace(['"', '\\\\', '/'], '_', $fallbackFilename);
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file);
     header('Content-Type: ' . $mime);
-    header('Content-Disposition: attachment; filename="' . $fallbackFilename . '"; filename*=UTF-8\'\' . rawurlencode($filename));
+    header('Content-Disposition: attachment; filename="' . $fallbackFilename . '"; filename*=UTF-8\'\'' . rawurlencode($filename));
     header('Content-Length: ' . filesize($file));
     header('Cache-Control: no-cache');
     readfile($file);
