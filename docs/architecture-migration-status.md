@@ -1,39 +1,34 @@
 # Architecture migration status
 
-The migration is incremental. Existing public URLs and legacy page scripts remain the compatibility boundary until each feature has been extracted and tested.
+The application now has its page implementations under `app/views/`. Legacy URL scripts remain thin compatibility entry points so existing rewrite rules and URLs continue to work while routing is migrated separately.
 
-## Current structure
+## View structure
 
-- Controllers: `app/controllers/` (PSR-4 namespace `App\\controllers`).
-- Shared public shell: `app/views/shared/{header,navigation,footer}.php`.
-- General public pages: `app/views/public/`, including `home.php` and temporary bridges for About, Contact and legal pages.
-- Feature view directories: `music`, `artists`, `categories`, `playlists`, `charts`, `search`, `auth`, `dashboard` and `admin`.
-- The web document root and the application views are separate concerns. The root-level public entry point is not the same as `app/views/public/`.
+- `app/views/shared/`: the actual public header, navigation and footer markup.
+- `app/views/public/`: homepage and informational/legal pages.
+- `app/views/music/`: catalogue, song detail and download-independent music page templates.
+- `app/views/artists/`, `categories/`, `playlists/`, `charts/`, `search/`: feature page templates.
+- `app/views/auth/`: login, registration, recovery, reset, verification and logout.
+- `app/views/dashboard/`: member dashboard, profile, favorites, playlists, songs and requests.
+- `app/views/admin/`: administration screens.
+- Root `public/` (web document root) is distinct from `app/views/public/` (miscellaneous site pages).
 
 ## Migrated
 
-- Shared application foundation: environment loading, database adapter, request/response, router and exception handling.
-- Namespaced domain models/services for users, music, analytics, settings, pages and mail.
-- Homepage data preparation lives in `app/controllers/Home.php`; homepage markup lives in `app/views/public/home.php`.
-- JSON API behavior lives in `app/controllers/Api.php` for player, search, favorites, artist lookup, icons and playlists. Existing `api/*.php` entry points remain thin compatibility adapters.
-- CI lints PHP and runs architecture smoke checks.
+- Actual page implementations have been moved from `pages/` and `dashboard/` into the corresponding view folders.
+- Legacy page paths now act as compatibility adapters that include the migrated implementation.
+- The public shell markup lives in `app/views/shared/`; old `app/includes/public/` paths are compatibility includes.
+- Homepage data preparation is in `app/controllers/Home.php`; homepage markup is in `app/views/public/home.php`.
+- API behavior is in `app/controllers/Api.php`; existing `api/*.php` paths remain adapters.
+- The `playlist_items` table name is reflected in the schema and model queries.
 
-## Still on the legacy page layer
+## Remaining architectural work
 
-Authentication pages; catalogue and detail pages; member dashboard; admin pages; upload workflows; and analytics write paths.
-The informational-page view files are temporary bridges to their existing `pages/*.php` scripts. The shared shell files also delegate to the existing `app/includes/public/` markup while the extraction is completed.
+This is a **view/file migration**, not yet a full MVC extraction. Some migrated page files still contain request handling, authorization, form processing and data retrieval alongside their markup. The next refactor should move those responsibilities into feature controllers/services and leave the views presentation-only, one feature at a time.
 
-These areas contain intertwined authorization, CSRF, session, upload, SQL and template behavior. Extract them in coherent units and test them against the existing database and browser flows; avoid generic wrappers that disguise the old architecture or risk breaking security and existing URLs.
+## Safety and deployment
 
-## Deployment boundary
-
-- Do not deploy this branch directly to production yet.
-- Do not run database migrations as part of this code-only refactor.
-- Keep existing rewrite rules and URL contracts until route parity is verified.
-- Configure production secrets outside Git, use a least-privilege database account, and verify Nginx access restrictions before deployment.
-- Run full CI and a staging smoke test with a copy of the production schema before merging.
-
-
-## Playlist table naming
-
-The playlist-song junction table is named `playlist_items` in the schema and model queries. Existing installations need a separate, data-preserving rename migration; the installer schema alone does not rename a live table.
+- Keep this branch separate from `master`; do not deploy it directly.
+- No live database has been changed. Existing installations need a separate, data-preserving rename from `playlistitems` to `playlist_items`.
+- Keep rewrite rules and URL contracts until route parity is verified.
+- Test full browser flows and staging against a copy of the production schema before merging or deploying.
