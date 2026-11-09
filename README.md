@@ -2,63 +2,72 @@
 
 **Transforming Lives Through Worship**
 
-Gospelzora is a gospel music platform in active development, built to help listeners discover songs, explore artists, and engage with worship music.
+Gospelzora is a PHP/MySQL gospel music platform for discovering songs, exploring artists, streaming music, and managing listener and artist accounts.
 
-## Current progress
+## Application status
 
-The repository contains a substantial PHP application with public music pages, member features, and an administration dashboard. The project is beyond the initial planning stage; development is currently focused on improving structure and maintainability while continuing feature work.
+The repository contains the public music experience, member and artist areas, administration tools, authentication flows, and the supporting database schema. It remains in active development and is **not yet declared production-ready**.
 
-### Implemented application areas
+### Implemented areas
 
 - **Music discovery:** home, music catalogue, song details, search, charts, categories, artists, and playlists.
-- **Playback and music APIs:** player endpoints and APIs for songs, artists, search, playlists, and favorites.
-- **Member features:** registration and login flows, email verification/password recovery pages, profiles, favorites, playlists, and song requests.
-- **Administration:** dashboard and management pages for songs, artists, categories, users, admins, site pages, visits, downloads, logs, messages, and maintenance.
-- **Reusable UI:** shared public, member, and admin layouts plus reusable partials (cards, alerts, pagination, empty states, and related components).
-- **Informational pages:** About, Contact, Privacy, Terms, and Copyright.
-- **Database:** MySQL/MariaDB schema and an installation entry point are included.
-- **Frontend assets:** Bootstrap, custom styles and JavaScript, icons, fonts, and image assets.
+- **Playback and APIs:** music player, song and artist endpoints, search, playlists, and favorites.
+- **Accounts:** registration, login, email verification, password recovery, profiles, favorites, playlists, and song requests.
+- **Member and artist dashboards:** account overview, profile management, artist song management, and uploads.
+- **Administration:** song, artist, category, account, page metadata, visitor, download, log, message, and maintenance management.
+- **Shared interface:** public, member, and admin shells, with reusable partials under `app/views/shared/`.
+- **Feature views:** public pages under `app/views/public/`; authentication, dashboard, music, playlist, artist, category, chart, search, and admin views are grouped under `app/views/`.
+- **Database:** MySQL/MariaDB schema, installer, playlist tables, account tables, analytics tables, and settings.
 
-### Ongoing work
+### Architecture notes
 
-- Organizing the application into clearer feature-oriented directories and separating routing/page entry points from view implementations.
-- Migrating existing public pages and shared markup into the new structure incrementally; some views still delegate to legacy scripts/includes during the transition.
-- Standardizing database naming (including `playlist_items`) and keeping application code aligned with the schema.
-- Improving maintainability, consistency, and production readiness.
-
-> Feature presence in the repository does not necessarily mean every flow has been fully tested or is production-ready. Deployment status and end-to-end test coverage are not currently documented here.
+- `app/views/` is the canonical location for page markup and reusable feature partials.
+- Shared layout and UI components live in `app/views/shared/`; feature-specific partials live with their feature views.
+- The old `app/includes/`, `dashboard/includes/`, and `dashboard/admin/includes/` trees have been removed. Do not recreate them.
+- Existing `pages/` and `dashboard/` scripts remain as URL-compatible entry points while request routing is migrated incrementally. They should delegate to canonical views rather than duplicate page markup.
+- `app/core/Router.php` is covered by smoke tests, but the current Apache rewrite rules still dispatch through the compatibility entry points. A complete front-controller migration is separate work.
 
 ## Technology
 
-- **PHP** — server-side application
-- **MySQL / MariaDB** — relational database, accessed with MySQLi
+- **PHP 8.4+** — server-side application
+- **MySQL / MariaDB** — relational database through MySQLi
 - **Bootstrap 5**, HTML, CSS, and JavaScript — interface
-- **nginx** — web server / local development environment
 - **Composer** — dependency management and autoloading
-- **PHPMailer** — email delivery
+- **PHPMailer** — transactional email
 
 ## Local setup
 
-Gospelzora is developed in a Linux + nginx environment.
+Gospelzora is developed in a Linux environment with Apache rewrite rules or equivalent web-server routing.
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/HiswillKato/Gospelzora.git
    ```
-2. Configure nginx to serve the project and ensure the required URL rewriting rules are supported. The repository includes `.htaccess`; nginx does not process it natively, so configure equivalent nginx rules or the rewrite solution used by your environment.
-3. Create a MySQL/MariaDB database and import `database.sql` (review it first for your environment).
-4. Configure the database and application settings in `app/config.php`. Keep secrets and production credentials out of Git.
-5. Install/refresh Composer dependencies if needed:
+2. Create a MySQL/MariaDB database matching `DB_NAME` in your local configuration. The default database name is `gospelzora`.
+3. Import the schema into the database you created:
+   ```bash
+   mysql -u YOUR_DB_USER -p gospelzora < database.sql
+   ```
+   The schema does not select a hardcoded database and does not drop existing tables. It uses `CREATE TABLE IF NOT EXISTS`; it does not alter existing table definitions, so structural upgrades require explicit migrations.
+4. Configure the database, base URL, trusted proxy addresses (if applicable), and mail settings through `.env` or the ignored `app/config.local.php`. Never commit production secrets.
+5. Install dependencies:
    ```bash
    composer install
    ```
-6. Visit the configured local site. Review `install.php` and the current configuration before using them; setup requirements can change as development progresses.
+6. Configure the web server to serve the project root and apply the repository's rewrite rules. nginx does not process `.htaccess`; configure equivalent rules when using nginx.
+7. Run the installer only when setting up a new environment. It checks for the complete required table set; do not treat it as a schema migration tool.
 
-## Project status
+## Automated checks
 
-**Active development — not yet declared production-ready.**
+GitHub Actions runs on pushes to branches and pull requests targeting `master`. The workflow:
 
-Core public, member, and administrative areas exist. Refactoring and migration work is ongoing, and deployment, security review, and comprehensive end-to-end testing still need to be verified.
+- lints PHP files outside `vendor/`;
+- runs the Router architecture smoke tests;
+- tests trusted-proxy client IP handling;
+- checks the canonical view layout and retired include directories;
+- checks that the installer table list matches the schema and that the schema is non-destructive.
+
+These checks do not replace database-backed integration tests, upload tests, or browser/end-to-end testing against a configured environment.
 
 ## Developer
 
