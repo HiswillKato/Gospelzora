@@ -18,7 +18,7 @@ $render = static function (string $file, array $queryKeys = []): callable {
 };
 
 $methods = static function (string $path, callable $handler) use ($router): void {
-    foreach (['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as $method) {
+    foreach (['GET', 'POST'] as $method) {
         $router->add($method, $path, $handler);
     }
 };
