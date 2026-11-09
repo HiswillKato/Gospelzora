@@ -4,9 +4,9 @@
 -- Applied by install.php with mysqli::multi_query() on the whole file, so it
 -- must stay plain SQL: no DELIMITER, no stored procedures, no result sets.
 --
--- WARNING, and deploy/check.php says the same about this file: it hardcodes
--- `USE zora` and DROPs every table first. It is an installer input, not a
--- migration — never pipe it at a database that holds data.
+-- Safe bootstrap schema: it does not select a database or drop existing tables.
+-- CREATE TABLE IF NOT EXISTS makes re-running this file non-destructive; changes
+-- to existing tables still require explicit versioned migrations.
 --
 -- NO FOREIGN KEYS, DELIBERATELY. The domain classes clean up by hand and in an
 -- order foreign keys would refuse: User::remove() deletes the `users` row first
@@ -19,27 +19,8 @@
 -- and the counters are updated with `column = column + 1`.
 -- ---------------------------------------------------------------------------
 
-USE zora;
-
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
-
-DROP TABLE IF EXISTS `icons`;
-DROP TABLE IF EXISTS `charts`;
-DROP TABLE IF EXISTS `events`;
-DROP TABLE IF EXISTS `messages`;
-DROP TABLE IF EXISTS `visitors`;
-DROP TABLE IF EXISTS `logins`;
-DROP TABLE IF EXISTS `logs`;
-DROP TABLE IF EXISTS `tokens`;
-DROP TABLE IF EXISTS `favorites`;
-DROP TABLE IF EXISTS `playlist_items`;
-DROP TABLE IF EXISTS `playlists`;
-DROP TABLE IF EXISTS `songs`;
-DROP TABLE IF EXISTS `categories`;
-DROP TABLE IF EXISTS `pages`;
-DROP TABLE IF EXISTS `settings`;
-DROP TABLE IF EXISTS `users`;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -56,7 +37,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- open session, and an automatic bump on every write would fire on unrelated
 -- updates such as recording a login.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id`        INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name`      VARCHAR(100) NOT NULL,
   `email`     VARCHAR(254) NOT NULL,
@@ -81,7 +62,7 @@ CREATE TABLE `users` (
 -- ---------------------------------------------------------------------------
 -- categories — song categories, each with a Font Awesome icon from `icons`
 -- ---------------------------------------------------------------------------
-CREATE TABLE `categories` (
+CREATE TABLE IF NOT EXISTS `categories` (
   `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name`        VARCHAR(100) NOT NULL,
   `slug`        VARCHAR(190) NOT NULL,
@@ -103,7 +84,7 @@ CREATE TABLE `categories` (
 --
 -- `updated` is explicit here for the same reason as on `users`.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `songs` (
+CREATE TABLE IF NOT EXISTS `songs` (
   `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `artist`      INT UNSIGNED NOT NULL DEFAULT 0,
   `category`    INT UNSIGNED NOT NULL DEFAULT 0,
@@ -136,7 +117,7 @@ CREATE TABLE `songs` (
 -- it. `songs` on the playlist is a denormalised counter kept in step by
 -- Music::addSong()/removeSong() — the counts come from playlist_items directly.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `playlists` (
+CREATE TABLE IF NOT EXISTS `playlists` (
   `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user`        INT UNSIGNED NOT NULL DEFAULT 0,
   `type`        VARCHAR(20)  NOT NULL DEFAULT 'playlist',
@@ -152,7 +133,7 @@ CREATE TABLE `playlists` (
   KEY `idx_playlists_created` (`created`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `playlist_items` (
+CREATE TABLE IF NOT EXISTS `playlist_items` (
   `id`       INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `playlist` INT UNSIGNED NOT NULL,
   `song`     INT UNSIGNED NOT NULL,
@@ -169,7 +150,7 @@ CREATE TABLE `playlist_items` (
 -- today) and is part of the uniqueness rule, so the same id under another type
 -- is a different row rather than a duplicate-key error.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `favorites` (
+CREATE TABLE IF NOT EXISTS `favorites` (
   `id`      INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user`    INT UNSIGNED NOT NULL,
   `type`    VARCHAR(20)  NOT NULL DEFAULT 'song',
@@ -187,7 +168,7 @@ CREATE TABLE `favorites` (
 -- in pages/terms.php, pages/privacy.php and pages/copyright.php. The widths
 -- match the limits dashboard/admin/page-edit.php enforces.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `pages` (
+CREATE TABLE IF NOT EXISTS `pages` (
   `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `slug`        VARCHAR(100) NOT NULL,
   `title`       VARCHAR(200) NULL,
@@ -204,7 +185,7 @@ CREATE TABLE `pages` (
 -- ON DUPLICATE KEY UPDATE. It also holds the per-account login throttle state
 -- (`login_lock_*`), which is why the key is VARCHAR and not an enum.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `settings` (
+CREATE TABLE IF NOT EXISTS `settings` (
   `name`  VARCHAR(100) NOT NULL,
   `value` TEXT         NULL,
   PRIMARY KEY (`name`)
@@ -218,7 +199,7 @@ CREATE TABLE `settings` (
 -- a single-use claim single-use: the claim is one conditional UPDATE on
 -- `used IS NULL`, so two concurrent requests cannot both win.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `tokens` (
+CREATE TABLE IF NOT EXISTS `tokens` (
   `id`      INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `type`    VARCHAR(20)  NOT NULL,
   `user`    INT UNSIGNED NOT NULL,
@@ -239,7 +220,7 @@ CREATE TABLE `tokens` (
 -- Analytics::ACTIONS, `details` the finished display sentence and `args` the
 -- optional context. Written once per action, read newest-first.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `logs` (
+CREATE TABLE IF NOT EXISTS `logs` (
   `id`      INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `type`    VARCHAR(20)  NOT NULL DEFAULT 'activity',
   `actor`   INT UNSIGNED NOT NULL DEFAULT 0,
@@ -261,7 +242,7 @@ CREATE TABLE `logs` (
 -- `email` is what was submitted (not the account id) so that failures against
 -- addresses with no account are still recorded, which is the point of the table.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `logins` (
+CREATE TABLE IF NOT EXISTS `logins` (
   `id`        INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `email`     VARCHAR(254) NOT NULL DEFAULT '',
   `success`   TINYINT(1)   NOT NULL DEFAULT 0,
@@ -281,7 +262,7 @@ CREATE TABLE `logins` (
 -- `path` and `referer` are long and unindexed on purpose; only `created`,
 -- `status` and `ip` are ever filtered or grouped on.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `visitors` (
+CREATE TABLE IF NOT EXISTS `visitors` (
   `id`        INT UNSIGNED  NOT NULL AUTO_INCREMENT,
   `path`      VARCHAR(500)  NOT NULL DEFAULT '',
   `method`    VARCHAR(10)   NOT NULL DEFAULT 'GET',
@@ -299,7 +280,7 @@ CREATE TABLE `visitors` (
 -- ---------------------------------------------------------------------------
 -- messages — contact form submissions for the admin panel
 -- ---------------------------------------------------------------------------
-CREATE TABLE `messages` (
+CREATE TABLE IF NOT EXISTS `messages` (
   `id`      INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name`    VARCHAR(100) NOT NULL,
   `email`   VARCHAR(254) NOT NULL,
@@ -324,7 +305,7 @@ CREATE TABLE `messages` (
 -- unknown type to null and skips the write, so the enum is a second line of
 -- defence rather than the only one.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `events` (
+CREATE TABLE IF NOT EXISTS `events` (
   `id`      INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `song`    INT UNSIGNED NOT NULL,
   `type`    ENUM('play','download') NOT NULL,
@@ -341,7 +322,7 @@ CREATE TABLE `events` (
 -- Pure derived data: Music::sync() truncates the chart and rebuilds it from the
 -- live counters, so this table can be dropped at any time.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `charts` (
+CREATE TABLE IF NOT EXISTS `charts` (
   `id`       INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `chart`    VARCHAR(40)  NOT NULL,
   `song`     INT UNSIGNED NOT NULL,
@@ -359,7 +340,7 @@ CREATE TABLE `charts` (
 -- re-exposes `css` under the key `fa_class`, which is the response contract
 -- assets/js/app.js reads.
 -- ---------------------------------------------------------------------------
-CREATE TABLE `icons` (
+CREATE TABLE IF NOT EXISTS `icons` (
   `name` VARCHAR(60)  NOT NULL,
   `css`  VARCHAR(120) NOT NULL,
   `uses` VARCHAR(255) NOT NULL DEFAULT '',
