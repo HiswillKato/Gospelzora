@@ -6,7 +6,7 @@ Gospelzora is a PHP/MySQL gospel music platform for discovering songs, exploring
 
 ## Application status
 
-The repository contains the public music experience, member and artist areas, administration tools, authentication flows, and the supporting database schema. It remains in active development and is **not yet declared production-ready**.
+The repository contains the public music experience, member and artist areas, administration tools, authentication flows, and the supporting database schema. Only `public/` is exposed by the web server. It remains in active development and is **not yet declared production-ready**.
 
 ### Implemented areas
 
@@ -24,8 +24,10 @@ The repository contains the public music experience, member and artist areas, ad
 - `app/views/` is the canonical location for page markup and reusable feature partials.
 - Shared layout and UI components live in `app/views/shared/`; feature-specific partials live with their feature views.
 - The old `app/includes/`, `dashboard/includes/`, and `dashboard/admin/includes/` trees have been removed. Do not recreate them.
-- Existing `pages/` and `dashboard/` scripts remain as URL-compatible entry points while request routing is migrated incrementally. They should delegate to canonical views rather than duplicate page markup.
-- `app/core/Router.php` is covered by smoke tests, but the current Apache rewrite rules still dispatch through the compatibility entry points. A complete front-controller migration is separate work.
+- `public/` is the only web document root. Set the web server root to this directory, never the repository root.
+- `public/index.php` is the single front controller. `routes/web.php` maps public, authentication, music, dashboard, admin and API URLs through `app/core/Router.php`.
+- There is no `/pages/` directory or standalone root `dashboard/` or `api/` entry-point architecture. Those URLs are handled by routes, while implementations remain under `app/views/` and `app/controllers/`.
+- Application source, configuration, Composer dependencies, database schema, installer implementation and tests remain outside `public/`.
 
 ## Technology
 
