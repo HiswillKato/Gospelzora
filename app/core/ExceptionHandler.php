@@ -16,8 +16,8 @@ final class ExceptionHandler
             || ($exception instanceof RuntimeException
                 && str_contains(strtolower($exception->getMessage()), 'technical difficulties'));
 
-        $scriptPath = strtr((string)($_SERVER['SCRIPT_FILENAME'] ?? ''), '\\', '/');
-        $isApiRequest = str_contains($scriptPath, '/api/');
+        $requestPath = parse_url((string)($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?: '/';
+        $isApiRequest = str_starts_with($requestPath, '/api/');
 
         if ($isDatabaseFailure) {
             if ($isApiRequest) {
