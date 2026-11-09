@@ -10,14 +10,10 @@ RewriteRule \.(?:env|ini|log|sql|lock|bak|swp|dist)$ - [F,NC,L]
 # Uploaded files are data, never executable PHP or scripts.
 RewriteRule ^(?:assets|uploads)/(?:.*/)?[^/]+\.(?:php[0-9]?|phtml|phar|cgi|pl|py|sh)$ - [F,NC,L]
 
-# Existing files are served directly. During the one-time asset migration,
-# missing /assets/* files fall back to the old root/assets tree.
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^assets/(.+)$ asset-fallback.php?path=$1 [L,QSA]
-
-# Let real public files (styles, scripts, images, audio, fonts, robots, favicon)
-# pass through. All application routes go to the single front controller.
+# Serve real public files (CSS, JS, images, audio, fonts, robots, favicon).
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
+
+# Application URLs go through the only PHP entry point.
 RewriteRule ^ index.php [L,QSA]
