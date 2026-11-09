@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use RuntimeException;
+use Throwable;
+
 /**
  * User — accounts, auth, profile and admin management. One `users` table; the
  * `role` column ('user'|'artist'|'admin'|'promoter') is the account type.
