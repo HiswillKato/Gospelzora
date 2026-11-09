@@ -482,7 +482,8 @@ class Music {
 
         if ($type !== 'song') return false;
         $status = in_array($status, ['published', 'draft', 'pending'], true) ? $status : 'draft';
-        $this->db->execute("UPDATE songs SET status = ?, updated = NOW() WHERE id = ?", [$status, $id]);
+        $updated = $this->db->execute("UPDATE songs SET status = ?, updated = NOW() WHERE id = ?", [$status, $id]);
+        if (!$updated || $this->db->errno()) return false;
         $this->analytics->log('song.status', sprintf("Song #%s -> %s", $id, $status));
         return true;
     }
@@ -863,14 +864,20 @@ class Music {
         $existing = $this->marked($userId, $type, $songId);
 
         if ($existing) {
-            $this->db->execute("DELETE FROM favorites WHERE id = ?", [(int)$existing['id']]);
+            $deleted = $this->db->affected("DELETE FROM favorites WHERE id = ?", [(int)$existing['id']]);
+            if ($deleted <= 0 || $this->db->errno()) {
+                return ['success' => false, 'message' => "Your favorites could not be updated. Please try again."];
+            }
             return ['success' => true, 'favorited' => false, 'message' => "Removed from your favorites."];
         }
 
-        $this->db->execute(
+        $inserted = $this->db->insert(
             "INSERT INTO favorites (user, type, song) VALUES (?, ?, ?)",
             [$userId, $type, $songId]
         );
+        if ($inserted <= 0 || $this->db->errno()) {
+            return ['success' => false, 'message' => "Your favorites could not be updated. Please try again."];
+        }
         return ['success' => true, 'favorited' => true, 'message' => "Added to your favorites."];
     }
 
