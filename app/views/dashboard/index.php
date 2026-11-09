@@ -115,5 +115,6 @@ if ($dash_type === 'artist') {
 }
 
 require __DIR__ . '/../shared/member/header.php';
+define('DASHBOARD_PARTIAL_GUARD', true);
 require __DIR__ . '/partials/overview.php';
 require __DIR__ . '/../shared/member/footer.php';
