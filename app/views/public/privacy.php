@@ -6,7 +6,7 @@ require_once __DIR__ . '/../shared/header.php';
 $page_header_title = e($pages->meta('privacy', 'title'));
 $page_header_subtitle = sprintf("Last updated: %s", SITE_LEGAL_UPDATED);
 $page_header_content = '';
-require __DIR__ . '/../../app/views/shared/partials/page-header.php';
+require __DIR__ . '/../shared/partials/page-header.php';
 ?>
 <section class="py-5"><div class="container"><div class="row justify-content-center"><div class="col-lg-9">
 <div class="card tile"><div class="card-body p-4 p-md-5">
