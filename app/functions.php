@@ -338,7 +338,7 @@ function asset(string $path): string
 
     if (\App\Services\ObjectStorage::enabled() && \App\Services\ObjectStorage::isMediaPath($path)) {
         $signed = \App\Services\ObjectStorage::instance()->url($path);
-        return htmlspecialchars($signed, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        return $signed;
     }
 
     return url('assets/' . $path);
