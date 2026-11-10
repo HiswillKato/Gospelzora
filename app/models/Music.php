@@ -1161,4 +1161,104 @@ class Music {
         }
     }
 
+    /* ---------------------------------------------------------- */
+    /* Categories                                                */
+    /* ---------------------------------------------------------- */
+
+    /** Active categories for filters, or the categories attached to one song. */
+    public function categories(?int $songId = null): array {
+        if ($songId !== null) {
+            return $this->db->select(
+                "SELECT c.* FROM categories c INNER JOIN songs s ON s.category = c.id WHERE s.id = ?",
+                [$songId]
+            );
+        }
+        return $this->db->select(
+            "SELECT * FROM categories WHERE status = 'active' ORDER BY name"
+        );
+    }
+
+    /** Find a category by slug or numeric id. */
+    public function category(mixed $value): ?array {
+        ['column' => $column, 'param' => $param] = resolve($value);
+        return $this->db->row(
+            "SELECT * FROM categories WHERE $column = ? LIMIT 1",
+            [$param]
+        );
+    }
+
+    /** Categories with published-song counts, optionally including inactive ones. */
+    public function all(bool $publishedOnly = true, bool $includeInactive = false): array {
+        $statusFilter = $publishedOnly ? " AND s.status = 'published'" : '';
+        $activeFilter = $includeInactive ? '' : " AND c.status = 'active'";
+        return $this->db->select(
+            "SELECT c.*, (SELECT COUNT(*) FROM songs s WHERE s.category = c.id$statusFilter) AS song_count
+             FROM categories c WHERE 1$activeFilter
+             ORDER BY c.status = 'inactive', c.name"
+        );
+    }
+
+    /** Paginated published songs in one category. */
+    public function browse(int $categoryId, int $page = 1, int $perPage = ITEMS_PER_PAGE): array {
+        $page = max(1, $page);
+        $total = (int)$this->db->scalar(
+            "SELECT COUNT(*) FROM songs s WHERE s.category = ? AND s.status = 'published'",
+            [$categoryId]
+        );
+        $pagination = paginate($total, $page, $perPage);
+        $songs = $this->db->select(
+            self::SONG_SELECT . ' ' . self::SONG_JOIN .
+            " WHERE s.category = ? AND s.status = 'published'
+             ORDER BY s.plays DESC LIMIT {$pagination['per_page']} OFFSET {$pagination['offset']}",
+            [$categoryId]
+        );
+        return ['songs' => $songs, 'total' => $total, 'pagination' => $pagination];
+    }
+
+    /* ---------------------------------------------------------- */
+    /* Playlist helpers                                           */
+    /* ---------------------------------------------------------- */
+
+    /** Delete a whole playlist and its items, but only for its owner. */
+    public function erase(int $playlistId, int $userId, ?string $type = null): array {
+        $type = $type ?? $this->user->role();
+        if (!in_array($type, ['user', 'artist', 'admin'], true)) {
+            return ['success' => false, 'message' => "Invalid account type."];
+        }
+        if (!$this->db->execute('START TRANSACTION')) {
+            return ['success' => false, 'message' => "The playlist could not be deleted. Please try again."];
+        }
+        try {
+            $owned = $this->db->row(
+                "SELECT id FROM playlists WHERE id = ? AND user = ? AND type = ? FOR UPDATE",
+                [$playlistId, $userId, $type]
+            );
+            if (!$owned) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "That playlist could not be found."];
+            }
+            $this->db->execute("DELETE FROM playlist_items WHERE playlist = ?", [$playlistId]);
+            $deleted = $this->db->affected(
+                "DELETE FROM playlists WHERE id = ? AND user = ? AND type = ?",
+                [$playlistId, $userId, $type]
+            );
+            if ($deleted <= 0 || $this->db->errno() || !$this->db->execute('COMMIT')) {
+                $this->db->execute('ROLLBACK');
+                return ['success' => false, 'message' => "The playlist could not be deleted. Please try again."];
+            }
+            return ['success' => true, 'message' => "Playlist deleted."];
+        } catch (\\Throwable $e) {
+            try { $this->db->execute('ROLLBACK'); } catch (\\Throwable $ignored) {}
+            throw $e;
+        }
+    }
+
+    /** Whether a song is already in a playlist. */
+    public function holds(int $playlistId, int $songId): bool {
+        return (bool)$this->db->scalar(
+            "SELECT COUNT(*) FROM playlist_items WHERE playlist = ? AND song = ?",
+            [$playlistId, $songId]
+        );
+    }
+
 }
