@@ -1,8 +1,21 @@
 # Gospelzora nginx virtual host (document root MUST be public/).
+# Install a valid certificate and adjust the certificate paths before enabling
+# this HTTPS server block. Keep PHP upload_max_filesize and post_max_size >= 100M.
+
 server {
     listen 80;
     listen [::]:80;
     server_name example.com www.example.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name example.com www.example.com;
+
+    ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
 
     root /var/www/gospelzora/public;
     index index.php;
@@ -25,5 +38,6 @@ server {
     }
     location ~ \.php$ { return 404; }
 
-    client_max_body_size 32m;
+    # The UI accepts audio files up to 100 MB; leave room for multipart overhead.
+    client_max_body_size 110m;
 }

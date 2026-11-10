@@ -242,6 +242,21 @@ $mail_cfg = mailconf();
 $db_ready = false;
 $missing_tables = [];
 
+/* Run requirements checks before handling any requested step. This prevents a
+   direct GET or POST to step 3+ from bypassing the step-2 continuation gate. */
+$checks = checks();
+$all_pass = true;
+foreach ($checks as $check) {
+    // Check tuple: [label, passed, detail, optional].
+    if (!$check[1] && !$check[3]) {
+        $all_pass = false;
+    }
+}
+if (!$all_pass && $step > 2) {
+    $step = 2;
+    $error = 'Fix the failing required checks above before continuing.';
+}
+
 /* ====================================================================== */
 /*  3. Step handling (POST handlers + re-entry state)                    */
 /* ====================================================================== */
@@ -266,7 +281,7 @@ $missing_tables = [];
    */
 
 /* ---------------- POST handling ---------------- */
-if (!$installed && $_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
+if (!$installed && $_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '') && ($step < 3 || $all_pass)) {
 
     if ($step === 3) {
         $c = [
@@ -450,9 +465,6 @@ if (($installed || $done) && ($_POST['action'] ?? '') === 'delete_installer' && 
 }
 
 /* -------- pre-filled defaults come from conf(): the DB_* constants when not yet configured -------- */
-$checks = checks();
-$all_pass = true;
-foreach ($checks as $c) { if (!$c[0] && !$c[3]) $all_pass = false; }
 $admin_exists = false;
 if (!$error && !$done && !$installed) {
     [$con, $err] = connect($cfg, true);
