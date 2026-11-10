@@ -334,8 +334,8 @@ function asset(string $path): string
         return url('assets/');
     }
 
-    if (\\App\\Services\\ObjectStorage::enabled() && \\App\\Services\\ObjectStorage::isMediaPath($path)) {
-        $signed = \\App\\Services\\ObjectStorage::instance()->url($path);
+    if (\App\Services\ObjectStorage::enabled() && \App\Services\ObjectStorage::isMediaPath($path)) {
+        $signed = \App\Services\ObjectStorage::instance()->url($path);
         return htmlspecialchars($signed, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
@@ -566,7 +566,7 @@ function store(array $file, string $directory, string $kind, string $field, ?str
         : slugify((string)pathinfo($name, PATHINFO_FILENAME)) . '.' . $extension;
     $name = basename($name);
 
-    if (\\App\\Services\\ObjectStorage::enabled()) {
+    if (\App\Services\ObjectStorage::enabled()) {
         $directoryPath = rtrim($directory, '/');
         $prefix = null;
         foreach ([
@@ -585,8 +585,8 @@ function store(array $file, string $directory, string $kind, string $field, ?str
         $finfo = class_exists('finfo') ? new finfo(FILEINFO_MIME_TYPE) : null;
         $contentType = $finfo ? (string)($finfo->file($temporary) ?: 'application/octet-stream') : 'application/octet-stream';
         try {
-            \\App\\Services\\ObjectStorage::instance()->uploadFile($temporary, $prefix . '/' . $name, $contentType);
-        } catch (\\Throwable $error) {
+            \App\Services\ObjectStorage::instance()->uploadFile($temporary, $prefix . '/' . $name, $contentType);
+        } catch (\Throwable $error) {
             error_log('Object Storage upload failed: ' . $error->getMessage());
             return ['path' => '', 'error' => "The server could not store the $field file. Please try again."];
         }
