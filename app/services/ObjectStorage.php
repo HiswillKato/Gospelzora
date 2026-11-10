@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\\Services;
+namespace App\Services;
 
 use RuntimeException;
 
@@ -21,17 +21,17 @@ final class ObjectStorage
 
     private function __construct()
     {
-        $this->namespace = trim((string)\\App\\core\\Environment::get('OCI_OBJECT_STORAGE_NAMESPACE', ''));
-        $this->region = trim((string)\\App\\core\\Environment::get('OCI_OBJECT_STORAGE_REGION', ''));
-        $this->bucket = trim((string)\\App\\core\\Environment::get('OCI_OBJECT_STORAGE_BUCKET', ''));
-        $this->accessKey = trim((string)\\App\\core\\Environment::get('OCI_OBJECT_STORAGE_ACCESS_KEY', ''));
-        $this->secretKey = trim((string)\\App\\core\\Environment::get('OCI_OBJECT_STORAGE_SECRET_KEY', ''));
+        $this->namespace = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_NAMESPACE', ''));
+        $this->region = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_REGION', ''));
+        $this->bucket = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_BUCKET', ''));
+        $this->accessKey = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_ACCESS_KEY', ''));
+        $this->secretKey = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_SECRET_KEY', ''));
 
         if ($this->namespace === '' || $this->region === '' || $this->bucket === '' || $this->accessKey === '' || $this->secretKey === '') {
             throw new RuntimeException('Oracle Object Storage is enabled but its configuration is incomplete.');
         }
 
-        $endpoint = trim((string)\\App\\core\\Environment::get('OCI_OBJECT_STORAGE_ENDPOINT', ''));
+        $endpoint = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_ENDPOINT', ''));
         $this->endpoint = rtrim($endpoint !== ''
             ? $endpoint
             : 'https://' . $this->namespace . '.compat.objectstorage.' . $this->region . '.oraclecloud.com', '/');
@@ -42,7 +42,7 @@ final class ObjectStorage
 
     public static function enabled(): bool
     {
-        return in_array(strtolower(trim((string)\\App\\core\\Environment::get('OCI_OBJECT_STORAGE_ENABLED', 'false'))), ['1', 'true', 'yes', 'on'], true);
+        return in_array(strtolower(trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_ENABLED', 'false'))), ['1', 'true', 'yes', 'on'], true);
     }
 
     public static function instance(): self
@@ -53,14 +53,14 @@ final class ObjectStorage
     /** Return whether a stored path is one of the app's uploaded-media paths. */
     public static function isMediaPath(string $path): bool
     {
-        $path = ltrim(str_replace('\\\\', '/', trim($path)), '/');
+        $path = ltrim(str_replace('\\', '/', trim($path)), '/');
         if ($path === '' || str_contains($path, '..') || preg_match('~[^A-Za-z0-9._/-]~', $path)) {
             return false;
         }
         if (preg_match('~^audio/[A-Za-z0-9._/-]+$~', $path) || preg_match('~^images/artwork/[A-Za-z0-9._/-]+$~', $path)) {
             return true;
         }
-        return (bool)preg_match('~^images/[A-Za-z0-9_-]+-[a-f0-9]{8}\\.(?:jpe?g|png|gif|webp)$~i', $path);
+        return (bool)preg_match('~^images/[A-Za-z0-9_-]+-[a-f0-9]{8}\.(?:jpe?g|png|gif|webp)$~i', $path);
     }
 
     /** Upload a temporary file without buffering it in PHP memory. */
@@ -80,7 +80,7 @@ final class ObjectStorage
             'content-type' => $contentType,
             'host' => $this->host(),
             'x-amz-content-sha256' => $payloadHash,
-            'x-amz-date' => gmdate('Ymd\\THis\\Z'),
+            'x-amz-date' => gmdate('Ymd\THis\Z'),
         ];
         $url = $this->objectUrl($key);
         $signed = $this->signedHeaders('PUT', $url, $headers, $payloadHash);
@@ -129,7 +129,7 @@ final class ObjectStorage
         $headers = [
             'host' => $this->host(),
             'x-amz-content-sha256' => $payloadHash,
-            'x-amz-date' => gmdate('Ymd\\THis\\Z'),
+            'x-amz-date' => gmdate('Ymd\THis\Z'),
         ];
         $signed = $this->signedHeaders('DELETE', $url, $headers, $payloadHash);
         $lines = [];
@@ -147,7 +147,7 @@ final class ObjectStorage
     {
         $key = $this->key($key);
         $expires = max(60, min(604800, $expires));
-        $date = gmdate('Ymd\\THis\\Z');
+        $date = gmdate('Ymd\THis\Z');
         $day = substr($date, 0, 8);
         $scope = $day . '/' . $this->region . '/s3/aws4_request';
         $params = [
@@ -161,9 +161,9 @@ final class ObjectStorage
             $params['response-content-disposition'] = $contentDisposition;
         }
         $canonicalQuery = $this->query($params);
-        $canonicalRequest = "GET\\n" . $this->canonicalPath($key) . "\\n" . $canonicalQuery
-            . "\\nhost:" . $this->host() . "\\n\\nhost\\nUNSIGNED-PAYLOAD";
-        $toSign = "AWS4-HMAC-SHA256\\n" . $date . "\\n" . $scope . "\\n" . hash('sha256', $canonicalRequest);
+        $canonicalRequest = "GET\n" . $this->canonicalPath($key) . "\n" . $canonicalQuery
+            . "\nhost:" . $this->host() . "\n\nhost\nUNSIGNED-PAYLOAD";
+        $toSign = "AWS4-HMAC-SHA256\n" . $date . "\n" . $scope . "\n" . hash('sha256', $canonicalRequest);
         $signature = hash_hmac('sha256', $toSign, $this->signingKey($day));
         return $this->objectUrl($key) . '?' . $canonicalQuery . '&X-Amz-Signature=' . $signature;
     }
@@ -175,18 +175,18 @@ final class ObjectStorage
             return 0;
         }
         $count = 0;
-        $iterator = new \\RecursiveIteratorIterator(
-            new \\RecursiveDirectoryIterator($directory, \\FilesystemIterator::SKIP_DOTS)
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS)
         );
         foreach ($iterator as $file) {
             if (!$file->isFile() || $file->isLink()) {
                 continue;
             }
-            $relative = str_replace('\\\\', '/', substr($file->getPathname(), strlen(rtrim($directory, '/')) + 1));
+            $relative = str_replace('\\', '/', substr($file->getPathname(), strlen(rtrim($directory, '/')) + 1));
             $key = trim($prefix, '/') . '/' . $relative;
             $mime = 'application/octet-stream';
             if (class_exists('finfo')) {
-                $finfo = new \\finfo(FILEINFO_MIME_TYPE);
+                $finfo = new \finfo(FILEINFO_MIME_TYPE);
                 $mime = (string)($finfo->file($file->getPathname()) ?: $mime);
             }
             $this->uploadFile($file->getPathname(), $key, $mime);
@@ -227,14 +227,14 @@ final class ObjectStorage
         ksort($headers);
         $canonicalHeaders = '';
         foreach ($headers as $name => $value) {
-            $canonicalHeaders .= strtolower($name) . ':' . trim((string)$value) . "\\n";
+            $canonicalHeaders .= strtolower($name) . ':' . trim((string)$value) . "\n";
         }
         $signedHeaders = implode(';', array_map('strtolower', array_keys($headers)));
         $parts = parse_url($url);
-        $canonicalRequest = $method . "\\n" . $parts['path'] . "\\n\\n" . $canonicalHeaders
-            . "\\n" . $signedHeaders . "\\n" . $payloadHash;
+        $canonicalRequest = $method . "\n" . $parts['path'] . "\n\n" . $canonicalHeaders
+            . "\n" . $signedHeaders . "\n" . $payloadHash;
         $scope = $day . '/' . $this->region . '/s3/aws4_request';
-        $toSign = "AWS4-HMAC-SHA256\\n" . $date . "\\n" . $scope . "\\n" . hash('sha256', $canonicalRequest);
+        $toSign = "AWS4-HMAC-SHA256\n" . $date . "\n" . $scope . "\n" . hash('sha256', $canonicalRequest);
         $signature = hash_hmac('sha256', $toSign, $this->signingKey($day));
         return 'AWS4-HMAC-SHA256 Credential=' . $this->accessKey . '/' . $scope
             . ', SignedHeaders=' . $signedHeaders . ', Signature=' . $signature;
@@ -270,7 +270,7 @@ final class ObjectStorage
 
     private function key(string $key): string
     {
-        $key = ltrim(str_replace('\\\\', '/', trim($key)), '/');
+        $key = ltrim(str_replace('\\', '/', trim($key)), '/');
         if ($key === '' || preg_match('~[^A-Za-z0-9._/-]~', $key)
             || in_array('..', explode('/', $key), true) || in_array('.', explode('/', $key), true)) {
             throw new RuntimeException('Invalid Object Storage key.');
