@@ -27,7 +27,7 @@ final class ObjectStorage
         $this->accessKey = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_ACCESS_KEY', ''));
         $this->secretKey = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_SECRET_KEY', ''));
 
-        if ($this->namespace === '' || $this->region === '' || $this->bucket === '' || $this->accessKey === '' || $this->secretKey === '') {
+        if ($this->namespace === '' || $this->region === '' || $this->bucket === '' || $this->accessKey === '' || $this->secretKey === '' || !preg_match('~^[A-Za-z0-9-]+$~', $this->region)) {
             throw new RuntimeException('Oracle Object Storage is enabled but its configuration is incomplete.');
         }
 
@@ -265,7 +265,9 @@ final class ObjectStorage
 
     private function host(): string
     {
-        return (string)parse_url($this->endpoint, PHP_URL_HOST);
+        $host = (string)parse_url($this->endpoint, PHP_URL_HOST);
+        $port = parse_url($this->endpoint, PHP_URL_PORT);
+        return $host . ($port ? ':' . $port : '');
     }
 
     private function key(string $key): string
