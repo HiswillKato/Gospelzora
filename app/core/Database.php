@@ -26,7 +26,7 @@ final class Database
             throw new RuntimeException('Technical difficulties: the database is unavailable. Please try again shortly.');
         }
 
-        $driver = new \\mysqli_driver();
+        $driver = new \mysqli_driver();
         $previousReporting = $driver->report_mode;
         mysqli_report(MYSQLI_REPORT_OFF);
         try {
