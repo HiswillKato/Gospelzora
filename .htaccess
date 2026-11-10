@@ -1,0 +1,4 @@
+# The repository root is not a web document root.
+# Configure Apache DocumentRoot to the /public directory instead.
+# This deny rule is a fail-safe if the repository root is exposed accidentally.
+Require all denied
