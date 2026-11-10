@@ -37,7 +37,7 @@ $cards = [
 foreach ($cards as [$stat_label, $stat_value, $stat_icon, $stat_color]) {
     $stat_href = '';
     ?>
-<div class="col-md-6 col-lg-4"><?php require __DIR__ . '/../../app/views/shared/partials/stat-card.php'; ?></div>
+<div class="col-md-6 col-lg-4"><?php require __DIR__ . '/../shared/partials/stat-card.php'; ?></div>
     <?php
 }
 ?>
@@ -129,6 +129,6 @@ foreach ($summary['daily'] as $d) { ?>
 </tbody></table>
 </div>
 <?php } ?>
-<?php if ($pagination['total_pages'] > 1) { ?><div class="p-3 border-top"><?php require __DIR__ . '/../../app/views/shared/partials/pagination.php'; ?></div><?php } ?>
+<?php if ($pagination['total_pages'] > 1) { ?><div class="p-3 border-top"><?php require __DIR__ . '/../shared/partials/pagination.php'; ?></div><?php } ?>
 </div>
 <?php require __DIR__ . '/../shared/footer.php'; 
