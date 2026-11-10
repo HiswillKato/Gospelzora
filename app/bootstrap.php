@@ -60,6 +60,7 @@ class_alias(\App\Models\Music::class, 'Music');
 require_once __DIR__ . '/models/Analytics.php';
 class_alias(\App\Models\Analytics::class, 'Analytics');
 require_once __DIR__ . '/services/Mailer.php';
+require_once __DIR__ . '/services/ObjectStorage.php';
 class_alias(\App\Services\Mailer::class, 'Mail');
 require_once __DIR__ . '/models/Pages.php';
 
