@@ -26,7 +26,9 @@ final class Database
             throw new RuntimeException('Technical difficulties: the database is unavailable. Please try again shortly.');
         }
 
-        $previousReporting = mysqli_report(MYSQLI_REPORT_OFF);
+        $driver = new \mysqli_driver();
+        $previousReporting = $driver->report_mode;
+        mysqli_report(MYSQLI_REPORT_OFF);
         try {
             $connection = @new mysqli(
                 (string)($this->config['host'] ?? '127.0.0.1'),

@@ -19,8 +19,8 @@ if (!defined('APP_BOOTSTRAPPED')) { http_response_code(404); exit; } ?><!doctype
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
 <title>Site configuration needed • <?= SITE_NAME ?></title>
-<?php require __DIR__ . '/partials/theme-script.php';
-require __DIR__ . '/partials/css-links.php'; ?>
+<?php require __DIR__ . '/../partials/theme-script.php';
+require __DIR__ . '/../partials/css-links.php'; ?>
 </head>
 <body class="d-flex align-items-center justify-content-center min-vh-100">
 <div class="container" style="max-width:680px">
