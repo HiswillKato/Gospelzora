@@ -56,8 +56,9 @@ $dashboard=[
 ];
 foreach($dashboard as $path=>$file) {
     $handler=$render('app/views/dashboard/'.$file);
-    if(in_array($path,['/dashboard/profile','/dashboard/add-song','/dashboard/playlists'],true)) $getPost($path,$handler);
-    else $get($path,$handler);
+    // Dashboard pages own their POST handlers and CSRF checks (profile, artist songs,
+    // playlists and song requests). Keep POST dispatch available to each page.
+    $getPost($path, $handler);
 }
 
 $admin=[
@@ -77,8 +78,9 @@ $admin=[
 ];
 foreach($admin as $path=>$file) {
     $handler=$render('app/views/admin/'.$file);
-    if(str_ends_with($path,'/add')||str_ends_with($path,'/edit')||in_array($path,['/dashboard/admin/pages','/dashboard/admin/maintenance'],true)) $getPost($path,$handler);
-    else $get($path,$handler);
+    // Admin list views also process CSRF-protected actions such as approve,
+    // delete, toggle and account management.
+    $getPost($path, $handler);
 }
 $get('/dashboard/admin/login',$render('app/views/admin/login.php'));
 $route('POST','/dashboard/admin/logout',$render('app/views/admin/logout.php'));
