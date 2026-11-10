@@ -66,6 +66,6 @@ require __DIR__ . '/../shared/header.php';
 <?php } } ?>
 </tbody></table>
 </div>
-<?php if ($pagination['total_pages'] > 1) { ?><div class="p-3 border-top"><?php require __DIR__ . '/../../app/views/shared/partials/pagination.php'; ?></div><?php } ?>
+<?php if ($pagination['total_pages'] > 1) { ?><div class="p-3 border-top"><?php require __DIR__ . '/../shared/partials/pagination.php'; ?></div><?php } ?>
 </div>
 <?php require __DIR__ . '/../shared/footer.php'; 
