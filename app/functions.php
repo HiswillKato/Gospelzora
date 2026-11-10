@@ -336,9 +336,13 @@ function asset(string $path): string
         return url('assets/');
     }
 
+    if (\App\Services\ObjectStorage::enabled() && \App\Services\ObjectStorage::isMediaPath($path)) {
+        $signed = \App\Services\ObjectStorage::instance()->url($path);
+        return $signed;
+    }
+
     return url('assets/' . $path);
 }
-
 /**
  * asset() with a ?v= filemtime stamp.
  *
@@ -576,6 +580,33 @@ function store(array $file, string $directory, string $kind, string $field, ?str
         ? filename($original, $kind)
         : slugify((string)pathinfo($name, PATHINFO_FILENAME)) . '.' . $extension;
     $name = basename($name);
+
+    if (\App\Services\ObjectStorage::enabled()) {
+        $directoryPath = rtrim($directory, '/');
+        $prefix = null;
+        foreach ([
+            ARTWORK_PATH => 'images/artwork',
+            AUDIO_PATH => 'audio',
+            IMAGE_PATH => 'images',
+        ] as $localDirectory => $objectPrefix) {
+            if (rtrim($localDirectory, '/') === $directoryPath) {
+                $prefix = $objectPrefix;
+                break;
+            }
+        }
+        if ($prefix === null) {
+            return ['path' => '', 'error' => "The server cannot store the $field file."];
+        }
+        $finfo = class_exists('finfo') ? new finfo(FILEINFO_MIME_TYPE) : null;
+        $contentType = $finfo ? (string)($finfo->file($temporary) ?: 'application/octet-stream') : 'application/octet-stream';
+        try {
+            \App\Services\ObjectStorage::instance()->uploadFile($temporary, $prefix . '/' . $name, $contentType);
+        } catch (\Throwable $error) {
+            error_log('Object Storage upload failed: ' . $error->getMessage());
+            return ['path' => '', 'error' => "The server could not store the $field file. Please try again."];
+        }
+        return ['path' => $name, 'error' => null];
+    }
 
     $directory = rtrim($directory, '/') . '/';
     if (!is_dir($directory) || !is_writable($directory)) {

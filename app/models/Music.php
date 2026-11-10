@@ -653,6 +653,15 @@ class Music {
      * ASSETS_PATH are ever touched, so arbitrary paths cannot be fed in here.
      */
     private function unlink(string $path): void {
+        if (\App\Services\ObjectStorage::enabled()) {
+            if (!\App\Services\ObjectStorage::isMediaPath($path)) return;
+            try {
+                \App\Services\ObjectStorage::instance()->delete($path);
+            } catch (\Throwable $error) {
+                error_log('Object Storage deletion failed: ' . $error->getMessage());
+            }
+            return;
+        }
         $real = realpath(ASSETS_PATH . '/' . ltrim(str_replace('\\', '/', $path), '/'));
         $root = realpath(ASSETS_PATH);
         if ($real === false || $root === false || !str_starts_with($real, $root . '/')) {
