@@ -56,7 +56,7 @@ Gospelzora is developed in a Linux environment. The web server document root MUS
    ```bash
    composer install
    ```
-6. Configure the web server to serve `Gospelzora/public/` as its document root. Apache uses `public/.htaccess`; nginx can adapt `deploy/nginx.conf.example` (update the domain, PHP-FPM socket, and upload size). Never expose the repository root.
+6. Configure the web server to serve `Gospelzora/public/` as its document root. Apache uses `public/.htaccess`; the repository-root `.htaccess` denies requests if the wrong root is configured. For nginx, adapt `deploy/nginx.conf.example`: set the domain, certificate paths, PHP-FPM socket, and upload limits. Keep PHP `upload_max_filesize` and `post_max_size` at 100M or higher. Never expose the repository root.
 7. All tracked browser assets are already stored under `public/assets/`; there is no root `assets/` directory in this repository. If an older deployed copy still has a repository-root `assets/` directory, run `php deploy/migrate-public-assets.php` from the repository root to copy and verify those files. Back up the old media and inspect the result before optionally using `--move` to remove the legacy directory. New uploads are written under `public/assets/`.
 8. Run the installer only when setting up a new environment. It is available at `/install.php`, with its implementation outside the document root. It checks for the complete required table set; do not treat it as a schema migration tool.
 
