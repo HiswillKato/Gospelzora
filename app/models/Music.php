@@ -1247,8 +1247,8 @@ class Music {
                 return ['success' => false, 'message' => "The playlist could not be deleted. Please try again."];
             }
             return ['success' => true, 'message' => "Playlist deleted."];
-        } catch (\\Throwable $e) {
-            try { $this->db->execute('ROLLBACK'); } catch (\\Throwable $ignored) {}
+        } catch (\Throwable $e) {
+            try { $this->db->execute('ROLLBACK'); } catch (\Throwable $ignored) {}
             throw $e;
         }
     }
