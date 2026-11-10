@@ -452,7 +452,13 @@ if (($installed || $done) && ($_POST['action'] ?? '') === 'delete_installer' && 
 /* -------- pre-filled defaults come from conf(): the DB_* constants when not yet configured -------- */
 $checks = checks();
 $all_pass = true;
-foreach ($checks as $c) { if (!$c[0] && !$c[3]) $all_pass = false; }
+foreach ($checks as $c) {
+    // Check tuple: [label, passed, detail, optional]. Optional warnings do not
+    // block setup, but every required check must pass before step 3 is offered.
+    if (!$c[1] && !$c[3]) {
+        $all_pass = false;
+    }
+}
 $admin_exists = false;
 if (!$error && !$done && !$installed) {
     [$con, $err] = connect($cfg, true);
