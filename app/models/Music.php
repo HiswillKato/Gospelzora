@@ -662,8 +662,7 @@ class Music {
             }
             return;
         }
-
-        $real = realpath(ASSETS_PATH . '/' . ltrim(str_replace('\\\\', '/', $path), '/'));
+        $real = realpath(ASSETS_PATH . '/' . ltrim(str_replace('\\', '/', $path), '/'));
         $root = realpath(ASSETS_PATH);
         if ($real === false || $root === false || !str_starts_with($real, $root . '/')) {
             return;
@@ -671,6 +670,10 @@ class Music {
         @unlink($real);
     }
 
+    /**
+     * The category to store: the chosen id when it names a real category, 0 otherwise.
+     * songs.category is NOT NULL, so "no choice" is 0 and never NULL.
+     */
     private function categorize(mixed $value): int {
         $id = (int)$value;
         return $id > 0 && $this->db->scalar("SELECT id FROM categories WHERE id = ?", [$id]) ? $id : 0;
