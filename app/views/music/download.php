@@ -15,9 +15,9 @@ if (!$song) {
 $id = (int)$song['id'];
 if (\App\Services\ObjectStorage::enabled() && \App\Services\ObjectStorage::isMediaPath((string)$song['audio'])) {
     $filename = $music->filename($song);
-    $fallbackFilename = preg_replace('/[^\\\\x20-\\\\x7E]/', '_', $filename) ?: 'song';
-    $fallbackFilename = str_replace(['"', '\\\\\\\\', '/'], '_', $fallbackFilename);
-    $disposition = 'attachment; filename="' . $fallbackFilename . '"; filename*=UTF-8\\'\\'' . rawurlencode($filename);
+    $fallbackFilename = preg_replace('/[^\x20-\x7E]/', '_', $filename) ?: 'song';
+    $fallbackFilename = str_replace(['"', '\\', '/'], '_', $fallbackFilename);
+    $disposition = 'attachment; filename="' . $fallbackFilename . '"; filename*=UTF-8\'\'' . rawurlencode($filename);
     try {
         $location = \App\Services\ObjectStorage::instance()->url((string)$song['audio'], 1800, $disposition);
     } catch (\Throwable $error) {
