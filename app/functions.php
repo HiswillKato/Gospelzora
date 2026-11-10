@@ -328,6 +328,8 @@ function url(string $path = ''): string
 function asset(string $path): string
 {
     $path = ltrim(trim($path), '/');
+    // Drop anything that is not a plain relative asset path — this also kills
+    // "..", protocol-relative "//host" and "javascript:" in one pass.
     $path = preg_replace('~[^A-Za-z0-9._/-]~', '', $path) ?? '';
     $path = preg_replace('~/{2,}~', '/', $path) ?? '';
     if ($path === '' || str_contains($path, '..')) {
@@ -341,7 +343,6 @@ function asset(string $path): string
 
     return url('assets/' . $path);
 }
-
 /**
  * asset() with a ?v= filemtime stamp.
  *
@@ -524,19 +525,31 @@ function store(array $file, string $directory, string $kind, string $field, ?str
         return ['path' => '', 'error' => $problem];
     }
 
-    $original = basename(str_replace('\\\\', '/', (string)($file['name'] ?? '')));
+    $original = basename(str_replace('\\', '/', (string)($file['name'] ?? '')));
     $extension = strtolower((string)pathinfo($original, PATHINFO_EXTENSION));
+
     $allowed = $kind === 'audio'
         ? ['mp3', 'm4a', 'aac', 'ogg', 'oga', 'wav', 'flac', 'webm']
         : ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
     if (!in_array($extension, $allowed, true)) {
-        return ['path' => '', 'error' => sprintf('The %s file must be one of: %s.', $field, strtoupper(implode(', ', $allowed)))];
+        return [
+            'path' => '',
+            'error' => sprintf(
+                'The %s file must be one of: %s.',
+                $field,
+                strtoupper(implode(', ', $allowed))
+            ),
+        ];
     }
 
+    // An image has to actually BE an image, or the site would serve whatever
+    // bytes were uploaded under an image URL.
     $temporary = (string)($file['tmp_name'] ?? '');
     if ($kind === 'image' && @getimagesize($temporary) === false) {
         return ['path' => '', 'error' => "The $field file is not a valid image."];
     }
+
     if ($kind === 'audio') {
         $mime = '';
         if (class_exists('finfo')) {
@@ -553,10 +566,12 @@ function store(array $file, string $directory, string $kind, string $field, ?str
             'flac' => ['audio/flac', 'audio/x-flac'],
             'webm' => ['audio/webm', 'video/webm'],
         ];
-        if (!in_array($mime, $audioMimes[$extension] ?? [], true)) {
+        $allowedForExtension = $audioMimes[$extension] ?? [];
+        if ($mime === '' || !in_array($mime, $allowedForExtension, true)) {
             return ['path' => '', 'error' => "The $field file content does not match a supported audio format."];
         }
     }
+
     if ($temporary === '' || !is_uploaded_file($temporary)) {
         return ['path' => '', 'error' => "The $field file could not be verified as an upload."];
     }
@@ -593,13 +608,15 @@ function store(array $file, string $directory, string $kind, string $field, ?str
         return ['path' => $name, 'error' => null];
     }
 
-    $directoryPath = rtrim($directory, '/') . '/';
-    if (!is_dir($directoryPath) || !is_writable($directoryPath)) {
+    $directory = rtrim($directory, '/') . '/';
+    if (!is_dir($directory) || !is_writable($directory)) {
         return ['path' => '', 'error' => "The server cannot write to the $field folder."];
     }
-    if (!@move_uploaded_file($temporary, $directoryPath . $name)) {
+
+    if (!@move_uploaded_file($temporary, $directory . $name)) {
         return ['path' => '', 'error' => "The $field file could not be saved."];
     }
+
     return ['path' => $name, 'error' => null];
 }
 
