@@ -29,3 +29,6 @@ AGENTS.md
 *.m4a
 *.aac
 
+# PHP class files (legacy - use app/{Models,Core,Controllers,Services} instead)
+*.class.php
+
