@@ -12,4 +12,8 @@ require_once dirname(__DIR__) . '/app/bootstrap.php';
 
 $router = new \App\core\Router($response);
 require BASE_PATH . '/routes/web.php';
-$router->dispatch($request);
+// Run the router dispatch through the middleware pipeline (if any):
+$pipeline = new \App\core\Middleware();
+$pipeline->run($request, function (): void {
+    $router->dispatch($request);
+});

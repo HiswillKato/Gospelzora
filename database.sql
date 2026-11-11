@@ -24,6 +24,24 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
+
+-- -------------------------------------------------------------------------
+-- schema_migrations — tracks applied schema versions for safe evolution
+-- -------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `schema_migrations` (
+  `version` VARCHAR(50) NOT NULL,
+  `applied_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`version`),
+  UNIQUE KEY `uk_schema_migrations_version` (`version`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Apply the initial schema version so the tracker exists from the start
+INSERT IGNORE INTO `schema_migrations` (`version`) VALUES ('2024-01-01-base');
+
+-- -------------------------------------------------------------------------
+-- users — one table for every account type
+-- -------------------------------------------------------------------------
+
 -- ---------------------------------------------------------------------------
 -- users — one table for every account type
 --

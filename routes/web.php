@@ -1,7 +1,24 @@
 <?php
 declare(strict_types=1);
 
-/** URL map for the single public front controller. */
+/**
+ * URL map for the single public front controller.
+ *
+ * Global context available to all route handlers (injected via `global` declaration
+ * at the top of each closure). These are per-request singletons set up in
+ * app/bootstrap.php and made available through the global scope.
+ *
+ * @global \App\core\Config            $config
+ * @global \App\core\Database          $db
+ * @global \App\services\Mail          $mail
+ * @global \App\Models\User            $user
+ * @global \App\core\Request           $request
+ * @global \App\core\Response          $response
+ * @global \App\Models\Analytics       $analytics
+ * @global \App\Models\Settings        $settings
+ * @global \App\Models\Pages           $pages
+ * @global \App\services\Music         $music
+ */
 $render = static function (string $file, array $queryKeys = []): callable {
     return static function (...$params) use ($file, $queryKeys): void {
         global $config, $db, $analytics, $mail, $settings, $user, $music, $pages, $request, $response;
