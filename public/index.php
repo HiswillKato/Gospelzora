@@ -14,6 +14,6 @@ $router = new \App\core\Router($response);
 require BASE_PATH . '/routes/web.php';
 // Run the router dispatch through the middleware pipeline (if any):
 $pipeline = new \App\core\Middleware();
-$pipeline->run($request, function (): void {
+$pipeline->run($request, function () use ($router, $request): void {
     $router->dispatch($request);
 });

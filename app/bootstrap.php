@@ -9,7 +9,8 @@
  * Being `require_once`, including it from a view or partial is always safe.
  *
  * It contains no domain logic. Helpers live in app/functions.php; each domain
- * class in its own app/*.class.php file.
+ * class lives in app/core, app/models or app/services and is aliased to its
+ * legacy global name here.
  */
 
 /* ---------------------------------------------------------- */
@@ -50,7 +51,8 @@ require_once __DIR__ . '/functions.php';
      Music     songs, categories, favorites, song requests.
      Pages     per-page SEO metadata. */
 
-require_once __DIR__ . '/db.class.php';
+require_once __DIR__ . '/core/DB.php';
+class_alias(\App\core\DB::class, 'DB');
 require_once __DIR__ . '/models/Settings.php';
 class_alias(\App\Models\Settings::class, 'Settings');
 require_once __DIR__ . '/models/User.php';
