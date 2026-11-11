@@ -21,7 +21,6 @@ $recent = $analytics->visitors($filters);
 $pagination = $recent['pagination'];
 $base_url = url('dashboard/admin/visits') . ($method ? '?' . http_build_query(['method' => $method]) : '');
 
-require __DIR__ . '/../shared/header.php';
 ?>
 <div class="row g-3 mb-4">
 <?php
@@ -131,4 +130,3 @@ foreach ($summary['daily'] as $d) { ?>
 <?php } ?>
 <?php if ($pagination['total_pages'] > 1) { ?><div class="p-3 border-top"><?php require __DIR__ . '/../shared/partials/pagination.php'; ?></div><?php } ?>
 </div>
-<?php require __DIR__ . '/../shared/footer.php'; 

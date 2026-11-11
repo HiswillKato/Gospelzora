@@ -941,3 +941,22 @@ function legal(string $html): string
 {
     return '<div class="legal-body">' . $html . '</div>';
 }
+
+/* ---------------------------------------------------------- */
+/* Member dashboard role wording                               */
+/* ---------------------------------------------------------- */
+
+/**
+ * Label/place wording for a member-account role. Shared by the member shell
+ * and the pages that mention the account (e.g. the profile page), so the
+ * wording lives in one place and does not depend on render order.
+ *
+ * @return array{label: string, place: string}
+ */
+function dash_role(string $type): array
+{
+    return [
+        'artist' => ['label' => 'Artist', 'place' => 'Artist studio'],
+        'admin'  => ['label' => 'Admin',  'place' => 'Admin account'],
+    ][$type] ?? ['label' => 'Member', 'place' => 'Member area'];
+}

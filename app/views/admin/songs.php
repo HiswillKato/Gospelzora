@@ -30,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
 
 $songs = $music->manage($artist_mode ? (int)$artist_user['id'] : null);
 $header_actions = '<a class="btn btn-gold btn-sm" href="' . url('dashboard/admin/songs/add') . '">' . icon('plus') . "Add Song" . '</a>';
-require __DIR__ . '/../shared/admin/header.php';
 ?>
 <?php $alert_type = 'success'; $alert_text = $msg;
 require __DIR__ . '/../shared/partials/alert.php'; ?>
@@ -59,4 +58,3 @@ require __DIR__ . '/../shared/partials/delete-button.php'; ?>
 </td></tr><?php } } ?>
 </tbody></table></div>
 </div>
-<?php require __DIR__ . '/../shared/admin/footer.php'; 

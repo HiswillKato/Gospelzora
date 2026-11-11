@@ -62,7 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
     $err = "Invalid security token. Please try again.";
 }
 
-require __DIR__ . '/../../shared/admin/header.php';
 ?>
 <?php $alert_type = 'danger'; $alert_text = $err;
 require __DIR__ . '/../../shared/partials/alert.php'; ?>
@@ -87,4 +86,3 @@ require __DIR__ . '/../../shared/partials/country-options.php'; ?></select></div
 <div class="col-md-3 d-flex align-items-end gap-2"><button type="submit" class="btn btn-gold">Save</button> <a href="<?= url($type['list']) ?>" class="btn btn-ghost">Cancel</a></div>
 </div></form>
 </div></div>
-<?php require __DIR__ . '/../../shared/admin/footer.php'; 

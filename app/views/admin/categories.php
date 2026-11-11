@@ -20,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
 }
 $categories = $music->all(false, true);
 $header_actions = '<a class="btn btn-gold btn-sm" href="' . url('dashboard/admin/categories/add') . '">' . icon('plus') . "Add Category" . '</a>';
-require __DIR__ . '/../shared/header.php';
 ?>
 <?php $alert_type = 'success'; $alert_text = $msg;
 require __DIR__ . '/../shared/partials/alert.php'; ?>
@@ -45,4 +44,3 @@ require __DIR__ . '/../shared/partials/alert.php'; ?>
 <?php $delete_id = (int)$c['id']; $delete_confirm = 'Delete this?'; $delete_form_class = 'd-inline';
 require __DIR__ . '/../shared/partials/delete-button.php'; ?></div></td></tr>
 <?php } } ?></tbody></table></div></div>
-<?php require __DIR__ . '/../shared/footer.php'; 

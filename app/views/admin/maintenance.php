@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
     $err = "Invalid security token. Please try again.";
 }
 
-require __DIR__ . '/../shared/admin/header.php';
 ?>
 <?php $alert_type = 'success'; $alert_text = $msg;
 require __DIR__ . '/../shared/partials/alert.php'; ?>
@@ -43,4 +42,3 @@ require __DIR__ . '/../shared/partials/alert.php'; ?>
 </button>
 </form>
 </div></div>
-<?php require __DIR__ . '/../shared/admin/footer.php'; 

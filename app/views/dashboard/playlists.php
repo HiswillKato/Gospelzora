@@ -24,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $playlists = $music->playlists($dash_id, $dash_type);
 
-require __DIR__ . '/../shared/member/header.php';
 ?>
 <div class="card tile">
 <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -53,4 +52,3 @@ require __DIR__ . '/../shared/member/header.php';
 </tbody></table></div>
 <?php } ?>
 </div>
-<?php require __DIR__ . '/../shared/member/footer.php'; ?>

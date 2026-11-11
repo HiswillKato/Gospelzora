@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
     redirect('dashboard/admin/messages');
 }
 $messages = $db->select("SELECT * FROM messages ORDER BY created DESC");
-require __DIR__ . '/../shared/admin/header.php';
 ?>
 <div class="card tile">
 <?php if (empty($messages)) { ?>
@@ -53,4 +52,3 @@ require __DIR__ . '/../shared/partials/delete-button.php'; ?>
 </div></div>
 <?php } ?></div><?php } ?>
 </div>
-<?php require __DIR__ . '/../shared/admin/footer.php'; 

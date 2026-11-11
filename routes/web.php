@@ -77,7 +77,7 @@ $dashboard=[
     '/dashboard/playlists'=>'playlists.php','/dashboard/favorites'=>'favorites.php',
 ];
 foreach($dashboard as $path=>$file) {
-    $handler=$render('app/views/dashboard/'.$file, [], 'member', false);
+    $handler=$render('app/views/dashboard/'.$file, [], 'member', true);
     // Dashboard pages own their POST handlers and CSRF checks (profile, artist songs,
     // playlists and song requests). Keep POST dispatch available to each page.
     $getPost($path, $handler);
@@ -98,8 +98,12 @@ $admin=[
     '/dashboard/admin/admins/add'=>'add-admin.php','/dashboard/admin/admins/edit'=>'add-admin.php',
     '/dashboard/admin/pages/add'=>'page-edit.php','/dashboard/admin/pages/edit'=>'page-edit.php',
 ];
+$adminPublicShell = ['artists.php','categories.php','logs.php','visits.php'];
 foreach($admin as $path=>$file) {
-    $handler=$render('app/views/admin/'.$file, [], 'admin', false);
+    // A few admin pages render the public shell (site nav/footer) rather than
+    // the admin shell; keep their existing appearance.
+    $adminShell = in_array($file, $adminPublicShell, true) ? 'public' : 'admin';
+    $handler=$render('app/views/admin/'.$file, [], $adminShell, true);
     // Admin list views also process CSRF-protected actions such as approve,
     // delete, toggle and account management.
     $getPost($path, $handler);

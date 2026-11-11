@@ -6,6 +6,7 @@ $user->guard('login');
  * who opened their profile from the dashboard topbar. */
 $dash_type = $user->role();
 $dash_user = $user->current();
+$dash_role = dash_role($dash_type);
 $dash_id = (int)$dash_user['id'];
 
 $section = 'profile';
@@ -47,7 +48,6 @@ $overview = [
     'favorites' => $user->count($dash_id, $dash_type),
 ];
 
-require __DIR__ . '/../shared/member/header.php';
 ?>
 <div class="row g-4">
 <div class="col-lg-4">
@@ -94,4 +94,3 @@ require __DIR__ . '/../shared/partials/country-options.php'; ?></select></div>
 </div></div>
 </div>
 </div>
-<?php require __DIR__ . '/../shared/member/footer.php'; 

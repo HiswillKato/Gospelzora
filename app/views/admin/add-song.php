@@ -53,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
 
 $artists = $artist_mode ? [$artist_user] : $user->options();
 $categories = $music->categories();
-require __DIR__ . '/../shared/admin/header.php';
 ?>
 <?php $alert_type = 'danger'; $alert_text = $err;
 require __DIR__ . '/../shared/partials/alert.php'; ?>
@@ -115,4 +114,3 @@ if ($edit) {
 <button type="submit" class="btn btn-gold" data-save-btn><?= icon('floppy-disk') ?>Save Song</button> <a href="<?= url('dashboard/admin/songs') ?>" class="btn btn-ghost">Cancel</a>
 </div>
 </div></form></div></div>
-<?php require __DIR__ . '/../shared/admin/footer.php'; 

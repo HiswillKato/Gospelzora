@@ -45,7 +45,6 @@ $keepTitle = trim($_GET['title'] ?? '');
 $keepNote = trim($_GET['note'] ?? '');
 $keepCategory = max(0, (int)($_GET['category'] ?? 0));
 
-require __DIR__ . '/../shared/member/header.php';
 ?>
 <div class="row g-4">
 <div class="col-lg-5">
@@ -98,4 +97,3 @@ require __DIR__ . '/../shared/member/header.php';
 </div>
 </div>
 </div>
-<?php require __DIR__ . '/../shared/member/footer.php'; 

@@ -8,7 +8,6 @@ $top = $analytics->top(10);
 $events = $analytics->downloads(['page' => (int)($_GET['page'] ?? 1)]);
 $pagination = $events['pagination'];
 
-require __DIR__ . '/../shared/admin/header.php';
 ?>
 <div class="row g-3 mb-4">
 <?php
@@ -91,4 +90,3 @@ foreach ($stats['daily'] as $d) { ?>
 <?php } ?>
 <?php if ($pagination['total_pages'] > 1) { $base_url = url('dashboard/admin/downloads'); ?><div class="p-3 border-top"><?php require __DIR__ . '/../shared/partials/pagination.php'; ?></div><?php } ?>
 </div>
-<?php require __DIR__ . '/../shared/admin/footer.php'; 

@@ -26,7 +26,6 @@ $base_url = url('dashboard/admin/logins') . ($filter_qs !== '' ? '?' . $filter_q
 
 $method_labels = ['site' => 'Site', 'admin' => 'Admin', 'blocked' => 'Blocked'];
 
-require __DIR__ . '/../shared/admin/header.php';
 ?>
 <div class="card tile mb-4"><div class="card-body">
 <form method="GET" class="row g-2 align-items-end">
@@ -77,4 +76,3 @@ require __DIR__ . '/../shared/admin/header.php';
 <?php } ?>
 <?php if ($pagination['total_pages'] > 1) { ?><div class="p-3 border-top"><?php require __DIR__ . '/../shared/partials/pagination.php'; ?></div><?php } ?>
 </div>
-<?php require __DIR__ . '/../shared/admin/footer.php'; 

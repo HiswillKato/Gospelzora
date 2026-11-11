@@ -20,7 +20,7 @@ if ($user->check('admin')) {
         'failedLogin24h' => $login['failed24h'],
     ];
     $recentLogs = $analytics->activity(['per_page' => 8]);
-    require __DIR__ . '/../shared/admin/header.php';
+    $shell = 'admin';
     ?>
     <div class="row g-3 mb-3 mb-lg-4">
     <?php
@@ -83,8 +83,7 @@ if ($user->check('admin')) {
     </div>
     </div>
     <?php
-    require __DIR__ . '/../shared/admin/footer.php';
-    exit;
+    return;
 }
 
 $dash_type = $user->role(); // 'artist' | 'user'
@@ -114,7 +113,6 @@ if ($dash_type === 'artist') {
     );
 }
 
-require __DIR__ . '/../shared/member/header.php';
+$shell = 'member';
 define('DASHBOARD_PARTIAL_GUARD', true);
 require __DIR__ . '/partials/overview.php';
-require __DIR__ . '/../shared/member/footer.php';

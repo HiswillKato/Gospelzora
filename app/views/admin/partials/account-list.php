@@ -82,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf($_POST['csrf_token'] ?? '')) {
 
 $accounts = $user->roster($role);
 $header_actions = '<a class="btn btn-gold btn-sm" href="' . url($type['add']) . '">' . icon('plus') . "Add " . $type['One'] . '</a>';
-require __DIR__ . '/../../shared/admin/header.php';
 ?>
 <div class="card tile"><div class="table-responsive">
 <table class="table table-hover align-middle mb-0"><thead><tr><th>Name</th><th>Email</th><th>Status</th><th class="d-none d-md-table-cell">Joined</th><th class="d-none d-lg-table-cell">Last Login</th><th></th></tr></thead><tbody>
@@ -100,4 +99,3 @@ require __DIR__ . '/../../shared/admin/header.php';
 require __DIR__ . '/../../shared/partials/delete-button.php'; ?><?php } ?>
 </div>
 </td></tr><?php } } ?></tbody></table></div></div>
-<?php require __DIR__ . '/../../shared/admin/footer.php'; 

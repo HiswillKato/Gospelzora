@@ -7,10 +7,7 @@ $section = $section ?? 'overview';
  * their own profile — so what it calls the account follows the role instead of
  * the artist/listener pair it started with. Pages that mention the account
  * read the same map, so the wording lives in one place. */
-$dash_role = [
-    'artist' => ['label' => "Artist", 'place' => "Artist studio"],
-    'admin'  => ['label' => "Admin",  'place' => "Admin account"],
-][$dash_type] ?? ['label' => "Member", 'place' => "Member area"];
+$dash_role = dash_role($dash_type);
 
 $nav_main = [
     'overview'   => ['title' => "Dashboard",    'icon' => 'fa-gauge-high', 'href' => 'dashboard'],

@@ -25,7 +25,6 @@ $pagination = $result['pagination'];
 $filter_qs = http_build_query(array_filter(['action' => $filters['action'], 'q' => $filters['q']]));
 $base_url = url('dashboard/admin/logs') . ($filter_qs !== '' ? '?' . $filter_qs : '');
 
-require __DIR__ . '/../shared/header.php';
 ?>
 <div class="card tile mb-4"><div class="card-body">
 <form method="GET" class="row g-2 align-items-end">
@@ -68,4 +67,3 @@ require __DIR__ . '/../shared/header.php';
 </div>
 <?php if ($pagination['total_pages'] > 1) { ?><div class="p-3 border-top"><?php require __DIR__ . '/../shared/partials/pagination.php'; ?></div><?php } ?>
 </div>
-<?php require __DIR__ . '/../shared/footer.php'; 

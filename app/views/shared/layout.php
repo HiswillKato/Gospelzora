@@ -18,11 +18,15 @@ if (!isset($view_file) || !is_string($view_file) || !is_file($view_file)) {
 }
 
 $shell = isset($shell) && is_string($shell) && $shell !== '' ? $shell : 'public';
-$shell_dir = $shell === 'public' ? '' : $shell . '/';
 
 ob_start();
 require $view_file;
 $content = ob_get_clean();
+
+// A view may override $shell (e.g. the role-based dashboard chooses the admin
+// or member shell), so resolve the directory only after the view has run.
+$shell = is_string($shell) && $shell !== '' ? $shell : 'public';
+$shell_dir = $shell === 'public' ? '' : $shell . '/';
 
 require __DIR__ . '/' . $shell_dir . 'header.php';
 echo $content;
