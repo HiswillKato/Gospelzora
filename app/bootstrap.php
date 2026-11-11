@@ -126,7 +126,7 @@ if (APP_ENV === 'production' && PHP_SAPI !== 'cli') {
         $configProblems[] = 'The site URL is not an absolute <code>http</code> or <code>https</code> address.';
     }
 
-    foreach (['AUDIO_PATH' => 'song audio', 'IMAGE_PATH' => 'artist images', 'ARTWORK_PATH' => 'song artwork'] as $dirConst => $dirWhat) {
+    foreach (['AUDIO_PATH' => 'song audio', 'ARTIST_IMAGE_PATH' => 'artist images', 'ARTWORK_PATH' => 'song artwork'] as $dirConst => $dirWhat) {
         $dir = constant($dirConst);
         if (!is_dir($dir)) {
             @mkdir($dir, 0775, true);

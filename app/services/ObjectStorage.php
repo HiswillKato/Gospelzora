@@ -6,43 +6,52 @@ namespace App\Services;
 use RuntimeException;
 
 /**
- * OCI Object Storage adapter using Oracle's S3-compatible API and AWS Signature V4.
- * The bucket stays private; media URLs are short-lived signed GET requests.
+ * S3-compatible object storage adapter using AWS Signature V4.
+ *
+ * Defaults to Cloudflare R2: the bucket stays private and media URLs are
+ * short-lived signed GET requests.
  */
 final class ObjectStorage
 {
     private static ?self $instance = null;
-    private string $namespace;
+    private string $accountId;
     private string $region;
     private string $bucket;
     private string $accessKey;
     private string $secretKey;
     private string $endpoint;
+    private string $mediaUrl = '';
+    private string $mediaSecret = '';
 
     private function __construct()
     {
-        $this->namespace = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_NAMESPACE', ''));
-        $this->region = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_REGION', ''));
-        $this->bucket = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_BUCKET', ''));
-        $this->accessKey = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_ACCESS_KEY', ''));
-        $this->secretKey = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_SECRET_KEY', ''));
+        $this->accountId = trim((string)\App\core\Environment::get('R2_ACCOUNT_ID', ''));
+        $this->region = trim((string)\App\core\Environment::get('R2_REGION', '')) ?: 'auto';
+        $this->bucket = trim((string)\App\core\Environment::get('R2_BUCKET', ''));
+        $this->accessKey = trim((string)\App\core\Environment::get('R2_ACCESS_KEY', ''));
+        $this->secretKey = trim((string)\App\core\Environment::get('R2_SECRET_KEY', ''));
 
-        if ($this->namespace === '' || $this->region === '' || $this->bucket === '' || $this->accessKey === '' || $this->secretKey === '' || !preg_match('~^[A-Za-z0-9-]+$~', $this->region)) {
-            throw new RuntimeException('Oracle Object Storage is enabled but its configuration is incomplete.');
+        if ($this->accountId === '' || $this->bucket === '' || $this->accessKey === '' || $this->secretKey === '' || !preg_match('~^[A-Za-z0-9-]+$~', $this->region)) {
+            throw new RuntimeException('Cloudflare R2 is enabled but its configuration is incomplete.');
         }
 
-        $endpoint = trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_ENDPOINT', ''));
+        $endpoint = trim((string)\App\core\Environment::get('R2_ENDPOINT', ''));
         $this->endpoint = rtrim($endpoint !== ''
             ? $endpoint
-            : 'https://' . $this->namespace . '.compat.objectstorage.' . $this->region . '.oraclecloud.com', '/');
+            : 'https://' . $this->accountId . '.r2.cloudflarestorage.com', '/');
         if (!preg_match('~^https://[A-Za-z0-9.-]+(?::[0-9]{1,5})?$~', $this->endpoint)) {
-            throw new RuntimeException('The Oracle Object Storage endpoint must be a valid HTTPS endpoint.');
+            throw new RuntimeException('The R2 endpoint must be a valid HTTPS endpoint.');
         }
+
+        // Optional: serve reads via a Cloudflare Worker on your own domain so R2
+        // endpoint/credentials are never exposed in client-visible URLs.
+        $this->mediaUrl = rtrim(trim((string)\App\core\Environment::get('R2_MEDIA_URL', '')), '/');
+        $this->mediaSecret = (string)\App\core\Environment::get('R2_MEDIA_SECRET', '');
     }
 
     public static function enabled(): bool
     {
-        return in_array(strtolower(trim((string)\App\core\Environment::get('OCI_OBJECT_STORAGE_ENABLED', 'false'))), ['1', 'true', 'yes', 'on'], true);
+        return in_array(strtolower(trim((string)\App\core\Environment::get('R2_ENABLED', 'false'))), ['1', 'true', 'yes', 'on'], true);
     }
 
     public static function instance(): self
@@ -57,9 +66,20 @@ final class ObjectStorage
         if ($path === '' || str_contains($path, '..') || preg_match('~[^A-Za-z0-9._/-]~', $path)) {
             return false;
         }
-        if (preg_match('~^audio/[A-Za-z0-9._/-]+$~', $path) || preg_match('~^images/artwork/[A-Za-z0-9._/-]+$~', $path)) {
+        // Placeholder artwork stays local and is never uploaded or signed.
+        if (str_starts_with(strtolower(basename($path)), 'placeholder')) {
+            return false;
+        }
+        if (preg_match('~^audio/[A-Za-z0-9._/-]+$~', $path)) {
             return true;
         }
+        if (preg_match('~^images/artwork/[A-Za-z0-9._/-]+$~', $path)) {
+            return true;
+        }
+        if (preg_match('~^images/artists/[A-Za-z0-9._/-]+\.(?:jpe?g|png|gif|webp)$~i', $path)) {
+            return true;
+        }
+        // Legacy artist images stored in images/ root.
         return (bool)preg_match('~^images/[A-Za-z0-9_-]+-[a-f0-9]{8}\.(?:jpe?g|png|gif|webp)$~i', $path);
     }
 
@@ -142,11 +162,56 @@ final class ObjectStorage
         }
     }
 
+    /** Check whether an object exists without downloading it. */
+    public function exists(string $key): bool
+    {
+        $key = $this->key($key);
+        $url = $this->objectUrl($key);
+        $payloadHash = hash('sha256', '');
+        $headers = [
+            'host' => $this->host(),
+            'x-amz-content-sha256' => $payloadHash,
+            'x-amz-date' => gmdate('Ymd\THis\Z'),
+        ];
+        $signed = $this->signedHeaders('HEAD', $url, $headers, $payloadHash);
+        $lines = [];
+        foreach ($headers as $name => $value) {
+            $lines[] = $name . ': ' . $value;
+        }
+        $curl = curl_init($url);
+        if ($curl === false) {
+            return false;
+        }
+        curl_setopt_array($curl, [
+            CURLOPT_CUSTOMREQUEST => 'HEAD',
+            CURLOPT_NOBODY => true,
+            CURLOPT_HTTPHEADER => [...$lines, 'Authorization: ' . $signed],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 15,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+        ]);
+        curl_exec($curl);
+        $status = (int)curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+        $failed = curl_errno($curl) !== 0;
+        curl_close($curl);
+        return !$failed && $status >= 200 && $status < 300;
+    }
+
     /** A short-lived GET link; optional content disposition is used by downloads. */
     public function url(string $key, int $expires = 3600, ?string $contentDisposition = null): string
     {
         $key = $this->key($key);
         $expires = max(60, min(604800, $expires));
+
+        // Prefer delivery via a Cloudflare Worker on your own domain so the R2
+        // endpoint and S3 credentials never appear in client-visible URLs.
+        // When R2_MEDIA_URL is set, return clean object URLs with no query params.
+        if ($this->mediaUrl !== '') {
+            return $this->mediaUrl . '/' . $this->encodedKey($key);
+        }
+
         $date = gmdate('Ymd\THis\Z');
         $day = substr($date, 0, 8);
         $scope = $day . '/' . $this->region . '/s3/aws4_request';
@@ -169,7 +234,7 @@ final class ObjectStorage
     }
 
     /** Migrate local media while preserving the database path/key. */
-    public function uploadLocalTree(string $directory, string $prefix): int
+    public function uploadLocalTree(string $directory, string $prefix, ?callable $filter = null): int
     {
         if (!is_dir($directory)) {
             return 0;
@@ -184,6 +249,9 @@ final class ObjectStorage
             }
             $relative = str_replace('\\', '/', substr($file->getPathname(), strlen(rtrim($directory, '/')) + 1));
             $key = trim($prefix, '/') . '/' . $relative;
+            if ($filter !== null && !$filter($key)) {
+                continue;
+            }
             $mime = 'application/octet-stream';
             if (class_exists('finfo')) {
                 $finfo = new \finfo(FILEINFO_MIME_TYPE);

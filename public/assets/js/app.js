@@ -58,7 +58,7 @@
         if (base === '' && doc.body) {
             base = doc.body.getAttribute('data-base-url') || '';
         }
-        return base.replace(/\/+$/, '') + '/api/' + name;
+        return base.replace(/\/+$/, '') + '/api/' + String(name).replace(/\.php$/i, '');
     }
 
     function toInt(value) {
@@ -652,7 +652,16 @@
             if (!audio.getAttribute('src')) {
                 return;
             }
-            toast('That audio file could not be played.', 'danger');
+            var err = audio.error;
+            var detail = '';
+            if (err) {
+                var codes = { 1: 'aborted', 2: 'network', 3: 'decode', 4: 'src-not-supported' };
+                detail = ' (' + (codes[err.code] || err.code) + (err.message ? ': ' + err.message : '') + ')';
+            }
+            if (window.console && console.error) {
+                console.error('Audio playback error', err, audio.currentSrc || audio.src);
+            }
+            toast('That audio file could not be played' + detail + '.', 'danger');
             playerSync();
         });
 
@@ -1686,12 +1695,67 @@
         paint();
     }
 
+    function initSongDuration() {
+        var audioInput = doc.getElementById('songAudio');
+        var durationInput = doc.getElementById('songDuration');
+        if (!audioInput || !durationInput) {
+            return;
+        }
+
+        function setDuration(seconds) {
+            if (!isFinite(seconds) || seconds <= 0) {
+                return;
+            }
+            var total = Math.round(seconds);
+            var h = Math.floor(total / 3600);
+            var m = Math.floor((total % 3600) / 60);
+            var s = total % 60;
+            durationInput.value = h > 0
+                ? (h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'))
+                : (m + ':' + String(s).padStart(2, '0'));
+        }
+
+        audioInput.addEventListener('change', function () {
+            var file = audioInput.files && audioInput.files[0];
+            if (!file) {
+                return;
+            }
+            var url = URL.createObjectURL(file);
+            var probe = new Audio();
+            probe.preload = 'metadata';
+            var done = false;
+            function finish() {
+                if (done) return;
+                if (isFinite(probe.duration) && probe.duration > 0) {
+                    done = true;
+                    setDuration(probe.duration);
+                    URL.revokeObjectURL(url);
+                    probe.removeAttribute('src');
+                    probe.load();
+                }
+            }
+            probe.addEventListener('loadedmetadata', finish);
+            probe.addEventListener('durationchange', finish);
+            probe.addEventListener('canplaythrough', finish);
+            probe.addEventListener('error', function () {
+                if (!done) {
+                    done = true;
+                    URL.revokeObjectURL(url);
+                }
+            });
+            probe.src = url;
+            // Some browsers need an explicit load for blob URLs.
+            try { probe.load(); } catch (e) {}
+        });
+    }
+
     function boot() {
         Theme.init();
         initFavourites();
         initAdminSidebar();
         initIconPickers();
         initBackToTop();
+        initSongDuration();
         Upload.init();
         ArtistPicker.init();
         doc.addEventListener('click', function (event) {

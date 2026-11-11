@@ -576,31 +576,60 @@ function store(array $file, string $directory, string $kind, string $field, ?str
         return ['path' => '', 'error' => "The $field file could not be verified as an upload."];
     }
 
-    $name = $name === null || trim($name) === ''
-        ? filename($original, $kind)
-        : slugify((string)pathinfo($name, PATHINFO_FILENAME)) . '.' . $extension;
-    $name = basename($name);
+    $preferred = $name === null ? '' : trim((string)$name);
 
-    if (\App\Services\ObjectStorage::enabled()) {
+    $objectPrefix = null;
+    $usingR2 = \App\Services\ObjectStorage::enabled();
+    if ($usingR2) {
         $directoryPath = rtrim($directory, '/');
-        $prefix = null;
         foreach ([
-            ARTWORK_PATH => 'images/artwork',
-            AUDIO_PATH => 'audio',
-            IMAGE_PATH => 'images',
-        ] as $localDirectory => $objectPrefix) {
+            ARTWORK_PATH      => 'images/artwork',
+            ARTIST_IMAGE_PATH => 'images/artists',
+            AUDIO_PATH        => 'audio',
+            IMAGE_PATH        => 'images',
+        ] as $localDirectory => $prefix) {
             if (rtrim($localDirectory, '/') === $directoryPath) {
-                $prefix = $objectPrefix;
+                $objectPrefix = $prefix;
                 break;
             }
         }
-        if ($prefix === null) {
+        if ($objectPrefix === null) {
             return ['path' => '', 'error' => "The server cannot store the $field file."];
         }
+    }
+
+    // When a preferred base name is given, store as <artist-name>.<ext> and
+    // ensure uniqueness (no duplicates / no overwrites).
+    if ($preferred !== '') {
+        $base = slugify((string)pathinfo(basename($preferred), PATHINFO_FILENAME));
+        $base = $base === '' ? ($kind === 'audio' ? 'audio' : 'image') : mb_substr($base, 0, 100);
+        $candidate = $base . '.' . $extension;
+        $n = 2;
+        $exists = static function (string $filename) use ($usingR2, $objectPrefix, $directory): bool {
+            if ($usingR2) {
+                return \App\Services\ObjectStorage::instance()->exists($objectPrefix . '/' . $filename);
+            }
+            return is_file(rtrim($directory, '/') . '/' . $filename);
+        };
+        while ($exists($candidate)) {
+            $candidate = $base . '-' . $n . '.' . $extension;
+            $n++;
+            if ($n > 10000) {
+                $candidate = $base . '-' . bin2hex(random_bytes(4)) . '.' . $extension;
+                break;
+            }
+        }
+        $name = $candidate;
+    } else {
+        $name = filename($original, $kind);
+    }
+    $name = basename($name);
+
+    if ($usingR2) {
         $finfo = class_exists('finfo') ? new finfo(FILEINFO_MIME_TYPE) : null;
         $contentType = $finfo ? (string)($finfo->file($temporary) ?: 'application/octet-stream') : 'application/octet-stream';
         try {
-            \App\Services\ObjectStorage::instance()->uploadFile($temporary, $prefix . '/' . $name, $contentType);
+            \App\Services\ObjectStorage::instance()->uploadFile($temporary, $objectPrefix . '/' . $name, $contentType);
         } catch (\Throwable $error) {
             error_log('Object Storage upload failed: ' . $error->getMessage());
             return ['path' => '', 'error' => "The server could not store the $field file. Please try again."];

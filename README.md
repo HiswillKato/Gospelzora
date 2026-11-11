@@ -81,10 +81,10 @@ Built and maintained by **Hiswill Kato**.
 *Gospelzora — Transforming Lives Through Worship.*
 
 
-## Oracle Cloud Object Storage
+## Cloudflare R2 Object Storage
 
-Uploads can use the OCI Amazon S3-compatible endpoint with a private bucket. Create a bucket and Customer Secret Key with access limited to that bucket, then set `OCI_OBJECT_STORAGE_NAMESPACE`, `OCI_OBJECT_STORAGE_REGION`, `OCI_OBJECT_STORAGE_BUCKET`, `OCI_OBJECT_STORAGE_ACCESS_KEY`, and `OCI_OBJECT_STORAGE_SECRET_KEY` in the server's ignored `.env`. Set `OCI_OBJECT_STORAGE_ENABLED=false` while preparing the migration.
+Uploads can use Cloudflare R2's S3-compatible API with a private bucket. Create an R2 bucket and an R2 API token with **Object Read & Write** access limited to that bucket, then set `R2_ACCOUNT_ID`, `R2_BUCKET`, `R2_ACCESS_KEY`, and `R2_SECRET_KEY` in the server's ignored `.env`. `R2_REGION` defaults to `auto`; `R2_ENDPOINT` is optional and defaults to `https://<account-id>.r2.cloudflarestorage.com`. Keep `R2_ENABLED=false` while preparing the migration.
 
-Install the existing PHP requirements, configure the credentials, and run `php scripts/migrate-local-media-to-oci.php --apply`. The command copies local audio and image files to the same object keys and retains local copies. After confirming the uploaded objects, set `OCI_OBJECT_STORAGE_ENABLED=true`; new uploads then go directly to the bucket, media URLs use short-lived signed links, and deletions remove the corresponding object. Keep the bucket private and restrict the Customer Secret Key to the required bucket operations. The site requires PHP cURL for OCI media transfers.
+Install the existing PHP requirements, configure the credentials, and run `php scripts/migrate-local-media-to-r2.php --apply`. The command copies local audio and real media images (artist photos and song artwork) to the same object keys, skips site assets and placeholders, and retains local copies. After confirming the uploaded objects, set `R2_ENABLED=true`; new uploads then go directly to the bucket, media URLs use short-lived signed links, and deletions remove the corresponding object. Keep the bucket private and scope the API token to the required bucket operations. The site requires PHP cURL for R2 media transfers.
 
-To roll back, set `OCI_OBJECT_STORAGE_ENABLED=false`; retained local files remain available. Do not remove local media until the object copies and application behavior have been verified.
+To roll back, set `R2_ENABLED=false`; retained local files remain available. Do not remove local media until the object copies and application behavior have been verified.

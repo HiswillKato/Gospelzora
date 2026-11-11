@@ -371,11 +371,9 @@ class Music {
         // the audio folder — nothing is written on its own.
         $audioUpload = $data['audio'] ?? null;
         $replacedAudio = false;
+        $mediaBaseName = trim($artist['name'] . ' ' . $title);
         if (is_array($audioUpload) && !empty($audioUpload['name'])) {
-            $ext = strtolower(pathinfo($audioUpload['name'], PATHINFO_EXTENSION));
-            // The slug already carries the artist name, so it is the filename.
-            $audioName = substr($slug, 0, 100) . '-' . bin2hex(random_bytes(6)) . '.' . $ext;
-            $upload = store($audioUpload, AUDIO_PATH . '/', 'audio', 'audio', $audioName);
+            $upload = store($audioUpload, AUDIO_PATH . '/', 'audio', 'audio', $mediaBaseName);
             if ($upload['error'] === null) {
                 $audioFile = 'audio/' . $upload['path'];
                 $replacedAudio = true;
@@ -388,7 +386,7 @@ class Music {
         // Artwork upload (keeps the existing file when none was uploaded)
         $artworkUpload = $data['artwork'] ?? null;
         if (is_array($artworkUpload) && !empty($artworkUpload['name'])) {
-            $upload = store($artworkUpload, ARTWORK_PATH . '/', 'image', 'artwork');
+            $upload = store($artworkUpload, ARTWORK_PATH . '/', 'image', 'artwork', $mediaBaseName);
             if ($upload['error'] === null) {
                 $artwork = 'images/artwork/' . $upload['path'];
                 $stored[] = $artwork;
@@ -591,12 +589,8 @@ class Music {
             return ['success' => false, 'message' => "The upload failed. Please try again."];
         }
 
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        // Requested-song slugs already include the artist name; the approved
-        // slug is inherited, so it is the audio filename.
-        $audioName = substr($song['slug'], 0, 100) . '-' . bin2hex(random_bytes(6)) . '.' . $ext;
-
-        $upload = store($file, AUDIO_PATH . '/', 'audio', 'audio', $audioName);
+        $mediaBaseName = trim(($song['artist_name'] ?? '') . ' ' . ($song['title'] ?? ''));
+        $upload = store($file, AUDIO_PATH . '/', 'audio', 'audio', $mediaBaseName !== '' ? $mediaBaseName : 'audio');
         if ($upload['error'] !== null) {
             return ['success' => false, 'message' => $upload['error']];
         }

@@ -29,12 +29,21 @@ if (!headers_sent()) {
     header('Referrer-Policy: strict-origin-when-cross-origin');
     header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
 
+    $mediaOrigin = '';
+    $mediaUrl = trim((string)(getenv('R2_MEDIA_URL') ?: ($_ENV['R2_MEDIA_URL'] ?? '')));
+    if ($mediaUrl !== '') {
+        $parts = parse_url($mediaUrl);
+        if (is_array($parts) && ($parts['scheme'] ?? '') === 'https' && !empty($parts['host'])) {
+            $mediaOrigin = 'https://' . $parts['host'] . (isset($parts['port']) ? ':' . $parts['port'] : '');
+        }
+    }
+
     $csp = "default-src 'self'; "
         . "script-src 'self' 'unsafe-inline'; "
         . "style-src 'self' 'unsafe-inline'; "
-        . "img-src 'self' data:; "
+        . "img-src 'self' data:" . ($mediaOrigin !== '' ? ' ' . $mediaOrigin : '') . '; '
         . "font-src 'self'; "
-        . "media-src 'self'; "
+        . "media-src 'self'" . ($mediaOrigin !== '' ? ' ' . $mediaOrigin : '') . '; '
         . "form-action 'self'; "
         . "frame-ancestors 'self'; "
         . "base-uri 'self'; "

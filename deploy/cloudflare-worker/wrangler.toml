@@ -1,0 +1,14 @@
+name = "zora-media"
+main = "src/index.js"
+compatibility_date = "2026-11-11"
+
+# Private R2 bucket binding (reads served by this Worker)
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "zora"
+
+# Serve on your own domain. Set zone_name to the Cloudflare zone that owns the host.
+# Change the hostname if you use a different subdomain, then set R2_MEDIA_URL in the app .env to match.
+routes = [
+  { pattern = "cdn.zora.hiws.dev/*", zone_name = "zora.hiws.dev" }
+]

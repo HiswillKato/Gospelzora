@@ -1,35 +1,15 @@
 /* ============================================================================
-   Gospelzora — "Royal"
-   A deep purple-and-gold streaming theme laid entirely on Bootstrap 5.3
-   primitives.
+   Gospelzora — "Royal" (modernized)
+   A deep purple-and-gold streaming theme on Bootstrap 5.3 primitives.
 
-   Nothing here re-implements a Bootstrap component. Colours, radii and
-   shadows are published as --bs-* tokens, so every built-in (btn, card,
-   badge, alert, table, form, dropdown…) picks up the brand on its own.
-   The custom classes exist only where Bootstrap has no primitive:
-     · colour helpers  (.text-*, .bg-*, .border-*, .badge-*)
-     · the three button accents this site uses (.btn-gold, .btn-soft,
-       .btn-ghost)
-     · a short list of bespoke pieces the markup already calls by name
-       (masthead, hero, section heading, category pill, empty state, filter
-       bar, song hero, player dock, upload, icon picker, artist search,
-       contact line, social chip, admin sidebar).
-   Panels, tiles and headers are Bootstrap's own card, card-header and
-   table — the .tile class only re-skins them from the tokens.
+   Modernized visuals while preserving the brand: the same purple/gold palette,
+   the same button accents (.btn-gold, .btn-soft, .btn-ghost), and the same
+   component class names the markup depends on.
    ========================================================================== */
 
 /* ---------------------------------------------------------------------------
-   1. Fonts — Fraunces and Plus Jakarta Sans ship as variable files, so one
-   face covers every weight. Declaring a fixed 400 was why headings looked flat:
-   the browser was synthesising bold instead of using the real axis.
+   1. Fonts
    --------------------------------------------------------------------------- */
-@font-face {
-  font-family: 'Fraunces';
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url('../webfonts/fraunces-latin.woff2') format('woff2');
-}
 @font-face {
   font-family: 'Plus Jakarta Sans';
   font-style: normal;
@@ -39,10 +19,7 @@
 }
 
 /* ---------------------------------------------------------------------------
-   2. Design tokens.
-   --surface / --surface-2 are the panels the theme is built from: cards,
-   tiles, the masthead, the sidebar. They are the only two names outside the
-   Bootstrap set, and everything else reads a --bs-* variable.
+   2. Design tokens
    --------------------------------------------------------------------------- */
 :root {
   color-scheme: light;
@@ -53,20 +30,21 @@
   --bs-body-line-height: 1.65;
 
   /* Surfaces */
-  --bs-body-bg: #fbfaff;
-  --bs-body-bg-rgb: 251, 250, 255;
+  --bs-body-bg: #f8f6ff;
+  --bs-body-bg-rgb: 248, 246, 255;
   --bs-body-color: #241f36;
   --bs-body-color-rgb: 36, 31, 54;
-  --bs-heading-color: #1c1430;
-  --bs-emphasis-color: #1c1430;
-  --bs-emphasis-color-rgb: 28, 20, 48;
+  --bs-heading-color: #171127;
+  --bs-emphasis-color: #171127;
+  --bs-emphasis-color-rgb: 23, 17, 39;
   --bs-secondary-color: #6f6790;
-  --bs-secondary-bg: #f1eefb;
-  --bs-tertiary-bg: #f6f3ff;
-  --bs-border-color: rgba(52, 33, 104, 0.14);
-  --bs-border-color-translucent: rgba(52, 33, 104, 0.08);
+  --bs-secondary-bg: #efeafb;
+  --bs-tertiary-bg: #f4f1ff;
+  --bs-border-color: rgba(52, 33, 104, 0.12);
+  --bs-border-color-translucent: rgba(52, 33, 104, 0.07);
   --surface: #ffffff;
-  --surface-2: #f4f1fe;
+  --surface-2: #f1edfc;
+  --surface-elevated: rgba(255, 255, 255, 0.72);
 
   /* Brand — royal purple */
   --bs-primary: #6d28d9;
@@ -92,80 +70,80 @@
   --bs-link-decoration: none;
 
   /* Shape */
-  --bs-border-radius: 0.6rem;
-  --bs-border-radius-sm: 0.4rem;
-  --bs-border-radius-lg: 0.9rem;
-  --bs-border-radius-xl: 1.15rem;
-  --bs-border-radius-xxl: 1.5rem;
+  --bs-border-radius: 0.75rem;
+  --bs-border-radius-sm: 0.5rem;
+  --bs-border-radius-lg: 1rem;
+  --bs-border-radius-xl: 1.25rem;
+  --bs-border-radius-xxl: 1.75rem;
 
   /* Depth */
-  --bs-box-shadow-sm: 0 1px 2px rgba(27, 16, 53, 0.05), 0 8px 20px -14px rgba(27, 16, 53, 0.35);
-  --bs-box-shadow: 0 2px 4px rgba(27, 16, 53, 0.06), 0 18px 38px -20px rgba(27, 16, 53, 0.45);
-  --bs-box-shadow-lg: 0 4px 8px rgba(27, 16, 53, 0.07), 0 30px 60px -28px rgba(27, 16, 53, 0.5);
+  --bs-box-shadow-sm: 0 1px 2px rgba(27, 16, 53, 0.04), 0 10px 24px -18px rgba(27, 16, 53, 0.22);
+  --bs-box-shadow: 0 8px 20px -12px rgba(27, 16, 53, 0.16), 0 18px 40px -24px rgba(27, 16, 53, 0.22);
+  --bs-box-shadow-lg: 0 18px 40px -20px rgba(27, 16, 53, 0.22), 0 30px 60px -30px rgba(27, 16, 53, 0.28);
 
   /* Theme extras */
   --gold: var(--bs-warning);
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --snap: 0.18s var(--ease);
-  --focus: 0 0 0 0.22rem rgba(109, 40, 217, 0.25);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --snap: 0.2s var(--ease);
+  --focus: 0 0 0 0.24rem rgba(109, 40, 217, 0.22);
+  --ring: 0 0 0 1px rgba(var(--bs-primary-rgb), 0.12), var(--bs-box-shadow-sm);
 
-  /* The admin sidebar is one width everywhere: the offcanvas breakpoint
-     variable and the desktop column both read this. */
+  /* Admin sidebar width */
   --admin-side: 272px;
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --bs-body-bg: #130c26;
-  --bs-body-bg-rgb: 19, 12, 38;
+  --bs-body-bg: #100a20;
+  --bs-body-bg-rgb: 16, 10, 32;
   --bs-body-color: #ece7fb;
   --bs-body-color-rgb: 236, 231, 251;
-  --bs-heading-color: #f6f2ff;
-  --bs-emphasis-color: #f6f2ff;
-  --bs-emphasis-color-rgb: 246, 242, 255;
+  --bs-heading-color: #f8f5ff;
+  --bs-emphasis-color: #f8f5ff;
+  --bs-emphasis-color-rgb: 248, 245, 255;
   --bs-secondary-color: #b0a6d6;
-  --bs-secondary-bg: #1d1436;
-  --bs-tertiary-bg: #221845;
-  --bs-border-color: rgba(210, 196, 255, 0.14);
-  --bs-border-color-translucent: rgba(210, 196, 255, 0.08);
-  --surface: #1a1133;
-  --surface-2: #241a44;
+  --bs-secondary-bg: #1b1333;
+  --bs-tertiary-bg: #201741;
+  --bs-border-color: rgba(210, 196, 255, 0.13);
+  --bs-border-color-translucent: rgba(210, 196, 255, 0.07);
+  --surface: #17102e;
+  --surface-2: #21183d;
+  --surface-elevated: rgba(23, 16, 46, 0.72);
 
-  --bs-primary-text-emphasis: #b794f6;
-  --bs-primary-bg-subtle: #2a1a52;
+  --bs-primary-text-emphasis: #c4a8fb;
+  --bs-primary-bg-subtle: #27194d;
   --bs-primary-border-subtle: #432a7d;
   --bs-warning-text-emphasis: #f5d27e;
   --bs-warning-bg-subtle: #3a2c10;
   --bs-warning-border-subtle: #5c4718;
   --on-gold: #2a1d05;
 
-  --bs-link-color-rgb: 183, 148, 246;
-  --bs-link-hover-color-rgb: 208, 184, 255;
+  --bs-link-color-rgb: 196, 168, 251;
+  --bs-link-hover-color-rgb: 216, 196, 255;
 
-  --bs-box-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 20px -14px rgba(0, 0, 0, 0.65);
-  --bs-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 18px 38px -20px rgba(0, 0, 0, 0.75);
-  --bs-box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.55), 0 30px 60px -28px rgba(0, 0, 0, 0.8);
+  --bs-box-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 12px 28px -18px rgba(0, 0, 0, 0.6);
+  --bs-box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.55), 0 20px 44px -24px rgba(0, 0, 0, 0.65);
+  --bs-box-shadow-lg: 0 20px 44px -22px rgba(0, 0, 0, 0.6), 0 34px 70px -32px rgba(0, 0, 0, 0.7);
 
   --bs-navbar-color: rgba(255, 255, 255, 0.78);
   --bs-navbar-hover-color: #fff;
   --bs-navbar-active-color: #fff;
 
-  /* The ink under the dark hero's white button; no light-mode twin, because
-     the light hero borrows the normal .btn-soft instead. */
   --navy: #100a22;
-  --focus: 0 0 0 0.22rem rgba(183, 148, 246, 0.3);
+  --focus: 0 0 0 0.24rem rgba(196, 168, 251, 0.28);
+  --ring: 0 0 0 1px rgba(196, 168, 251, 0.14), var(--bs-box-shadow-sm);
 }
 
 /* ---------------------------------------------------------------------------
-   3. Base & typography. The body carries a fixed purple-andgold wash, so a
-   long list page still reads as the brand rather than as paper.
+   3. Base & typography
    --------------------------------------------------------------------------- */
 body {
   min-height: 100vh;
   background-color: var(--bs-body-bg);
   background-image:
-    radial-gradient(1100px 560px at 84% -8%, rgba(var(--bs-primary-rgb), 0.09), transparent 60%),
-    radial-gradient(900px 520px at 0% -4%, rgba(var(--bs-warning-rgb), 0.07), transparent 55%);
+    radial-gradient(900px 520px at 100% -10%, rgba(var(--bs-primary-rgb), 0.10), transparent 60%),
+    radial-gradient(700px 420px at -5% 0%, rgba(var(--bs-warning-rgb), 0.08), transparent 55%),
+    radial-gradient(600px 360px at 50% 110%, rgba(var(--bs-primary-rgb), 0.06), transparent 60%);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -173,50 +151,43 @@ body {
 
 h1, h2, h3, h4, h5, h6,
 .display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
-  font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  font-optical-sizing: auto;
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
-.text-uppercase { letter-spacing: 0.06em; }
-hr { opacity: 0.14; }
-::selection { background: rgba(var(--bs-primary-rgb), 0.22); }
+.text-uppercase { letter-spacing: 0.08em; }
+hr { opacity: 0.12; }
+::selection { background: rgba(var(--bs-primary-rgb), 0.22); color: inherit; }
 
-/* Bootstrap has no min-width reset; every flexible panel that holds a long
-   title or path needs this so the text truncates instead of widening the row. */
 .min-width-0 { min-width: 0; }
 
-/* The small uppercase label that opens a footer column or a stat block.
-   Bootstrap has no utility for the tracking + face together. */
 .eyebrow {
   font-family: var(--bs-font-monospace);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--bs-secondary-color);
 }
 .mono { font-family: var(--bs-font-monospace); }
 
 /* ---------------------------------------------------------------------------
-   4. Links.
+   4. Links
    --------------------------------------------------------------------------- */
 a {
-  text-underline-offset: 0.18em;
+  text-underline-offset: 0.2em;
   text-decoration-thickness: 0.08em;
-  transition: color var(--snap);
+  transition: color var(--snap), opacity var(--snap);
   text-decoration: none;
 }
 a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item):not(.page-link):not(.list-group-item):not(.badge):not(.card):not(.tile):hover {
   text-decoration: underline;
-  text-decoration-color: rgba(var(--bs-link-color-rgb), 0.5);
+  text-decoration-color: rgba(var(--bs-link-color-rgb), 0.45);
 }
 
 /* ---------------------------------------------------------------------------
-   5. Buttons — every Bootstrap button becomes a pill with centred content,
-   and an icon-only button a fixed square so a circle never smears into an
-   ellipse.
+   5. Buttons
    --------------------------------------------------------------------------- */
 .btn {
   --bs-btn-border-radius: var(--bs-border-radius-pill);
@@ -225,12 +196,14 @@ a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item):not(.page-link
   align-items: center;
   justify-content: center;
   gap: 0.45em;
+  letter-spacing: 0.01em;
   transition: transform var(--snap), box-shadow var(--snap), color var(--snap),
-              background-color var(--snap), border-color var(--snap);
+              background-color var(--snap), border-color var(--snap), filter var(--snap);
 }
-.btn:active { transform: translateY(1px); }
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
 .btn:focus-visible { box-shadow: var(--focus); }
-.btn-lg { --bs-btn-font-size: 1.05rem; }
+.btn-lg { --bs-btn-font-size: 1.02rem; --bs-btn-padding-y: 0.7rem; --bs-btn-padding-x: 1.25rem; }
 .btn.rounded-circle {
   --bs-btn-padding-x: 0;
   --bs-btn-padding-y: 0;
@@ -245,19 +218,20 @@ a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item):not(.page-link
   --bs-btn-bg: var(--bs-warning);
   --bs-btn-border-color: var(--bs-warning);
   --bs-btn-hover-color: var(--on-gold);
-  --bs-btn-hover-bg: #e2a51c;
-  --bs-btn-hover-border-color: #e2a51c;
+  --bs-btn-hover-bg: #f4bd3f;
+  --bs-btn-hover-border-color: #f4bd3f;
   --bs-btn-active-color: var(--on-gold);
   --bs-btn-active-bg: #d4990f;
   --bs-btn-active-border-color: #d4990f;
   --bs-btn-focus-shadow-rgb: var(--bs-warning-rgb);
+  box-shadow: 0 8px 18px -10px rgba(var(--bs-warning-rgb), 0.75);
 }
+.btn-gold:hover { box-shadow: 0 14px 26px -12px rgba(var(--bs-warning-rgb), 0.85); filter: saturate(1.02); }
 
-/* The quiet accent: a tinted fill that fills solid on hover. */
 .btn-soft {
   --bs-btn-color: var(--bs-primary);
-  --bs-btn-bg: rgba(var(--bs-primary-rgb), 0.12);
-  --bs-btn-border-color: rgba(var(--bs-primary-rgb), 0.12);
+  --bs-btn-bg: rgba(var(--bs-primary-rgb), 0.10);
+  --bs-btn-border-color: rgba(var(--bs-primary-rgb), 0.08);
   --bs-btn-hover-color: #fff;
   --bs-btn-hover-bg: var(--bs-primary);
   --bs-btn-hover-border-color: var(--bs-primary);
@@ -266,9 +240,8 @@ a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item):not(.page-link
   --bs-btn-active-border-color: var(--bs-primary);
   --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
 }
+.btn-soft:hover { box-shadow: 0 12px 22px -14px rgba(var(--bs-primary-rgb), 0.6); }
 
-/* The row-action button: transparent until it is hovered, so a table of
-   five icon buttons does not read as five calls to action. */
 .btn-ghost {
   --bs-btn-color: var(--bs-body-color);
   --bs-btn-bg: transparent;
@@ -282,24 +255,18 @@ a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item):not(.page-link
   --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
 }
 .btn-ghost.text-danger { --bs-btn-color: var(--bs-danger); --bs-btn-hover-color: var(--bs-danger); }
-/* An icon-only ghost button is a round chip, so it needs a visible ring: the
-   variant is transparent until hover, and the round shape is the whole cue. */
 .btn-ghost.rounded-circle {
   --bs-btn-border-color: var(--bs-border-color);
-  --bs-btn-hover-border-color: rgba(var(--bs-primary-rgb), 0.5);
-  --bs-btn-active-border-color: rgba(var(--bs-primary-rgb), 0.5);
+  --bs-btn-hover-border-color: rgba(var(--bs-primary-rgb), 0.45);
+  --bs-btn-active-border-color: rgba(var(--bs-primary-rgb), 0.45);
 }
-/* On the dark bars a 14%-white ring with no fill reads as a bare glyph, not a
-   button, so the chip keeps a faint surface and a firmer ring there. */
 [data-theme="dark"] .btn-ghost.rounded-circle {
-  --bs-btn-bg: rgba(255, 255, 255, 0.07);
-  --bs-btn-border-color: rgba(210, 196, 255, 0.3);
-  --bs-btn-hover-border-color: rgba(var(--bs-primary-rgb), 0.75);
-  --bs-btn-active-border-color: rgba(var(--bs-primary-rgb), 0.75);
+  --bs-btn-bg: rgba(255, 255, 255, 0.05);
+  --bs-btn-border-color: rgba(210, 196, 255, 0.22);
+  --bs-btn-hover-border-color: rgba(var(--bs-primary-rgb), 0.65);
+  --bs-btn-active-border-color: rgba(var(--bs-primary-rgb), 0.65);
 }
 
-/* Input groups: only the outer ends take a pill radius, so a field lines up
-   with the pill button beside it. */
 .input-group > :first-child {
   border-start-start-radius: var(--bs-border-radius-pill);
   border-end-start-radius: var(--bs-border-radius-pill);
@@ -309,21 +276,32 @@ a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item):not(.page-link
   border-end-end-radius: var(--bs-border-radius-pill);
 }
 
-/* Fields take the same pill shape as the buttons. Textareas keep a softer
-   radius, because a pill would bow the text once it wraps. */
 .form-control:not(textarea),
 .form-select {
   border-radius: var(--bs-border-radius-pill);
 }
 
 /* ---------------------------------------------------------------------------
-   6. Badges & colour helpers.
-   Only the one alias the markup calls by name lives here: text-gold. Every
-   other colour in the site is a Bootstrap utility (text-primary, bg-warning,
-   text-warning-emphasis …) on the tokens above.
+   6. Forms (modern polish)
    --------------------------------------------------------------------------- */
-.badge { --bs-badge-font-weight: 600; }
+.form-control, .form-select {
+  border-color: var(--bs-border-color);
+  background-color: var(--surface);
+  box-shadow: 0 1px 0 rgba(27, 16, 53, 0.02);
+  transition: border-color var(--snap), box-shadow var(--snap), background-color var(--snap);
+}
+.form-control:focus, .form-select:focus {
+  border-color: rgba(var(--bs-primary-rgb), 0.45);
+  box-shadow: var(--focus);
+}
+textarea.form-control { border-radius: var(--bs-border-radius-lg); }
+.form-label { font-weight: 600; margin-bottom: 0.4rem; color: var(--bs-heading-color); }
+.form-text { color: var(--bs-secondary-color); }
 
+/* ---------------------------------------------------------------------------
+   7. Badges & helpers
+   --------------------------------------------------------------------------- */
+.badge { --bs-badge-font-weight: 600; letter-spacing: 0.01em; }
 .text-gold { color: var(--gold) !important; }
 
 [data-theme="dark"] .text-primary,
@@ -333,15 +311,15 @@ a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item):not(.page-link
 [data-theme="dark"] .modern-file-upload__filename { color: var(--bs-primary-text-emphasis) !important; }
 
 /* ---------------------------------------------------------------------------
-   7. Cards & tiles.
-   A .card on its own stays the soft, borderless panel the public pages use.
-   .tile is the same card re-skinned as a dashboard panel: a bordered surface
-   that a table or a card-header can sit flush inside.
+   8. Cards & tiles
    --------------------------------------------------------------------------- */
 .card {
-  --bs-card-border-width: 0;
+  --bs-card-border-width: 1px;
+  --bs-card-border-color: var(--bs-border-color-translucent);
+  --bs-card-bg: var(--surface);
   --bs-card-cap-bg: transparent;
   --bs-card-title-color: var(--bs-heading-color);
+  --bs-card-border-radius: var(--bs-border-radius-lg);
   box-shadow: var(--bs-box-shadow-sm);
   transition: transform var(--snap), box-shadow var(--snap), border-color var(--snap);
 }
@@ -352,15 +330,16 @@ a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item):not(.page-link
   --bs-card-border-color: var(--bs-border-color);
   --bs-card-bg: var(--surface);
   --bs-card-cap-bg: transparent;
-  --bs-card-border-radius: var(--bs-border-radius-lg);
+  --bs-card-border-radius: var(--bs-border-radius-xl);
   box-shadow: var(--bs-box-shadow-sm);
 }
-/* Bootstrap paints every cell with --bs-table-bg (the page colour), which
-   would lay a square block over the tile's rounded corners. */
 .tile .table { --bs-table-bg: transparent; }
-.tile .card-header { border-bottom-color: var(--bs-border-color); }
+.tile .card-header {
+  border-bottom-color: var(--bs-border-color);
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+}
 
-/* A tile that is really a link — the dashboard's stat blocks. */
 a.tile, a.stat-card {
   display: block;
   color: inherit;
@@ -368,28 +347,28 @@ a.tile, a.stat-card {
 }
 @media (hover: hover) {
   a.tile:hover, a.stat-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
     box-shadow: var(--bs-box-shadow);
-    border-color: rgba(var(--bs-primary-rgb), 0.45);
+    border-color: rgba(var(--bs-primary-rgb), 0.35);
     text-decoration: none;
   }
 }
 
-/* Song & artist cards: square, uniform artwork with a gentle zoom on hover. */
-.song-card, .artist-card { overflow: hidden; }
+.song-card, .artist-card { overflow: hidden; border: 1px solid var(--bs-border-color-translucent); }
 .song-card .card-img-top,
 .artist-card .card-img-top {
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  transition: transform 0.45s var(--ease);
+  transition: transform 0.5s var(--ease);
 }
 @media (hover: hover) {
   .song-card:hover, .artist-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
     box-shadow: var(--bs-box-shadow) !important;
+    border-color: rgba(var(--bs-primary-rgb), 0.2);
   }
   .song-card:hover .card-img-top,
-  .artist-card:hover .card-img-top { transform: scale(1.05); }
+  .artist-card:hover .card-img-top { transform: scale(1.04); }
 }
 
 .song-card-controls { padding-top: 0.25rem; }
@@ -400,76 +379,115 @@ a.tile, a.stat-card {
   .category-card:hover { transform: translateY(-4px); box-shadow: var(--bs-box-shadow) !important; }
 }
 
-/* Dashboard stat tile: a tinted square for the glyph, then the number. */
 .stat-card .card-body { gap: 1rem; }
 .stat-icon {
   width: 3rem;
   height: 3rem;
-  border-radius: var(--bs-border-radius-lg);
+  border-radius: 0.9rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
   flex: 0 0 auto;
-  border: 1px solid currentColor;
+  border: 1px solid rgba(var(--bs-primary-rgb), 0.18);
+  background: rgba(var(--bs-primary-rgb), 0.06);
 }
 
 /* ---------------------------------------------------------------------------
-   8. Media helpers.
+   9. Tables
    --------------------------------------------------------------------------- */
-.zoomable { overflow: hidden; }
-.zoomable img { transition: transform 0.5s var(--ease); }
-@media (hover: hover) { .zoomable:hover img { transform: scale(1.06); } }
+.table {
+  --bs-table-border-color: var(--bs-border-color-translucent);
+}
+.table > :not(caption) > * > * { padding: 0.85rem 1rem; }
+.table thead th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--bs-secondary-color);
+  font-weight: 700;
+  border-bottom-width: 1px;
+  white-space: nowrap;
+}
+.table-hover > tbody > tr { transition: background-color var(--snap); }
+.table-hover > tbody > tr:hover > * { background-color: rgba(var(--bs-primary-rgb), 0.03); }
 
 /* ---------------------------------------------------------------------------
-   9. Hero & section headings.
+   10. Alerts & dropdowns
+   --------------------------------------------------------------------------- */
+.alert { border: 1px solid transparent; border-radius: var(--bs-border-radius-lg); }
+.dropdown-menu {
+  --bs-dropdown-border-color: var(--bs-border-color);
+  --bs-dropdown-border-radius: var(--bs-border-radius-lg);
+  --bs-dropdown-link-hover-bg: var(--surface-2);
+  --bs-dropdown-link-active-bg: var(--bs-primary);
+  box-shadow: var(--bs-box-shadow);
+  padding: 0.4rem;
+}
+.dropdown-item { border-radius: 0.5rem; padding: 0.5rem 0.7rem; font-weight: 500; }
+
+/* ---------------------------------------------------------------------------
+   11. Hero & section headings
    --------------------------------------------------------------------------- */
 .hero-section {
   position: relative;
   overflow: hidden;
-  padding: clamp(3.5rem, 8vw, 6rem) 0 clamp(3rem, 7vw, 5rem);
+  padding: clamp(4rem, 9vw, 6.5rem) 0 clamp(3.5rem, 7vw, 5.5rem);
   color: var(--bs-body-color);
   background:
-    radial-gradient(1100px 560px at 12% -12%, rgba(var(--bs-warning-rgb), 0.3), transparent 62%),
-    linear-gradient(135deg, #f7f3ff 0%, #ece2fd 55%, #faf7ff 100%);
+    radial-gradient(900px 500px at 10% -10%, rgba(var(--bs-warning-rgb), 0.22), transparent 60%),
+    radial-gradient(700px 400px at 95% 10%, rgba(var(--bs-primary-rgb), 0.14), transparent 55%),
+    linear-gradient(160deg, #fbf8ff 0%, #f1eaff 45%, #f8f5ff 100%);
   border-bottom: 1px solid var(--bs-border-color);
+}
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: radial-gradient(rgba(var(--bs-primary-rgb), 0.18) 0.5px, transparent 0.5px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
 }
 .hero-section::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(620px 320px at 92% 120%, rgba(var(--bs-primary-rgb), 0.14), transparent 72%);
+  background: radial-gradient(500px 260px at 85% 110%, rgba(var(--bs-primary-rgb), 0.12), transparent 70%);
 }
 .hero-section .container { position: relative; z-index: 1; }
 .hero-title {
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 700;
-  font-size: clamp(2.4rem, 6vw, 4rem);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 800;
+  font-size: clamp(2.5rem, 6vw, 4.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
   color: var(--bs-heading-color);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 .hero-tagline {
-  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
   font-weight: 600;
   color: var(--bs-warning-text-emphasis);
   margin-bottom: 0.85rem;
 }
 
-/* The hero is the one band that flips whole, not per token: light gets a
-   lavender wash under the same dark type every other page uses, dark gets the
-   deep purple stage with white type. */
 [data-theme="dark"] .hero-section {
   color: #fff;
   background:
-    radial-gradient(1100px 560px at 12% -12%, rgba(240, 180, 41, 0.22), transparent 62%),
-    linear-gradient(135deg, #2c1657 0%, #1b1035 55%, #140a2b 100%);
+    radial-gradient(900px 500px at 10% -10%, rgba(240, 180, 41, 0.18), transparent 60%),
+    radial-gradient(700px 420px at 95% 0%, rgba(109, 40, 217, 0.35), transparent 55%),
+    linear-gradient(160deg, #2a1454 0%, #1b1035 50%, #120925 100%);
   border-bottom-color: transparent;
 }
+[data-theme="dark"] .hero-section::before {
+  opacity: 0.18;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.35) 0.5px, transparent 0.5px);
+}
 [data-theme="dark"] .hero-section::after {
-  background: radial-gradient(620px 320px at 92% 120%, rgba(109, 40, 217, 0.55), transparent 72%);
+  background: radial-gradient(520px 280px at 90% 120%, rgba(109, 40, 217, 0.45), transparent 70%);
 }
 [data-theme="dark"] .hero-title { color: #fff; }
 [data-theme="dark"] .hero-tagline { color: var(--gold); }
@@ -477,8 +495,8 @@ a.tile, a.stat-card {
 [data-theme="dark"] .hero-section .text-body-secondary { color: rgba(255, 255, 255, 0.78) !important; }
 [data-theme="dark"] .hero-section .btn-soft {
   --bs-btn-color: #fff;
-  --bs-btn-bg: transparent;
-  --bs-btn-border-color: rgba(255, 255, 255, 0.5);
+  --bs-btn-bg: rgba(255, 255, 255, 0.08);
+  --bs-btn-border-color: rgba(255, 255, 255, 0.25);
   --bs-btn-hover-color: var(--navy);
   --bs-btn-hover-bg: #fff;
   --bs-btn-hover-border-color: #fff;
@@ -488,43 +506,45 @@ a.tile, a.stat-card {
 }
 
 .section-title {
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 700;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  letter-spacing: -0.02em;
-  margin-bottom: 0.15rem;
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 750;
+  font-size: clamp(1.55rem, 3vw, 2.1rem);
+  letter-spacing: -0.025em;
+  margin-bottom: 0.2rem;
 }
-.section-subtitle { color: var(--bs-secondary-color); margin-bottom: 0; }
+.section-subtitle { color: var(--bs-secondary-color); margin-bottom: 0; font-size: 1.02rem; }
 
 /* ---------------------------------------------------------------------------
-   10. Category pills, empty state & filter bar.
+   12. Category pills, empty state & filter bar
    --------------------------------------------------------------------------- */
 .category-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.5rem 1.1rem;
+  padding: 0.5rem 1.15rem;
   border-radius: var(--bs-border-radius-pill);
   border: 1px solid var(--bs-border-color);
   background: var(--surface);
   color: var(--bs-body-color);
   font-weight: 600;
   font-size: 0.9rem;
-  transition: transform var(--snap), color var(--snap), background-color var(--snap), border-color var(--snap);
+  box-shadow: 0 1px 0 rgba(27, 16, 53, 0.02);
+  transition: transform var(--snap), color var(--snap), background-color var(--snap), border-color var(--snap), box-shadow var(--snap);
 }
 .category-pill:hover {
   transform: translateY(-2px);
   background: var(--bs-primary);
   border-color: var(--bs-primary);
   color: #fff;
+  box-shadow: 0 12px 22px -14px rgba(var(--bs-primary-rgb), 0.55);
 }
 
 .empty-state {
   text-align: center;
   padding: 3.5rem 1.5rem;
   border: 1px dashed var(--bs-border-color);
-  border-radius: var(--bs-border-radius-xl);
-  background: var(--bs-tertiary-bg);
+  border-radius: var(--bs-border-radius-xxl);
+  background: linear-gradient(180deg, var(--surface), var(--bs-tertiary-bg));
 }
 .empty-state__icon {
   width: 4rem;
@@ -535,10 +555,10 @@ a.tile, a.stat-card {
   justify-content: center;
   font-size: 1.6rem;
   color: var(--bs-primary);
-  background: rgba(var(--bs-primary-rgb), 0.12);
+  background: rgba(var(--bs-primary-rgb), 0.10);
   margin-bottom: 1rem;
 }
-.empty-state h4 { font-family: 'Fraunces', Georgia, serif; }
+.empty-state h4 { font-family: var(--bs-font-sans-serif); font-weight: 700; }
 .empty-state p { color: var(--bs-secondary-color); margin-bottom: 0; }
 
 .filter-bar {
@@ -553,17 +573,18 @@ a.tile, a.stat-card {
 .filter-bar .form-select { background: var(--bs-tertiary-bg); }
 
 /* ---------------------------------------------------------------------------
-   11. Song hero.
+   13. Song hero
    --------------------------------------------------------------------------- */
 .song-hero {
   padding: 3rem 0;
-  background: linear-gradient(160deg, rgba(var(--bs-primary-rgb), 0.12), transparent 70%);
+  background: linear-gradient(160deg, rgba(var(--bs-primary-rgb), 0.10), transparent 65%);
 }
 .song-artwork {
   width: 100%;
   max-width: 320px;
-  border-radius: var(--bs-border-radius-xl);
+  border-radius: var(--bs-border-radius-xxl);
   box-shadow: var(--bs-box-shadow-lg);
+  border: 1px solid var(--bs-border-color-translucent);
 }
 .song-hero .btn-outline-light {
   --bs-btn-color: var(--bs-body-color);
@@ -574,48 +595,48 @@ a.tile, a.stat-card {
 }
 
 /* ---------------------------------------------------------------------------
-   12. Masthead — a translucent sticky bar that follows the theme, with the
-   brand mark, the menu and the account cluster.
+   14. Masthead
    --------------------------------------------------------------------------- */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 1030;
-  background: rgba(var(--bs-body-bg-rgb), 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--bs-border-color);
+  background: rgba(var(--bs-body-bg-rgb), 0.72);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom: 1px solid var(--bs-border-color-translucent);
 }
-.site-header .navbar { --bs-navbar-padding-y: 0.6rem; }
-.site-header .nav-link { color: var(--bs-body-color); font-weight: 500; }
+.site-header .navbar { --bs-navbar-padding-y: 0.65rem; }
+.site-header .nav-link {
+  color: var(--bs-body-color);
+  font-weight: 500;
+  border-radius: var(--bs-border-radius-pill);
+  padding: 0.45rem 0.85rem !important;
+  transition: color var(--snap), background-color var(--snap);
+}
 .site-header .nav-link:hover,
-.site-header .nav-link:focus { color: var(--bs-primary-text-emphasis); }
-.site-header .nav-link.active { color: var(--bs-primary-text-emphasis); font-weight: 700; }
+.site-header .nav-link:focus { color: var(--bs-primary-text-emphasis); background: rgba(var(--bs-primary-rgb), 0.06); }
+.site-header .nav-link.active { color: var(--bs-primary-text-emphasis); font-weight: 700; background: rgba(var(--bs-primary-rgb), 0.10); }
 .site-header .dropdown-menu { --bs-dropdown-link-active-bg: var(--bs-primary); }
 .site-header .collapse.border-top { border-color: var(--bs-border-color) !important; }
 .site-header .search-input {
-  background: var(--bs-tertiary-bg);
+  background: var(--surface);
   border-color: var(--bs-border-color);
   color: var(--bs-body-color);
 }
 .site-header .search-input::placeholder { color: var(--bs-secondary-color); }
 
-/* The mark is a window, not a frame: the logo art carries its own rounded
-   shape, so the box adds no border and no fill of its own — either one shows
-   through the logo's transparent corners and reads as a box around it. */
 .brand-mark {
   width: 2.6rem;
   height: 2.6rem;
   flex: 0 0 auto;
-  border-radius: var(--bs-border-radius-lg);
+  border-radius: 0.85rem;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 .brand-mark img { width: 100%; height: 100%; object-fit: cover; }
-/* Where there is no picture — the sidebar initial, a message row — the mark
-   carries the initials on the brand gradient instead. */
 .brand-initials {
   font-family: var(--bs-font-monospace);
   font-weight: 700;
@@ -623,8 +644,8 @@ a.tile, a.stat-card {
   background-image: linear-gradient(135deg, var(--bs-primary), var(--bs-warning));
 }
 .brand-name {
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 700;
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 750;
   font-size: 1.15rem;
   line-height: 1.05;
   letter-spacing: -0.02em;
@@ -637,6 +658,7 @@ a.tile, a.stat-card {
   text-transform: uppercase;
   color: var(--bs-secondary-color);
 }
+.navbar-brand { transition: opacity var(--snap); }
 .navbar-brand:hover .brand-name { color: var(--bs-primary-text-emphasis); }
 
 .theme-toggle .fa-sun { display: none; }
@@ -644,11 +666,11 @@ a.tile, a.stat-card {
 [data-theme="dark"] .theme-toggle .fa-moon { display: none; }
 
 /* ---------------------------------------------------------------------------
-   13. Footer & the chips it borrows from the contact page.
+   15. Footer & contact
    --------------------------------------------------------------------------- */
 .site-footer {
   border-top: 1px solid var(--bs-border-color);
-  background: var(--surface);
+  background: linear-gradient(180deg, var(--surface), var(--bs-tertiary-bg));
 }
 .social {
   width: 2.75rem;
@@ -656,18 +678,18 @@ a.tile, a.stat-card {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.85rem;
+  border-radius: 0.9rem;
   border: 1px solid var(--bs-border-color);
-  background: var(--surface-2);
+  background: var(--surface);
   color: var(--bs-body-color);
   font-size: 1.1rem;
-  transition: transform var(--snap), color var(--snap), border-color var(--snap), box-shadow var(--snap);
+  transition: transform var(--snap), color var(--snap), border-color var(--snap), box-shadow var(--snap), background-color var(--snap);
 }
 .social:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   color: var(--brand, var(--bs-primary));
   border-color: currentColor;
-  box-shadow: 0 14px 30px -14px currentColor;
+  box-shadow: 0 12px 24px -14px currentColor;
 }
 
 .contact-line {
@@ -675,18 +697,20 @@ a.tile, a.stat-card {
   align-items: center;
   gap: 0.9rem;
   padding: 0.9rem 1rem;
-  border-radius: var(--bs-border-radius);
+  border-radius: var(--bs-border-radius-lg);
   border: 1px solid var(--bs-border-color);
   background: var(--surface);
-  transition: border-color var(--snap), transform var(--snap);
+  transition: border-color var(--snap), transform var(--snap), box-shadow var(--snap);
 }
-/* The label copy may hold long unbroken addresses; let it shrink and wrap
-   instead of pushing the line wider than the viewport on small screens. */
 .contact-line > span:last-child {
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.contact-line:hover { border-color: rgba(var(--bs-primary-rgb), 0.5); transform: translateX(3px); }
+.contact-line:hover {
+  border-color: rgba(var(--bs-primary-rgb), 0.35);
+  transform: translateX(3px);
+  box-shadow: var(--bs-box-shadow-sm);
+}
 .contact-line .contact-icon {
   width: 2.75rem;
   height: 2.75rem;
@@ -694,56 +718,57 @@ a.tile, a.stat-card {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.8rem;
-  background: rgba(var(--bs-primary-rgb), 0.12);
+  border-radius: 0.85rem;
+  background: rgba(var(--bs-primary-rgb), 0.10);
   color: var(--bs-primary);
 }
 
 #back-to-top { z-index: 1040; box-shadow: var(--bs-box-shadow); }
 #back-to-top[hidden] { display: none; }
 
-/* The global player dock. app.js builds it from Bootstrap primitives; the only
-   bespoke part is the fixed strip itself, which floats above the page and lifts
-   the back-to-top chip clear while it is open. */
+/* Player bar */
 .player-bar {
   position: fixed;
   inset: auto 0 0 0;
   z-index: 1035;
-  background: var(--surface);
+  background: rgba(var(--bs-body-bg-rgb), 0.78);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
   border-top: 1px solid var(--bs-border-color);
-  box-shadow: var(--bs-box-shadow);
+  box-shadow: 0 -10px 30px -20px rgba(27, 16, 53, 0.35);
 }
 .player-bar[hidden] { display: none; }
 .player-bar__inner {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding-block: 0.6rem;
+  padding-block: 0.65rem;
 }
 .player-bar__art {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.85rem;
+  height: 2.85rem;
   flex: 0 0 auto;
-  border-radius: var(--bs-border-radius);
+  border-radius: 0.7rem;
   object-fit: cover;
   background: var(--surface-2);
+  border: 1px solid var(--bs-border-color-translucent);
 }
 .player-bar__meta { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
-.player-bar__title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-bar__title { font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .player-bar__artist { font-size: 0.8rem; color: var(--bs-secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .player-bar__time { font-family: var(--bs-font-monospace); font-size: 0.75rem; color: var(--bs-secondary-color); flex: 0 0 auto; }
-.player-bar__seek { flex: 1 1 auto; max-width: 340px; accent-color: var(--bs-primary); }
+.player-bar__seek { flex: 1 1 auto; max-width: 360px; accent-color: var(--bs-primary); height: 4px; }
 @media (max-width: 575.98px) {
   .player-bar__time { display: none; }
 }
-body:has(#zora-player:not([hidden])) { padding-bottom: 4.75rem; }
-body:has(#zora-player:not([hidden])) #back-to-top { bottom: 4.75rem !important; }
+body:has(#zora-player:not([hidden])) { padding-bottom: 5rem; }
+body:has(#zora-player:not([hidden])) #back-to-top { bottom: 5rem !important; }
 
 /* ---------------------------------------------------------------------------
-   14. Bespoke pieces named by the markup.
+   16. Bespoke pieces
    --------------------------------------------------------------------------- */
 .error-code {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--bs-font-sans-serif);
   font-weight: 800;
   font-size: clamp(4rem, 12vw, 8rem);
   line-height: 1;
@@ -764,10 +789,10 @@ body:has(#zora-player:not([hidden])) #back-to-top { bottom: 4.75rem !important; 
   background: var(--bs-tertiary-bg);
   color: var(--bs-body-color);
   cursor: pointer;
-  transition: border-color var(--snap), background-color var(--snap);
+  transition: border-color var(--snap), background-color var(--snap), transform var(--snap);
 }
-.modern-file-upload__surface:hover { border-color: var(--bs-primary); background: rgba(var(--bs-primary-rgb), 0.06); }
-.modern-file-upload.is-dragging .modern-file-upload__surface { border-color: var(--bs-primary); background: rgba(var(--bs-primary-rgb), 0.12); }
+.modern-file-upload__surface:hover { border-color: var(--bs-primary); background: rgba(var(--bs-primary-rgb), 0.05); }
+.modern-file-upload.is-dragging .modern-file-upload__surface { border-color: var(--bs-primary); background: rgba(var(--bs-primary-rgb), 0.10); transform: scale(0.995); }
 .modern-file-upload__surface i,
 .modern-file-upload__surface svg { font-size: 1.75rem; color: var(--bs-primary); }
 .modern-file-upload__title { font-weight: 600; }
@@ -778,9 +803,9 @@ body:has(#zora-player:not([hidden])) #back-to-top { bottom: 4.75rem !important; 
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-top: 0.25rem;
-  padding: 0.2rem 0.7rem;
+  padding: 0.25rem 0.75rem;
   border-radius: var(--bs-border-radius-pill);
-  background: rgba(var(--bs-primary-rgb), 0.1);
+  background: rgba(var(--bs-primary-rgb), 0.10);
   color: var(--bs-primary);
   font-size: 0.82rem;
   font-weight: 600;
@@ -798,9 +823,9 @@ body:has(#zora-player:not([hidden])) #back-to-top { bottom: 4.75rem !important; 
   border-radius: var(--bs-border-radius-lg);
   background: var(--surface);
   color: var(--bs-body-color);
-  transition: border-color var(--snap);
+  transition: border-color var(--snap), box-shadow var(--snap);
 }
-.icon-picker-toggle:hover { border-color: var(--bs-primary); }
+.icon-picker-toggle:hover { border-color: rgba(var(--bs-primary-rgb), 0.4); box-shadow: var(--bs-box-shadow-sm); }
 .icon-picker-glyph {
   width: 2.75rem;
   height: 2.75rem;
@@ -810,7 +835,7 @@ body:has(#zora-player:not([hidden])) #back-to-top { bottom: 4.75rem !important; 
   justify-content: center;
   font-size: 1.2rem;
   color: var(--bs-primary);
-  background: rgba(var(--bs-primary-rgb), 0.12);
+  background: rgba(var(--bs-primary-rgb), 0.10);
   flex: 0 0 auto;
 }
 .icon-picker-label { display: flex; flex-direction: column; min-width: 0; }
@@ -830,7 +855,7 @@ body:has(#zora-player:not([hidden])) #back-to-top { bottom: 4.75rem !important; 
   left: 0;
   right: 0;
   z-index: 1050;
-  margin-top: 0.25rem;
+  margin-top: 0.35rem;
   max-height: 280px;
   overflow: auto;
   background: var(--surface);
@@ -847,9 +872,8 @@ body:has(#zora-player:not([hidden])) #back-to-top { bottom: 4.75rem !important; 
   border: 0;
   background: none;
   color: var(--bs-body-color);
+  transition: background-color var(--snap);
 }
-/* The row under the arrow keys wears the same tint as the row under the
-   pointer: two ways into one list, one way it looks. */
 .artist-search__results a:hover,
 .artist-search__results button:hover,
 .artist-search__results button.is-active { background: rgba(var(--bs-primary-rgb), 0.08); }
@@ -860,31 +884,15 @@ body:has(#zora-player:not([hidden])) #back-to-top { bottom: 4.75rem !important; 
 .password-hint { color: var(--bs-secondary-color); }
 
 /* ---------------------------------------------------------------------------
-   15. Admin & member shell — one sidebar (Bootstrap offcanvas-lg) that is a
-   slide-in panel below lg and a sticky column above it.
-
-   The list scrolls when it is taller than the screen, but the track is
-   deliberately invisible: a scrollbar down a 270px menu looks like a defect,
-   and the mouse wheel / touch drag still move it.
-
-   .admin-link is the one bespoke nav class: Bootstrap's nav-pills is built
-   for a page's own tabs, not for a site menu with icons, a count badge and
-   an active tint.
+   17. Admin & member shell
    --------------------------------------------------------------------------- */
 .admin-shell { min-height: 100vh; align-items: stretch; }
-/* Nothing inside the work area may widen the page: a stray long token in a
-   card is clipped rather than scrolling the whole viewport sideways. The
-   public pages keep their own overflow rules. */
 .admin-shell main { overflow-x: clip; }
 
 .admin-side {
   background: var(--surface);
   border-right: 1px solid var(--bs-border-color);
 }
-/* The menu scrolls when it outgrows the screen, but its tray stays invisible:
-   a scrollbar down a 270px column reads as a defect, and the wheel / touch
-   drag still move it. The offcanvas body is the scroller while the panel is a
-   slide-in drawer below lg, so it gets the same treatment. */
 .admin-side,
 .admin-side .offcanvas-body {
   scrollbar-width: none;
@@ -898,15 +906,16 @@ body:has(#zora-player:not([hidden])) #back-to-top { bottom: 4.75rem !important; 
   align-items: center;
   gap: 0.75rem;
   padding: 0.6rem 0.85rem;
-  border-radius: var(--bs-border-radius-sm);
+  border-radius: 0.65rem;
   color: var(--bs-body-color);
   font-weight: 500;
   min-width: 0;
+  transition: color var(--snap), background-color var(--snap);
 }
-.admin-link i { width: 1.25rem; text-align: center; color: var(--bs-secondary-color); flex: 0 0 auto; }
+.admin-link i { width: 1.25rem; text-align: center; color: var(--bs-secondary-color); flex: 0 0 auto; transition: color var(--snap); }
 .admin-link:hover { background: var(--surface-2); color: var(--bs-primary-text-emphasis); text-decoration: none; }
 .admin-link:hover i { color: var(--bs-primary-text-emphasis); }
-.admin-link.active { background: rgba(var(--bs-primary-rgb), 0.14); color: var(--bs-primary-text-emphasis); }
+.admin-link.active { background: rgba(var(--bs-primary-rgb), 0.12); color: var(--bs-primary-text-emphasis); font-weight: 600; }
 .admin-link.active i { color: var(--bs-primary-text-emphasis); }
 
 #adminOffcanvas, #memberOffcanvas { --bs-offcanvas-width: var(--admin-side); }
@@ -914,14 +923,11 @@ body:has(#zora-player:not([hidden])) #back-to-top { bottom: 4.75rem !important; 
   position: sticky;
   top: 0;
   z-index: 1020;
-  background: rgba(var(--bs-body-bg-rgb), 0.86);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(var(--bs-body-bg-rgb), 0.78);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
   border-bottom: 1px solid var(--bs-border-color);
 }
-/* The bar is a row of round chips, so the brand mark takes the same box as the
-   chips beside it and the brand anchor drops the padding that would otherwise
-   make it taller than the row it sits in. */
 .admin-topbar .navbar-brand { padding-top: 0; padding-bottom: 0; }
 .admin-topbar .brand-mark { width: 2.5rem; height: 2.5rem; }
 
@@ -938,19 +944,18 @@ body:has(#zora-player:not([hidden])) #back-to-top { bottom: 4.75rem !important; 
   }
 }
 
-/* A small log-in card. */
 .login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 1.5rem; }
 code {
   font-family: var(--bs-font-monospace);
   color: var(--bs-primary-text-emphasis);
-  background: rgba(var(--bs-primary-rgb), 0.1);
+  background: rgba(var(--bs-primary-rgb), 0.10);
   padding: 0.15em 0.4em;
   border-radius: var(--bs-border-radius-sm);
   overflow-wrap: anywhere;
 }
 
 /* ---------------------------------------------------------------------------
-   16. Accessibility & motion.
+   18. Accessibility & motion
    --------------------------------------------------------------------------- */
 a:focus-visible,
 .btn:focus-visible,

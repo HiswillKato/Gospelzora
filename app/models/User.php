@@ -1204,9 +1204,9 @@ class User {
             // Artist image upload (keeps the existing image when none was uploaded)
             $file = $data['image'] ?? null;
             if (is_array($file) && !empty($file['name'])) {
-                $upload = store($file, IMAGE_PATH . '/', 'image', 'image');
+                $upload = store($file, ARTIST_IMAGE_PATH . '/', 'image', 'image', $name);
                 if ($upload['error'] === null) {
-                    $image = 'images/' . $upload['path'];
+                    $image = 'images/artists/' . $upload['path'];
                 } else {
                     $err = $upload['error'];
                 }
