@@ -23,7 +23,6 @@ $pagination = $catalog['pagination'];
 $categories = $music->categories();
 $artists_list = $user->options();
 
-require_once __DIR__ . '/../shared/header.php';
 ?>
 
 <?php
@@ -92,4 +91,3 @@ require __DIR__ . '/../shared/partials/page-header.php';
     </div>
 </section>
 
-<?php require_once __DIR__ . '/../shared/footer.php'; 

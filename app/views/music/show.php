@@ -18,7 +18,6 @@ $related = $music->related($song['id'], (int)$song['artist']);
 $is_fav = $music->favorited($song['id']);
 
 $page_title = e($song['title']);
-require_once __DIR__ . '/../shared/header.php';
 ?>
 
 <section class="song-hero">
@@ -94,4 +93,3 @@ require_once __DIR__ . '/../shared/header.php';
 </section>
 <?php } ?>
 
-<?php require_once __DIR__ . '/../shared/footer.php'; 

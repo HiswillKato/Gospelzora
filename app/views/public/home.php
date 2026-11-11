@@ -2,7 +2,6 @@
 $page_title = sprintf("Welcome to %s", SITE_NAME);
 $page_description = "Browse gospel music, top charts, artists and categories - free streaming and downloads.";
 
-require_once BASE_PATH . '/app/views/shared/header.php';
 ?>
 
 <!-- Hero -->
@@ -114,4 +113,3 @@ require_once BASE_PATH . '/app/views/shared/header.php';
     </div>
 </section>
 
-<?php require_once BASE_PATH . '/app/views/shared/footer.php'; 

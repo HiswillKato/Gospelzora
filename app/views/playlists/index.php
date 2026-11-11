@@ -39,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $playlists = $music->playlists($user_id, $role);
 
-require_once __DIR__ . '/../shared/header.php';
 ?>
 <?php
 $page_header_title = "My Playlists";
@@ -148,4 +147,3 @@ require __DIR__ . '/../shared/partials/page-header.php';
 
 </div></section>
 
-<?php require_once __DIR__ . '/../shared/footer.php'; ?>

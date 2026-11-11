@@ -9,7 +9,6 @@ $result = $music->browse($id, $page);
 $songs = $result['songs'];
 $pagination = $result['pagination'];
 $page_title = e($cat['name']);
-require_once __DIR__ . '/../shared/header.php';
 ?>
 <?php
 $page_header_title = e($cat['name']);
@@ -29,4 +28,3 @@ $base_url = url('category/'.$cat['slug']);
 require __DIR__ . '/../shared/partials/pagination.php';
 ?></div>
 <?php } ?></div></section>
-<?php require_once __DIR__ . '/../shared/footer.php'; 

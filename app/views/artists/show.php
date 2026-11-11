@@ -7,7 +7,6 @@ $id = (int)$artist['id'];
 
 $songs = $music->songs($id);
 $page_title = e($artist['name']);
-require_once __DIR__ . '/../shared/header.php';
 ?>
 <?php
 $page_header_title = '';
@@ -30,4 +29,3 @@ $grid_card_opt = ['favorite' => false];
 $grid_empty_icon = 'music'; $grid_empty_title = "No songs yet."; $grid_empty_text = "This artist hasn't published any songs yet."; $grid_empty_cta = '';
 require __DIR__ . '/../shared/partials/song-grid.php';
 ?>
-<?php require_once __DIR__ . '/../shared/footer.php'; 

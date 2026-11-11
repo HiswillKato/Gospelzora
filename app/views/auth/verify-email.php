@@ -20,7 +20,6 @@ if ($token === '') {
 }
 
 $page_title = "Verify Email";
-require_once __DIR__ . '/../shared/header.php';
 
 ob_start();
 if ($verified) { ?>
@@ -40,4 +39,3 @@ $auth_text = '';
 $auth_center = true;
 require __DIR__ . '/../shared/partials/auth-panel.php';
 
-require_once __DIR__ . '/../shared/footer.php'; 

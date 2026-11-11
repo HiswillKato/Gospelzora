@@ -38,7 +38,6 @@ $error = "Your session expired. Please try again.";
 
 $page_title = "Contact";
 $page_description = "Send us a message - we would love to hear from you.";
-require_once __DIR__ . '/../shared/header.php';
 ?>
 
 <section class="py-5">
@@ -88,4 +87,3 @@ require_once __DIR__ . '/../shared/header.php';
     </div>
 </section>
 
-<?php require_once __DIR__ . '/../shared/footer.php'; 

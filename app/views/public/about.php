@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../../bootstrap.php';
 $page_title = "About Us";
 $page_description = "Learn about Gospelzora and our mission to spread worship through music.";
-require_once __DIR__ . '/../shared/header.php';
 ?>
 
 <section class="hero-section">
@@ -48,4 +47,3 @@ require_once __DIR__ . '/../shared/header.php';
     </div>
 </section>
 
-<?php require_once __DIR__ . '/../shared/footer.php'; 

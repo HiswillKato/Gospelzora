@@ -19,15 +19,20 @@ declare(strict_types=1);
  * @global \App\Models\Pages           $pages
  * @global \App\Models\Music           $music
  */
-$render = static function (string $file, array $queryKeys = []): callable {
-    return static function (...$params) use ($file, $queryKeys): void {
+$render = static function (string $file, array $queryKeys = [], string $shell = 'public', bool $useLayout = true): callable {
+    return static function (...$params) use ($file, $queryKeys, $shell, $useLayout): void {
         global $config, $db, $analytics, $mail, $settings, $user, $music, $pages, $request, $response;
         foreach ($queryKeys as $index => $key) {
             if (array_key_exists($index, $params)) {
                 $_GET[$key] = $params[$index];
             }
         }
-        require BASE_PATH . '/' . $file;
+        if ($useLayout) {
+            $view_file = BASE_PATH . '/' . $file;
+            require BASE_PATH . '/app/views/shared/layout.php';
+        } else {
+            require BASE_PATH . '/' . $file;
+        }
     };
 };
 $route = static function (string $method, string $path, callable $handler) use ($router): void {
@@ -51,20 +56,20 @@ foreach ($public as $path=>$file) $get($path,$render($file));
 $getPost('/contact',$render('app/views/public/contact.php'));
 $getPost('/login',$render('app/views/auth/login.php'));
 $getPost('/register',$render('app/views/auth/register.php'));
-$route('POST','/logout',$render('app/views/auth/logout.php'));
+$route('POST','/logout',$render('app/views/auth/logout.php', [], 'public', false));
 foreach (['/forgot'=>'forgot.php','/reset'=>'reset.php','/verify-email'=>'verify-email.php'] as $path=>$file) {
     $getPost($path,$render('app/views/auth/'.$file));
 }
 $getPost('/playlists',$render('app/views/playlists/index.php'));
 
 $slugRoutes=[
-    '/song/{slug}'=>['app/views/music/show.php','slug'],
-    '/artist/{slug}'=>['app/views/artists/show.php','slug'],
-    '/category/{slug}'=>['app/views/categories/show.php','slug'],
-    '/playlist/{slug}'=>['app/views/playlists/show.php','slug'],
-    '/download/{slug}'=>['app/views/music/download.php','slug'],
+    '/song/{slug}'=>['app/views/music/show.php','slug',true],
+    '/artist/{slug}'=>['app/views/artists/show.php','slug',true],
+    '/category/{slug}'=>['app/views/categories/show.php','slug',true],
+    '/playlist/{slug}'=>['app/views/playlists/show.php','slug',true],
+    '/download/{slug}'=>['app/views/music/download.php','slug',false],
 ];
-foreach($slugRoutes as $path=>[$file,$key]) $get($path,$render($file,[$key]));
+foreach($slugRoutes as $path=>[$file,$key,$layout]) $get($path,$render($file,[$key],'public',$layout));
 
 $dashboard=[
     '/dashboard'=>'index.php','/dashboard/profile'=>'profile.php','/dashboard/songs'=>'songs.php',
@@ -72,7 +77,7 @@ $dashboard=[
     '/dashboard/playlists'=>'playlists.php','/dashboard/favorites'=>'favorites.php',
 ];
 foreach($dashboard as $path=>$file) {
-    $handler=$render('app/views/dashboard/'.$file);
+    $handler=$render('app/views/dashboard/'.$file, [], 'member', false);
     // Dashboard pages own their POST handlers and CSRF checks (profile, artist songs,
     // playlists and song requests). Keep POST dispatch available to each page.
     $getPost($path, $handler);
@@ -94,13 +99,13 @@ $admin=[
     '/dashboard/admin/pages/add'=>'page-edit.php','/dashboard/admin/pages/edit'=>'page-edit.php',
 ];
 foreach($admin as $path=>$file) {
-    $handler=$render('app/views/admin/'.$file);
+    $handler=$render('app/views/admin/'.$file, [], 'admin', false);
     // Admin list views also process CSRF-protected actions such as approve,
     // delete, toggle and account management.
     $getPost($path, $handler);
 }
-$get('/dashboard/admin/login',$render('app/views/admin/login.php'));
-$route('POST','/dashboard/admin/logout',$render('app/views/admin/logout.php'));
+$get('/dashboard/admin/login',$render('app/views/admin/login.php', [], 'admin', false));
+$route('POST','/dashboard/admin/logout',$render('app/views/admin/logout.php', [], 'admin', false));
 
 $get('/admin',static function() use($response):void {$response->redirect(url('dashboard/admin'),301);});
 $get('/admin/{section}',static function(string $section) use($response):void {

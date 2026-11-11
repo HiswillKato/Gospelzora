@@ -7,7 +7,7 @@ final class Home
 {
     public function index(): void
     {
-        global $music, $user;
+        global $config, $db, $analytics, $mail, $settings, $user, $music, $pages, $request, $response;
 
         $page_title = sprintf('Welcome to %s', SITE_NAME);
         $page_description = 'Browse gospel music, top charts, artists and categories - free streaming and downloads.';
@@ -18,6 +18,8 @@ final class Home
         $artists = $result['artists'];
         $categories = $music->categories();
 
-        require BASE_PATH . '/app/views/public/home.php';
+        $view_file = BASE_PATH . '/app/views/public/home.php';
+        $shell = 'public';
+        require BASE_PATH . '/app/views/shared/layout.php';
     }
 }

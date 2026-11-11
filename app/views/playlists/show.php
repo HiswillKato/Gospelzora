@@ -13,14 +13,12 @@ $viewer_role = $viewer_id !== null ? $user->role() : null;
 
 if (!$playlist || !$music->visible($playlist, $viewer_id, $viewer_role)) {
     http_response_code(404);
-    require __DIR__ . '/../shared/header.php';
     $page_header_title = '';
     $page_header_subtitle = '';
     $page_header_content = '<h1 class="fw-bold mb-2">' . "Playlist not found" . '</h1>'
         . '<p class="text-body-secondary mb-0">This playlist does not exist, or it is private.</p>';
     require __DIR__ . '/../shared/partials/page-header.php';
-    require __DIR__ . '/../shared/footer.php';
-    exit;
+    return;
 }
 
 $owner_id = (int)$playlist['user'];
@@ -51,8 +49,6 @@ $songs = $playlist['songs_list'];
 
 $page_title = $playlist['name'];
 $page_description = $playlist['description'] ?: sprintf('%d song playlist on %s.', (int)$playlist['songs'], SITE_NAME);
-
-require_once __DIR__ . '/../shared/header.php';
 ?>
 <?php
 $page_header_title = '';
@@ -158,4 +154,3 @@ $extra_js = <<<'HTML'
 })();
 </script>
 HTML;
-require_once __DIR__ . '/../shared/footer.php'; ?>

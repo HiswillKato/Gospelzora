@@ -10,7 +10,6 @@ $songs = $music->chart($type, 50);
 
 $page_title = "Top Charts";
 $page_description = "See the most-played and most-downloaded gospel songs right now.";
-require_once __DIR__ . '/../shared/header.php';
 ?>
 
 <?php
@@ -98,4 +97,3 @@ require __DIR__ . '/../shared/partials/page-header.php';
     </div>
 </section>
 
-<?php require_once __DIR__ . '/../shared/footer.php'; 

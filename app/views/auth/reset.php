@@ -34,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $missing = $token === '';
 
 $page_title = "Reset Password";
-require_once __DIR__ . '/../shared/header.php';
 
 ob_start();
 $alert_type = 'danger'; $alert_text = $error;
@@ -69,4 +68,3 @@ $auth_text = 'Choose a new password for your account.';
 $auth_footer = '<a href="' . e(url('login')) . '" class="fw-semibold">Back to login</a>';
 require __DIR__ . '/../shared/partials/auth-panel.php';
 
-require_once __DIR__ . '/../shared/footer.php'; 

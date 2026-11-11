@@ -90,7 +90,6 @@ $extra_js = '
 </script>
 ';
 
-require_once __DIR__ . '/../shared/header.php';
 
 ob_start();
 $alert_type = 'danger'; $alert_text = $error;
@@ -144,4 +143,3 @@ $auth_text = 'Join ' . SITE_NAME . ' and start your worship journey';
 $auth_footer = 'Already have an account? <a href="' . e(url('login')) . '" class="fw-semibold">Log in</a>';
 require __DIR__ . '/../shared/partials/auth-panel.php';
 
-require_once __DIR__ . '/../shared/footer.php'; 

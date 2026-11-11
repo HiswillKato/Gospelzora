@@ -24,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $page_title = "Forgot Password";
-require_once __DIR__ . '/../shared/header.php';
 
 ob_start();
 $alert_type = 'success'; $alert_text = $done;
@@ -53,4 +52,3 @@ $auth_text = "Enter your email and we'll send you a reset link.";
 $auth_footer = 'Remembered it? <a href="' . e(url('login')) . '" class="fw-semibold">Log in</a>';
 require __DIR__ . '/../shared/partials/auth-panel.php';
 
-require_once __DIR__ . '/../shared/footer.php'; 

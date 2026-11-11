@@ -5,7 +5,6 @@ $page_title = 'My Favorites';
 $page_description = 'Your saved gospel songs, all in one place.';
 $user_id = (int)$_SESSION['user_id'];
 $songs = $music->favorites($user_id);
-require_once BASE_PATH . '/app/views/shared/header.php';
 $page_header_title = 'My Favorites';
 $page_header_subtitle = "Songs you've saved";
 $page_header_content = '';
@@ -22,4 +21,3 @@ $grid_empty_cta = '<a href="' . e(url('music')) . '" class="btn btn-gold">Browse
 require BASE_PATH . '/app/views/shared/partials/song-grid.php';
 ?>
 </div></section>
-<?php require_once BASE_PATH . '/app/views/shared/footer.php'; ?>

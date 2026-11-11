@@ -11,7 +11,6 @@ if ($q !== '') {
     $artists = $result['artists'];
     $categories = $result['categories'];
 }
-require_once __DIR__ . '/../shared/header.php';
 ?>
 <?php
 $page_header_title = "Search";
@@ -43,4 +42,3 @@ require __DIR__ . '/../shared/partials/song-grid.php';
 <a href="<?= url('category/'.$c['slug']) ?>" class="category-pill"><?= e($c['name']) ?></a>
 <?php } ?></div><?php } ?>
 <?php } ?></div></section>
-<?php require_once __DIR__ . '/../shared/footer.php'; 

@@ -9,7 +9,6 @@ $result = $user->artists(['q' => $q, 'page' => $page]);
 $artists = $result['artists'];
 $pagination = $result['pagination'];
 
-require_once __DIR__ . '/../shared/header.php';
 ?>
 <?php
 $page_header_title = "Artists";
@@ -41,4 +40,3 @@ $base_url = url('artists') . ($filter_qs !== '' ? '?' . $filter_qs : '');
 <div class="mt-5"><?php require __DIR__ . '/../shared/partials/pagination.php'; ?></div>
 <?php } ?>
 </div></section>
-<?php require_once __DIR__ . '/../shared/footer.php'; 

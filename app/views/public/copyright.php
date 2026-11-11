@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../../bootstrap.php';
 $page_title = e($pages->meta('copyright', 'title'));
 $page_description = e($pages->meta('copyright', 'description'));
-require_once __DIR__ . '/../shared/header.php';
 $page_header_title = e($pages->meta('copyright', 'title'));
 $page_header_subtitle = sprintf("Last updated: %s", SITE_LEGAL_UPDATED);
 $page_header_content = '';
@@ -52,4 +51,3 @@ require __DIR__ . '/../shared/partials/page-header.php';
 COPYRIGHT_BODY, SITE_NAME, url('contact')
 )) ?>
 </div></div></div></div></div></section>
-<?php require_once __DIR__ . '/../shared/footer.php';

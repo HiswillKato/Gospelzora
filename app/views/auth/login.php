@@ -66,7 +66,5 @@ require __DIR__ . '/../shared/partials/css-links.php'; ?></head>
 
 $page_title = "Login";
 $page_description = "Log in to your Gospelzora account.";
-require_once __DIR__ . '/../shared/header.php';
 $minimal = false;
 require __DIR__ . '/../shared/partials/login-card.php';
-require_once __DIR__ . '/../shared/footer.php'; 

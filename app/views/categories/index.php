@@ -3,7 +3,6 @@ require_once __DIR__ . '/../../bootstrap.php';
 $page_title = "Categories";
 $page_description = "Explore gospel music by category and find worship that resonates.";
 $categories = $music->all();
-require_once __DIR__ . '/../shared/header.php';
 ?>
 <?php
 $page_header_title = "Categories";
@@ -22,4 +21,3 @@ require __DIR__ . '/../shared/partials/page-header.php';
 <h5 class="mt-3 mb-1"><?= e($c['name']) ?></h5>
 <p class="small text-body-secondary mb-0"><?= e(sprintf("%d songs", (int)$c['song_count'])) ?></p></div></a></div>
 <?php } ?></div><?php } ?></div></section>
-<?php require_once __DIR__ . '/../shared/footer.php'; 
