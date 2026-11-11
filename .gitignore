@@ -21,3 +21,11 @@ Thumbs.db
 *.code-workspace
 AGENTS.md
 
+# Audio files
+*.mp3
+*.wav
+*.ogg
+*.flac
+*.m4a
+*.aac
+
