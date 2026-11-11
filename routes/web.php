@@ -10,14 +10,14 @@ declare(strict_types=1);
  *
  * @global \App\core\Config            $config
  * @global \App\core\Database          $db
- * @global \App\services\Mail          $mail
+ * @global \App\Services\Mailer        $mail
  * @global \App\Models\User            $user
  * @global \App\core\Request           $request
  * @global \App\core\Response          $response
  * @global \App\Models\Analytics       $analytics
  * @global \App\Models\Settings        $settings
  * @global \App\Models\Pages           $pages
- * @global \App\services\Music         $music
+ * @global \App\Models\Music           $music
  */
 $render = static function (string $file, array $queryKeys = []): callable {
     return static function (...$params) use ($file, $queryKeys): void {

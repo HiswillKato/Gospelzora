@@ -147,13 +147,13 @@ function flash(?string $type = null, ?string $message = null): ?array
  *
  * The single funnel every role string passes through, on the way into the
  * database as well as out of it, so an unexpected value can never reach a WHERE
- * clause or a session key. Anything not in User::SESSION_ROLES becomes 'user'.
+ * clause or a session key. Anything not in \App\Models\User::SESSION_ROLES becomes 'user'.
  */
 function normalize(mixed $role): string
 {
     $role = strtolower(trim((string)$role));
 
-    return in_array($role, User::SESSION_ROLES, true) ? $role : 'user';
+    return in_array($role, \App\Models\User::SESSION_ROLES, true) ? $role : 'user';
 }
 
 /**

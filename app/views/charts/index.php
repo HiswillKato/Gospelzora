@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../bootstrap.php';
 
-$types = Music::CHARTS;
+$types = \App\Models\Music::CHARTS;
 $type = $_GET['type'] ?? 'overall';
 if (!isset($types[$type])) {
     $type = 'overall';
@@ -30,13 +30,13 @@ require __DIR__ . '/../shared/partials/page-header.php';
             <?php } ?>
         </div>
 
-        <?php $periodNote = Music::PERIOD_CHARTS[$type]['note'] ?? null;
+        <?php $periodNote = \App\Models\Music::PERIOD_CHARTS[$type]['note'] ?? null;
         if ($periodNote) { ?>
         <p class="text-body-secondary small mb-4"><?= e($periodNote) ?></p>
         <?php } ?>
 
         <?php if (empty($songs)) {
-            if (isset(Music::PERIOD_CHARTS[$type])) {
+            if (isset(\App\Models\Music::PERIOD_CHARTS[$type])) {
                 $empty_icon = 'chart-simple'; $empty_title = "No plays recorded yet"; $empty_text = "This chart fills up as soon as listeners start playing songs."; $empty_cta = '';
                 require __DIR__ . '/../shared/partials/empty-state.php';
             } else {

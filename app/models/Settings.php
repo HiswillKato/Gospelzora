@@ -6,11 +6,11 @@ namespace App\Models;
 /** Request-cached key/value settings backed by the existing settings table. */
 final class Settings
 {
-    private \DB $db;
+    private \App\core\DB $db;
     /** @var array<string, string|false> */
     private array $cache = [];
 
-    public function __construct(\DB $db)
+    public function __construct(\App\core\DB $db)
     {
         $this->db = $db;
     }

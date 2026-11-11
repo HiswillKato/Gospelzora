@@ -52,22 +52,13 @@ require_once __DIR__ . '/functions.php';
      Pages     per-page SEO metadata. */
 
 require_once __DIR__ . '/core/DB.php';
-class_alias(\App\core\DB::class, 'DB');
 require_once __DIR__ . '/models/Settings.php';
-class_alias(\App\Models\Settings::class, 'Settings');
 require_once __DIR__ . '/models/User.php';
-class_alias(\App\Models\User::class, 'User');
 require_once __DIR__ . '/models/Music.php';
-class_alias(\App\Models\Music::class, 'Music');
 require_once __DIR__ . '/models/Analytics.php';
-class_alias(\App\Models\Analytics::class, 'Analytics');
 require_once __DIR__ . '/services/Mailer.php';
 require_once __DIR__ . '/services/ObjectStorage.php';
-class_alias(\App\Services\Mailer::class, 'Mail');
 require_once __DIR__ . '/models/Pages.php';
-
-/* Transitional global alias: legacy templates can keep using Pages until migrated. */
-class_alias(\App\Models\Pages::class, 'Pages');
 
 /* ---------------------------------------------------------- */
 /* Shared instances                                            */
@@ -76,7 +67,7 @@ class_alias(\App\Models\Pages::class, 'Pages');
    Because a page reaches this file with `require_once` at its own top level, these
    names land in the page's scope, which is what makes `$user`, `$music`, … available
    to the page, to the shells it requires afterwards and to the partials those shells
-   pull in. A page must therefore never do `new User()` itself — it would shadow this
+   pull in. A page must therefore never do `new \App\Models\User()` itself — it would shadow this
    instance and throw away the per-request memoization inside it.
 
    Order matters: Analytics needs DB, Mail needs Analytics, User needs all three, and
@@ -86,13 +77,13 @@ class_alias(\App\Models\Pages::class, 'Pages');
 
 $request   = new \App\core\Request();
 $response  = new \App\core\Response();
-$db        = new DB(new \App\core\Database($config['database']));
-$analytics = new Analytics($db);
-$mail      = new Mail($analytics);
-$settings  = new Settings($db);
-$user      = new User($db, $analytics, $settings, $mail);
-$music     = new Music($db, $analytics, $user);
-$pages     = new Pages($db);
+$db        = new \App\core\DB(new \App\core\Database($config['database']));
+$analytics = new \App\Models\Analytics($db);
+$mail      = new \App\Services\Mailer($analytics);
+$settings  = new \App\Models\Settings($db);
+$user      = new \App\Models\User($db, $analytics, $settings, $mail);
+$music     = new \App\Models\Music($db, $analytics, $user);
+$pages     = new \App\Models\Pages($db);
 
 /* ---------------------------------------------------------- */
 /* Deployment self-check                                       */

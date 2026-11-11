@@ -12,11 +12,11 @@ namespace App\Models;
 
 class Music {
 
-    private \DB $db;
+    private \App\core\DB $db;
     private Analytics $analytics;
     private User $user;
 
-    public function __construct(\DB $db, Analytics $analytics, User $user) {
+    public function __construct(\App\core\DB $db, Analytics $analytics, User $user) {
         $this->db = $db;
         $this->analytics = $analytics;
         $this->user = $user;

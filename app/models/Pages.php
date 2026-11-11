@@ -12,9 +12,9 @@ namespace App\Models;
  */
 final class Pages
 {
-    private \DB $db;
+    private \App\core\DB $db;
 
-    public function __construct(\DB $db)
+    public function __construct(\App\core\DB $db)
     {
         $this->db = $db;
     }

@@ -45,7 +45,7 @@ class User {
     private const REGISTER_WINDOW_MINUTES = 60;
     private const REGISTER_SESSION_SECONDS = 30;
 
-    private \DB $db;
+    private \App\core\DB $db;
     private Analytics $analytics;
     private Settings $settings;
     private \App\Services\Mailer $mail;
@@ -59,7 +59,7 @@ class User {
     /** Set when the account row could not be read (guards fall back to the session). */
     private bool $dbUnavailable = false;
 
-    public function __construct(\DB $db, Analytics $analytics, Settings $settings, \App\Services\Mailer $mail) {
+    public function __construct(\App\core\DB $db, Analytics $analytics, Settings $settings, \App\Services\Mailer $mail) {
         $this->db = $db;
         $this->analytics = $analytics;
         $this->settings = $settings;
